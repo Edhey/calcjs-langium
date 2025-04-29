@@ -1,99 +1,101 @@
 [![Open in Codespaces](https://classroom.github.com/assets/launch-codespace-2972f46106e565e64193e422d61a12cf1da4916b45550586e14ef0a7c637dd04.svg)](https://classroom.github.com/open-in-codespaces?assignment_repo_id=19363861)
 # TFA 
-**Author:** Himar Edhey Hernández Alonso
-**Subject:** Lenguage Processing
-**Email:** alu0101552392@ull.edu.es
-**GitHub:** [Edhey](https://github.com/Edhey)
+- **Author:** Himar Edhey Hernández Alonso
+- **Subject:** Lenguage Processing
+- **Email:** alu0101552392@ull.edu.es
+- **GitHub:** [Edhey](https://github.com/Edhey)
 
-# Initial TFA Goals
+## Initial TFA Goals
+The goal of my TFA project is to migrate the current calculator language transpiler into a fully Langium-based implementation. So we need to:
+- Define the grammar for the calculator language using Langium.
+- Build a Language Server Protocol that supports syntax highlighting, error detection, and basic validation in Visual Studio Code.
+- Redo the JavaScript code generator to migrate the original functionality of converting calculator programs into executable JavaScript from recast to Langium.
 
-## Explanation of the Goals
-The goal of my TFA project is to **migrate** the existing **calculator language transpiler** to a **fully Langium-based implementation**.  
-This involves:
-- Defining the **grammar** of the calculator language using **Langium**.
-- Building a **Language Server (LSP)** that provides **syntax highlighting**, **error detection**, and **basic validation** in **VSCode**.
-- Implementing a **JavaScript code generator** to maintain the original functionality of transpiling calculator programs into executable JavaScript code.
+In summary, with this project we will make a user-friendly environment for the calculator language, allowing users to write the code easily.
 
-This project will combine **language design**, **language server development**, and **toolchain integration**, providing a complete environment for users of the calculator language to write, debug, and potentially run their code.
-
----
-
-## Examples and Illustrations
+### Example
 The code generation should be similar to the original calculator language:
 
+**DSL code example:**
 ```calculator
 fun add(x, y) { x + y }
 a = add(2, 3)
 write(a)
 ```
 
-Expected transpiled JavaScript:
-
+**Expected JavaScript transpile:**
 ```javascript
 function add(x, y) { return x + y; }
 let a = add(2, 3);
 console.log(a);
 ```
 
-But now VSCode should:
-- Highlight keywords (`fun`, `write`), operators (`+`), literals (`numbers`), and identifiers.
-- Report syntax errors (e.g., missing parentheses).
-- Validate semantic issues (e.g., calling an undeclared function).
-
+But now when coding in VSCode it should:
+- Highlight keywords (`fun`, `write`), operators (`+`, `-`, etc.), literals, and identifiers.
+- Report syntax errors (missing parentheses, incorrect expressions, etc.).
+- Report semantic errors (calling a function/variable that hasn't been declared).
 ---
 
-## Strategies and Translation Scheme
-The strategy to achieve the migration consists of **five main steps**:
-
-1. **Grammar Definition**:
-   - Write the Langium `.langium` grammar file describing the calculator language.
-   - I will reference on examples such as [Langium MiniLogo](https://github.com/TypeFox/langium-minilogo)
-   - The grammar should be similar to the original calculator language, it contains:
-     - **Complex Numbers**: `1.5 + 2.3i`
-     - **Expressions**: `a + b`, `a * b`
-     - **Variables**: `a = 5`
-     - **Functions**: `fun add(x, y) { x + y }`
+### Tasks
+We will divide our project in 6 main tasks:
+1. **Define the Grammar**:
+   - We must create the `.langium` grammar file for the calculator language.
+     - We will use reference examples like [Langium MiniLogo](https://github.com/TypeFox/langium-minilogo) for this task.
+     - The grammar should be similar to the original calculator language, so it needs to include:       
+       - **Literals** (`1`, `2.3`, `true`, `false`)
+         - **Complex numbers** (`1.5 + 2.3i`)
+         - **Booleans** (`true`, `false`)
+         - **Strings** (`"Hello, World!"`)
+       - **Keywords** (`fun`, `write`)
+       - **Operators** (`+`, `-`, `*`, `/`).
+       - **Expressions** (`a + b`, `a * b`),
+       - **Variables** (`variable`),
+       - **Assignments** (`a = 5`),
+       - **Functions** (`fun add(x, y) { x + y }`).
 
 2. **AST Generation and Validation**:
-   - Use Langium’s built-in `npx langium generate` to generate TypeScript AST classes.
-   - Implement **syntax** validation: e.g., balanced parentheses, correct expressions.
-   - Implement **semantic** validation: e.g., variables must be declared before use.
+   - I will use the Langium geneartion to create TypeScript AST classes.
+     - The AST classes aren't the manual recast AST anymore, so we will need to adapt the code generation to this new structure.
+   - Implement syntax validation (matching parentheses, correct structure).
+   - Implement semantic validation (variables must be declared before use).
 
 3. **Syntax Highlighting**:
-   - Define token types for syntax elements (keywords, identifiers, operators).
-   - Configure highlighting rules in the VSCode extension.
+   - Needed to define tokens for keywords, identifiers, operators, etc.
+   - Then configure the VSCode extension to provide syntax highlighting.
 
-4. **JavaScript Code Generator**:
-   - Now we must traverse through the Langium AST.
-   - We should maintain the original functionality of the old transpiler.
+4. **JavaScript Code Generation**:
+   - Now we need to adapt the code generation to the new AST structure.
+     - We need to traverse the new Langium AST.
+     - Ensure that the behavior matches the original calculator.
 
 5. **Testing and Packaging**:
-   - Test parsing, validation, highlighting, and code generation.
-   - Prepare demo files (`.calc`) with correct and incorrect examples.
-   - Package the VSCode extension.
+   - Test creation for correct and incorrect examples is needed.
+   - Our goal is to pass the old code generation test and add new tests for the new features.
+   - When all is ready we package the finished extension for Visual Studio Code.
 
-6. **Final Documentation**
-   - Complete README and project documentation.
-   - Prepare demo examples and screenshots.
+6. **Final Documentation**:
+   - Write a complete README with instructions about how to use the extension.
+   - Include examples, screenshots, and detail instructions.
 ---
 
-## Evaluation of Difficulties
+### Evaluation of Difficulties
 **Expected Difficulties**:
+The Langium learning curve could be steep, especially for:
 - Properly defining the calculator grammar (handling operator precedence, parentheses).
   - Build the priority of the Langium grammar rules to ensure correct parsing.
   - Our original calculator language has a complex grammar that could be difficult to translate.
   - If I run out of time, I will focus on a simple calculator grammar.
-- Understanding Langium's way of modeling ASTs and validations.
+- Understand Langium ASTs generation and validations.
   - Langium uses a different approach than the original transpiler.
-  - I will need to learn how to use Langium's AST classes and validation framework.
-- Maintaining the original functionality of the transpiler could be challenging.
+  - I will need to learn how to use Langium's AST classes and how to validate it.
+- Maintain the original functionality of the transpiler could be challenging.
+  - The original logic for code generation, scoping and validation must be adapted to the new AST structure.
   - I will need to ensure that the generated JavaScript code behaves the same as the original transpiler.
-  - I will need to understand the original transpiler's code generation logic.
-- Integrating the language server with VSCode for syntax highlighting and validation.
-  - I will need to learn how to configure the VSCode extension for syntax highlighting and validation.
+- Apply syntax highlighting and validation to the language server with VSCode.
+  - I need to learn how to configure the VSCode extension for syntax highlighting and validation.
   - Ensure that the language server communicates correctly with the VSCode client could be tricky.
 
-**Time Estimation**:
+**Estimated Time**: 25–30 hours
 | Task | Estimated Hours |
 |:-----|:---------------:|
 | Environment setup | 2h |
@@ -104,44 +106,40 @@ The strategy to achieve the migration consists of **five main steps**:
 | Code generation | 6h |
 | Testing, documentation, packaging | 3h |
 
-**Total Estimated Hours**: **25-30 hours**.
 **Fallback Plan**:
-- If time runs short, I will focus first on **grammar**, **parsing**, **highlighting**, and **semantic validation** of a simple calculator language.
-- I will maintain the original functionality of the transpiler if time allows.
-
+If necessary, I will focus on a simpler grammar first, ensuring grammar definition, parsing, highlighting, and semantic validation are completed. Then, if time allows, I will work on maintaining the original functionality of the transpiler.
 ---
 
-## Languages, Libraries and Tools
+### Tools and Technologies
 - **Languages**: TypeScript, JavaScript
-- **Libraries and Frameworks**:
+- **Frameworks and Libraries**:
   - [Langium](https://langium.org/)
   - [Node.js](https://nodejs.org/)
-- **Editors and Extensions**:
+- **Editor**:
   - [Visual Studio Code](https://code.visualstudio.com/)
-  - [Langium Official Visual Extension](https://langium.org/docs/introduction/#vscode-extension)
+  - Langium LSP extension
 - **References**:
   - [Langium MiniLogo Example](https://github.com/TypeFox/langium-minilogo)
   - [Learning Langium Course](https://github.com/ULL-ESIT-PL/learning-langium)
-  - [Langium Documentation](https://langium.org/docs/introduction/)
-- **AIs**:
-  - I will use Copilot for assistance with explanations, examples, debugging suggestions.
-
+  - Langium Grammar Language documentation
+- **AI Assistance**:
+  - I will use Github Copilot for assistance with explanations, examples, debugging suggestions.
 ---
 
-## Methodologies
+### Methodologies
 I will follow the next methodologies in the project:
 - **TDD** for validators: start by writing failing tests for syntax/semantic errors.
 - **Automation scripts**: Use the scripts provided for make testing easier.
 - **Version control**: Regular commits in Git with descriptive messages.
 - **GitHub Project Board**: Track progress in the project board. [GitHub Project Board](https://github.com/orgs/ULL-ESIT-PL-2425/projects/496)
-
 ---
 
-# Conclution
-By the end of the project, I will have migrated the calculator language into a **Langium-based DSL** with:
-- Syntax highlighting,
-- Syntax and semantic validation,
-- JavaScript code generation,
+### Conclusion
+By the end of this project, I will have successfully migrated the calculator language into a Langium-based DSL with:
+- Syntax highlighting.
+- Syntax and semantic validation.
+- JavaScript code generation.
 - Packaged as a working VSCode extension.
 
-With this project I will demonstrate my ability to **design a language**, **build a language server**, and **integrate it into a modern editor**.
+To sum up, in this project I will demonstrate my ability to design a domain-specific language, develop a full language server, and integrate it into a modern development environment.
+---

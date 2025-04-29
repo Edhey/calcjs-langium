@@ -1,7 +1,7 @@
 # TODO Plan (Sequence of the Subtasks)
 **Phase 0: Environment Preparation**
-- [ ] Initialize a Langium project (`npm init langium`).
-- [ ] Set up Node.js, TypeScript, and project dependencies.
+- [ ] Initialize the Langium project (`npm init langium`).
+- [ ] Set up project dependencies.
 
 **Phase 1: Grammar and Parser**
 - [ ] Write the initial calculator grammar (.langium file).
@@ -22,7 +22,7 @@
 
 **Phase 5: Testing and Packaging**
 - [ ] Create unit tests for the validation functions.
-- [ ] Prepare example `.calc` programs.
+- [ ] Write enough test examples.
 - [ ] Package and document the VSCode extension.
 - [ ] Error messages should be clear and informative.
 

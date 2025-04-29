@@ -1,5 +1,5 @@
-Initialize a Langium project (`npm init langium`).
-Set up Node.js, TypeScript, and project dependencies.
+Initialize the Langium project.
+Set up project dependencies.
 Write the initial calculator grammar (.langium file).
 Generate the AST (`npx langium generate`).
 Create sample `.calc` files and validate parsing.
@@ -10,7 +10,7 @@ Integrate validation into the language server.
 Rewrite AST-to-JavaScript translation.
 Implement the code generation logic to maintain original functionality.
 Create unit tests for the validation functions.
-Prepare example `.calc` programs.
+Write enough test examples.
 Package and document the VSCode extension.
 Error messages should be clear and informative.
 Capture screenshots of syntax highlighting and validation working in VSCode.
