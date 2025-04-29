@@ -1,0 +1,20 @@
+Initialize a Langium project (`npm init langium`).
+Set up Node.js, TypeScript, and project dependencies.
+Write the initial calculator grammar (.langium file).
+Generate the AST (`npx langium generate`).
+Create sample `.calc` files and validate parsing.
+Implement syntax validation (e.g., expected tokens).
+Implement semantic validation (e.g., variable scoping, function definitions).
+Define syntax highlighting (keywords, operators, literals).
+Integrate validation into the language server.
+Rewrite AST-to-JavaScript translation.
+Implement the code generation logic to maintain original functionality.
+Create unit tests for the validation functions.
+Prepare example `.calc` programs.
+Package and document the VSCode extension.
+Error messages should be clear and informative.
+Capture screenshots of syntax highlighting and validation working in VSCode.
+Write a detailed user guide in the README.md.
+The GitHub Action for CI is passing
+The link delivered on campus is clickable and points to the GitHub repository
+The zip file delivered on campus contains the source code in the repository
