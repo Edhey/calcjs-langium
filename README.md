@@ -37,10 +37,22 @@ let $f, $g, $h, $k;
 print($h(Complex('1').add(Complex('i'))))), print($k(Complex('2').sub(Complex('i'))));
 ```
 
+Error report:
+```calculator
+a = 4i,
+b = 3i,
+c = a + b
+```
+
+**Expected error report:**
+```calculator
+Error: Variable 'c' is at line 3, column 1 is not used.
+```
+
 But now when coding in VSCode it should:
 - Highlight keywords (`fun`, `write`), operators (`+`, `-`, etc.), literals, and identifiers.
 - Report syntax errors (missing parentheses, incorrect expressions, etc.).
-- Report semantic errors (calling a function/variable that hasn't been declared).
+- Report semantic errors (calling a function/variable that hasn't been used, etc.).
 ---
 
 ### Tasks
