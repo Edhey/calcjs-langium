@@ -18,16 +18,23 @@ The code generation should be similar to the original calculator language:
 
 **DSL code example:**
 ```calculator
-fun add(x, y) { x + y }
-a = add(2, 3)
-write(a)
+f = fun(x) { 2*x },
+g = fun(x) { 3*x },
+h = g + f,
+k = g * f,
+print(h(1+i)), # 5 + 5i
+print(k(2-i)) # 18 - 24i
 ```
 
 **Expected JavaScript transpile:**
 ```javascript
-function add(x, y) { return x + y; }
-let a = add(2, 3);
-console.log(a);
+let $f, $g, $h, $k; 
+(((($f = functionObject(function ($x) { 
+  return Complex('2').mul($x); }),
+    $g = functionObject(function ($x) { returnComplex('3').mul($x); })),
+    $h = $g.add($f)),
+    $k = $g.mul($f)),
+print($h(Complex('1').add(Complex('i'))))), print($k(Complex('2').sub(Complex('i'))));
 ```
 
 But now when coding in VSCode it should:
