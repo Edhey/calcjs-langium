@@ -16,9 +16,9 @@
  */
 
 import { promises as fileStream } from 'fs';
-import * as calc from './calc.cjs';
+import * as calc from '../calc.cjs';
 const parser = calc.parser;
-import { scopeAnalysis, findDependecies } from './scope.js';
+import { scopeAnalysis, findDependecies } from '../scope/scope.js';
 import { codeGeneration } from './code-generation.js';
 import { writeCode } from './write-code.js';
 

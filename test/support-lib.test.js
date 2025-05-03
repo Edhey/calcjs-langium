@@ -12,7 +12,7 @@
  */
 
 import { expect } from 'chai';
-import { gamma, Complex, print, min, max } from '../src/support-lib.js';
+import { gamma, Complex, print, min, max } from '../src/code-generation/support-lib.js';
 
 /**
  * @desc Tests for the support library

@@ -15,11 +15,11 @@
  *
  */
 
-import './mokey-patch/monkey-patch.js';
-import { Complex } from './mokey-patch/handlers/complex-monkey-patch.js';
-import { FunctionObject, functionObject } from './function-object/function-object.js';
-import { ArrayFunctionObject, arrayObject } from './function-object/array-function-object.js';
-import { ObjectFunctionObject, objectFunctionObject } from './function-object/object-function-object.js';
+import '../mokey-patch/monkey-patch.js';
+import { Complex } from '../mokey-patch/handlers/complex-monkey-patch.js';
+import { FunctionObject, functionObject } from '../function-object/function-object.js';
+import { ArrayFunctionObject, arrayObject } from '../function-object/array-function-object.js';
+import { ObjectFunctionObject, objectFunctionObject } from '../function-object/object-function-object.js';
 
 const P = [Complex(0.99999999999980993),
 Complex(676.5203681218851), Complex(-1259.1392167224028), Complex(771.32342877765313),

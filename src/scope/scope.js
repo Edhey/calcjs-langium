@@ -13,7 +13,7 @@
  */
 
 import astTypes from 'ast-types';
-import * as supportLib from './support-lib.js';
+import * as supportLib from '../code-generation/support-lib.js';
 import { Scope } from './scope-class.js';
 
 const visit = astTypes.visit;

@@ -16,7 +16,7 @@ import {
   buildIdentifier,
   buildVariableDeclaration,
   buildVariableDeclarator
-} from './ast-build.cjs';
+} from '../ast-build.cjs';
 
 /**
  * Represents a scope in which variables can be declared, initialized, and used.

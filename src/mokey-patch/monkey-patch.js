@@ -11,8 +11,8 @@
  * @see https://github.com/ULL-ESIT-PL-2425/arith2js-himar_edhey-hernandez-alu0101552392
  */
 
-import './handlers/boolean-monkey-patch.js';
 import { Complex } from './handlers/complex-monkey-patch.js';
+import './handlers/boolean-monkey-patch.js';
 import './handlers/function-monkey-patch.js';
 import './handlers/string-monkey-patch.js';
 import './handlers/function-object-monkey-patch.js';

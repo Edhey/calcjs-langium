@@ -11,7 +11,7 @@
  * @see {@link https://github.com/ULL-ESIT-PL-2425/arith2js-himar_edhey-hernandez-alu0101552392}
  */
 
-import { transpile } from '../src/transpile.js';
+import { transpile } from '../src/code-generation/transpile.js';
 import fileStream from 'fs/promises';
 import { expect } from 'chai';
 
