@@ -1,0 +1,41 @@
+{
+  "source": {
+    "include": ["src"],
+    "includePattern": ".+\\.js(doc|x)?$"
+  },
+  "plugins": ["plugins/markdown"],
+  "opts": {
+    "destination": "./docs/jsdoc",
+    "recurse": true,
+    "template": "node_modules/clean-jsdoc-theme",
+    "theme_opts": {
+      "default_theme": "light",
+      "homepageTitle": "Scope-intro documentation",
+      "menu": [
+        {
+          "title": "PL Lab scope-intro Description",
+          "link": "https://apuntes-pl.vercel.app/labs/scope-intro",
+          "target": "_self"
+        },
+        {
+          "title": "Coverage Report",
+          "link": "../coverage/",
+          "target": "_self"
+        },
+        { 
+          "title": "Lab documentation",
+          "link": "../",
+          "target": "_self"
+        }
+      ]
+    }
+  },
+  "templates": {
+    "cleverLinks": true,
+    "monospaceLinks": false
+  },
+  "markdown": {
+    "hardwrap": false,
+    "idInHeadings": true
+  }
+}

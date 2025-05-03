@@ -1,0 +1,5 @@
+f = fun(x) { -x },
+h = -f,             //  h  is the identity function
+print((-f)(4-2i)),  //  4-2i
+print(h(-4i)),      // -4i
+print((-f)(0))      //  0

@@ -1,0 +1,2 @@
+print(true - "cadena"),  # Error 
+print(false - "cadena")  # Error 

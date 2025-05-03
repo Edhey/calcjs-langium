@@ -1,0 +1,2 @@
+print("cadena" == "cadena"), # true
+print("cadena" == "cadena2") # false

@@ -1,0 +1,7 @@
+f = fun(x) { x + 1 },
+f(0) = 8,
+print(f(0)),
+g = fun(x) { fun(y) { x + y } },
+g(1)(0) = 9,
+print(g(1)(0)),
+print(g(1)(2))

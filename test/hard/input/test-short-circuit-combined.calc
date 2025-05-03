@@ -1,0 +1,5 @@
+isPositive = fun(n) { 0 < n },
+isLessThanTen = fun(n) { n < 10 },
+print(isPositive(5) && isLessThanTen(5) || 2), # true
+print(isPositive(-5) && isLessThanTen(-5) || 1), # This will be printed
+print(isPositive(15) && isLessThanTen(15) || 1) # This will be printed

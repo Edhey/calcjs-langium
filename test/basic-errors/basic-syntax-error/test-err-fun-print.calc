@@ -1,0 +1,6 @@
+a = fun(d) {
+  d+2,
+  print(e)
+},
+e = 2,
+print(a(2))

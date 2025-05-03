@@ -1,0 +1,19 @@
+Person = fun(name; age) {
+    this = fun () { 0 },
+    this("name") = name,
+    this("greet") = fun(other) {
+      write("I am "+this("name")+". Glad to meet you "+other)
+    },
+    this("age") = age, 
+    this
+},
+ 
+Teacher = fun(name; age; subjects) {
+    this = Person(name; age),
+    this("subjects") = subjects,
+    this
+},
+ 
+john = Teacher("John"; 69; ["PL"; "DMSI"]),
+john("greet")("Juana"),
+write(john("name");"teaches subject";john("subjects")(0)) 

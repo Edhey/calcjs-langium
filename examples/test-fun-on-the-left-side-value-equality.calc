@@ -1,0 +1,9 @@
+f = fun(x) { fun(y) { x + y } },
+f(2)(3) = 8, 
+write(f(2)(3)),   //  8
+write(f(1+1)(3)), //  8
+write(f(2)(5)),   //  7
+f(2+i) = 10,
+write(f(2+i)),   //  10
+f(2+i)(3) = "hola",
+write(f(2+i)(3)) // "hola"

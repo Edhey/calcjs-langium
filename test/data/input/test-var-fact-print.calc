@@ -1,0 +1,8 @@
+a = 3,
+b = a + 2,
+c = b!,
+print(c),
+d = c + 1,
+print(d),
+e = d!,
+print(e)

@@ -1,0 +1,8 @@
+x = 10,     # This x is global
+f = fun (a) {
+  x = a+2i, # This x is local, it shadows the global x
+  3i*x      # Returned value
+},
+b = f(4),   # Function call
+print(b), # -6+12i = 3i*(4+2i)
+print(x)  # 10

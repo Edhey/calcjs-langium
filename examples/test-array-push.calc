@@ -1,0 +1,10 @@
+a = [4+2;5+3i;9-i], # Creates a new function 0 => 4+2, 1 => 5+3i, 2 => 9-i 
+print(a(0)), # { re: 6, im: 0 }
+a(1) = 333,  
+print(a(1)), # { re: 333, im: 0 }
+print(a),     # { re: 6, im: 0 }, { re: 333, im: 0 }, { re: 9, im: -1 } ] or s.t. similar
+print(a("length")), # 3
+print(a(9)), # null
+a("push")(12), # Adds 12 to the array
+print(a("length")), # 4
+print(a(3)) # { re: 12, im: 0 }

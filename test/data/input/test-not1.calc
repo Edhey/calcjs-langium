@@ -1,0 +1,5 @@
+isPositive = fun(n) { 0 < n },
+isNotPositive = fun(n) { !isPositive(n) },
+print(isNotPositive(-5)), # true
+print(isNotPositive(5)), # false
+print(isNotPositive(0)) # true

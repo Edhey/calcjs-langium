@@ -1,0 +1,11 @@
+const { functionObject,print,Complex } = require("/home/usuario/practicas/02-Translating-Arithmetic-Expressions-to-JavaScript/arith2js-himar_edhey-hernandez-alu0101552392/src/support-lib.js");
+
+/* end of preamble of generated code */
+
+let $f;
+
+((((((((((($f = functionObject(function($x) {
+  return functionObject(function($y) {
+    return $x.add($y);
+  });
+}), print($f.add($f)(Complex('3'))(Complex('5')))), print(Complex('2').add($f)(Complex('3'))(Complex('5')))), print($f.add(Complex('2'))(Complex('3'))(Complex('5')))), print($f.add('prueba')(Complex('3'))(Complex('5')))), print('prueba'.add($f)(Complex('3'))(Complex('5')))), print($f.add(true)(Complex('3'))(Complex('5')))), print(true.add($f)(Complex('3'))(Complex('5')))), print(Complex('2').add(Complex('2')))), print('prueba'.add('prueba'))), print(true.add(true))), print(false.add(true))), print(false.add(false)); 

@@ -1,0 +1,13 @@
+const { print,Complex } = require("/home/usuario/practicas/02-Translating-Arithmetic-Expressions-to-JavaScript/arith2js-himar_edhey-hernandez-alu0101552392/src/support-lib.js");
+
+/* end of preamble of generated code */
+
+let $a, $b;
+
+(($a = function() {
+  return print(Complex('2')), function() {
+    return print(Complex('3'));
+  };
+}, $b = function() {
+  return print(Complex('3'));
+}), $a()()), $b(); 

@@ -1,0 +1,11 @@
+a = fun() {
+  print(2),
+  fun() {
+    print(3)
+  }
+},
+b = fun() {
+  print(3)
+},
+a()(),
+b()

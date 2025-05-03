@@ -1,0 +1,4 @@
+Parse error on line 1:
+(4 + 5i) * * (6 - 7i) 
+-----------^
+Expecting 'NUMBER', 'ID', '-', '|', '!', 'PID', '(', 'TRUE', 'FALSE', 'FUN', 'STRING', 'WHILE', 'FOR', got '*'

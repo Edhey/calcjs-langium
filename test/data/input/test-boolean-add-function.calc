@@ -1,0 +1,3 @@
+f = fun(x) { x + 1 },
+print((true + f)(2)),  # 4
+print((false + f)(3)) # 4

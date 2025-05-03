@@ -1,0 +1,3 @@
+4 + 2i is a complex number
+true is a boolean
+3 is a function

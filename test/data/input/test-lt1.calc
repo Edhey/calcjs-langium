@@ -1,0 +1,4 @@
+tripleLessThan = fun(a) { fun(b) { fun(c) { a < b && b < c } } },
+print(tripleLessThan(1)(2)(3)), # true
+print(tripleLessThan(1)(3)(2)), # false 
+print(tripleLessThan(2)(1)(3)) # false

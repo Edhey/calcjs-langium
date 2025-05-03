@@ -1,0 +1,5 @@
+f = fun(x) { fun(y) { x + y } },
+h = fun(x) { x*x },
+write(h == f),      // false
+write((f + 4)(4)(5)),
+write(f(h)(4))

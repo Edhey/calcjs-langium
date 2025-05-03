@@ -1,0 +1,4 @@
+Errors in global scope:
+Variable a used before declaration at line 1, column 3
+Variable a used before declaration at line 2, column 1
+

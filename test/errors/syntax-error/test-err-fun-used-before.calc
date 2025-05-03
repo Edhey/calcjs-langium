@@ -1,0 +1,6 @@
+mal = fun (n) {
+  fun() { n+y } 
+},
+y = 4,
+r = mal(4)(5),
+print(r) # 9

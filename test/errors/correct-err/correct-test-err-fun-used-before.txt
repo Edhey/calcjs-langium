@@ -1,0 +1,6 @@
+Errors in local anonymous function scope:
+Variable y not declared at line 2, column 13
+
+Errors in global scope:
+Variable y declared but not used at line 4, column 1
+

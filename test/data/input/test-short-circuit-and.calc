@@ -1,0 +1,4 @@
+print(false && 2), # false
+print(true && 1), # This will be printed
+print(true && false && 2), # false
+print(true && true && 1) # This will be printed

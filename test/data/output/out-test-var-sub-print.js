@@ -1,0 +1,6 @@
+const { Complex,print } = require("/home/usuario/practicas/02-Translating-Arithmetic-Expressions-to-JavaScript/arith2js-himar_edhey-hernandez-alu0101552392/src/support-lib.js");
+
+/* end of preamble of generated code */
+
+let $x, $y, $z, $a, $b, $c, $d;
+(((((((($x = Complex('3.3'), $y = Complex('2.2')), $z = $x.sub($y)), print($z)), $a = Complex('1.1')), $b = Complex('4.4')), $c = $a.add($b)), print($c)), $d = $z.sub($c)), print($d); 

@@ -1,0 +1,5 @@
+f = fun(x) { fun(y) { x+y} },
+print((f == f)), # true
+print(2 == 2), # true
+print(true == true), # true
+print("hola" == "hola") # true

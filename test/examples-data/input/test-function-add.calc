@@ -1,0 +1,6 @@
+f = fun(x) { 2*x },
+g = fun(x) { 3*x },
+h = g + f,
+print(h(1+i)),
+a = 1+ h,
+print(a(1))

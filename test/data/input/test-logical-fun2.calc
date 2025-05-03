@@ -1,0 +1,6 @@
+isZero = fun(n) { n == 0 },
+isPositive = fun(n) { 0 < n },
+isNegative = fun(n) { n < 0 },
+print(isZero(4) && isPositive(4) || isNegative(4)), # false
+print(isZero(0) && isPositive(3) || isNegative(3)), # true
+print(isZero(-2) && isPositive(-2) || isNegative(-2)) # true

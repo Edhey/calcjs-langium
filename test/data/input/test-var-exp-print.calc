@@ -1,0 +1,8 @@
+p = 2,
+q = 3,
+r = p ** q,
+print(r),
+s = r ** 2,
+print(s),
+t = s ** 1,
+print(t)

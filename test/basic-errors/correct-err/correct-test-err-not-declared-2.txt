@@ -1,0 +1,6 @@
+Errors in global scope:
+Variable d not declared at line 1, column 7
+Variable c not declared at line 3, column 7
+Variable a declared but not used at line 1, column 1
+Variable b declared but not used at line 2, column 1
+

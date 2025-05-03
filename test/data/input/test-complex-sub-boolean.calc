@@ -1,0 +1,3 @@
+a = (1+2i),
+print(a - true),  # 2i
+print(a - false) # 1+2i

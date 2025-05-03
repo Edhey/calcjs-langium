@@ -1,0 +1,6 @@
+print(!"hola"), # false
+print(!""), # true
+print(!2), # false
+print(!0), # true
+print(!true), # false
+print(!false) # true

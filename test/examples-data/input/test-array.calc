@@ -1,0 +1,5 @@
+a = [4+2;5+3i;9-i],
+print(a(0)), # 4 + 2i
+print(a(1)), # 5 + 3i
+print(a(2)), # 9 - i
+print(a)    # [6, 5+3i, 9-i]

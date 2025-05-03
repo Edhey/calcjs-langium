@@ -1,0 +1,1 @@
+Complex('2').pow(Complex('3i')).add(Complex('4').pow(Complex('2i'))).pow(Complex('1').add(Complex('1i'))); 

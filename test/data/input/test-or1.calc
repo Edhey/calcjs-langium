@@ -1,0 +1,5 @@
+isNegative = fun(n) { n < 0 },
+isGreaterThanTen = fun(n) { 10 < n },
+print(isNegative(-5) || isGreaterThanTen(-5)), # true
+print(isNegative(5) || isGreaterThanTen(5)), # false
+print(isNegative(15) || isGreaterThanTen(15)) # true

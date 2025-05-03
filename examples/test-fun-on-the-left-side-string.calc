@@ -1,0 +1,6 @@
+f = fun(x) { fun(y) { x + y } },
+f("cadena")(3) = 8,
+f(2)("cadena") = 9,
+write(f("cadena")(3)), #  8 
+write(f("cadena")(4)), # "cadena4"
+write(f(2)("cadena"))  # 9  

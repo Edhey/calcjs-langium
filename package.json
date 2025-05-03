@@ -1,0 +1,110 @@
+{
+  "name": "@ull-esit-pl-2425/tfa-himar_edhey-hernandez-alu0101552392",
+  "version": "0.0.0",
+  "description": "* See section [TFA](https://apuntes-pl.vercel.app/labs/tfa#task-presentation-of-goals) Final Project - VsCode extension for a transpiler of a simple calculator language to JavaScript.\n* The project is based on the [Langium](https://langium.org/) framework.",
+  "main": "./out/extension/main.cjs",
+  "type": "commonjs",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://npm.pkg.github.com/"
+  },
+  "bin": {
+    "calc2js": "./bin/calc2js.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ULL-ESIT-PL-2425/arith2js-himar_edhey-hernandez-alu0101552392.git"
+  },
+  "scripts": {
+    "build": "tsc -b tsconfig.src.json && node esbuild.mjs",
+    "watch": "concurrently -n tsc,esbuild -c blue,yellow \"tsc -b tsconfig.src.json --watch\" \"node esbuild.mjs --watch\"",
+    "lint": "eslint src --ext ts",
+    "langium:generate": "langium generate",
+    "langium:generate:production": "langium generate --mode=production",
+    "langium:watch": "langium generate --watch",
+    "vscode:prepublish": "npm run build && npm run lint",
+    "test": "npm run build && mocha test/",
+    "test-example": "npm run compile; mocha test/ --grep 'Example Test'",
+    "test-simple": "npm run compile; mocha test/ --grep 'Simple Test'",
+    "test-hard": "npm run compile; mocha test/ --grep 'Hard Test'",
+    "test-error": "npm run compile; mocha test/ --grep 'Error Test'",
+    "compile": "jison src/grammar.jison src/lexer.l -o src/calc.js",
+    "test:vitest": "vitest run",
+    "cov": "nyc npm run test",
+    "report": "nyc --report --reporter=html --report-dir=docs/coverage -x src/template.js npm run test",
+    "coverage": "c8 --reporter=html --reporter=text --report-dir='docs/coverage' npm run test",
+    "jsdocs": "jsdoc -c jsdoc.json",
+    "docs": "npm run clean:docs && npm run jsdocs && npm run coverage",
+    "clean": "rm -f src/calc.js && npm run clean:docs",
+    "clean:docs": "rm -fR docs/coverage && rm -fR docs/jsdoc",
+    "dev": "http-server -c-1 -o docs",
+    "trans": "./bin/calc2js.mjs",
+    "exec": "./bin/calc2js.mjs --run"
+  },
+  "keywords": [
+    "ull",
+    "jison",
+    "espree",
+    "compiler"
+  ],
+  "author": "Himar Edhey Hernández Alonso <alu0101552392@ull.edu.es> (https://github.com/Edhey)",
+  "license": "ISC",
+  "dependencies": {
+    "langium": "~3.5.0",
+    "vscode-languageclient": "~9.0.1",
+    "vscode-languageserver": "~9.0.1",
+    "chalk": "~5.3.0",
+    "commander": "^10.0.0",
+    "ast-types": "^0.14.2",
+    "callable-instance": "^2.0.0",
+    "espree": "^10.3.0",
+    "mathjs": "^14.2.1",
+    "node": "^23.8.0",
+    "recast": "^0.23.10",
+    "template-file": "^6.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@typescript-eslint/parser": "~7.3.1",
+    "@typescript-eslint/eslint-plugin": "~7.3.1",
+    "eslint": "~8.57.0",
+    "langium-cli": "~3.5.0",
+    "typescript": "~5.1.6",
+    "@types/vscode": "~1.67.0",
+    "concurrently": "~8.2.1",
+    "esbuild": "~0.20.2",
+    "vitest": "~1.4.0",
+    "c8": "^10.1.3",
+    "chai": "^5.2.0",
+    "clean-jsdoc-theme": "^4.3.0",
+    "http-server": "^14.1.1",
+    "jsdoc": "^4.0.4",
+    "mocha": "^11.1.0",
+    "nyc": "^17.1.0"
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "calc-script",
+        "aliases": [
+          "CalcScript",
+          "calc-script"
+        ],
+        "extensions": [
+          ".calc"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "calc-script",
+        "scopeName": "source.calc-script",
+        "path": "syntaxes/calc-script.tmLanguage.json"
+      }
+    ]
+  },
+  "activationEvents": [
+    "onLanguage:calc-script"
+  ]
+}

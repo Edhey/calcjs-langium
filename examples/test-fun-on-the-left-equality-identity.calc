@@ -1,0 +1,9 @@
+f = fun(x) { fun(y) { x + y } },
+g = fun(y) { y*y },
+f(g) = fun(v) { f(g(v))(3) },
+h = fun(x) { x*x }, // h is equal to g as a function
+write(h == f),      // false
+write(f(2)(3)),     //  5 
+write(f(g)(4)),     // 19 f(g)(4) = (fun(v) { f(g(v))(3) })(4) = f(g(4))(3) = f(16)(3) = 16+3 = 19
+write(f(h)(4)),     // ???
+write(f(h)(4)(5))   // ???

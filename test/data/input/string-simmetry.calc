@@ -1,0 +1,5 @@
+print(4+2i+" is a complex number"),
+print(true+" is a boolean"),
+a = fun(x) { x },
+b = a+" is a function",
+print(b(3))

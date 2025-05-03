@@ -1,0 +1,4 @@
+print(true || 2), # true
+print(false || 1), # This will be printed
+print(false || true || 2), # true
+print(false || false || 1) # This will be printed

@@ -1,0 +1,21 @@
+isPositive = fun(n) { 0 < n },
+isLessThanTen = fun(n) { n < 10 },
+isGreaterThanFive = fun(n) { 5 < n },
+isEqualToThree = fun(n) { n == 3 },
+add = fun(a) { fun(b) { a + b } },
+subtract = fun(a) { fun(b) { a - b } },
+multiply = fun(a) { fun(b) { a * b } },
+divide = fun(a) { fun(b) { a / b } },
+
+print(isPositive(7) && isLessThanTen(7) || isGreaterThanFive(7)), # true
+print(isPositive(-7) && isLessThanTen(-7) || isGreaterThanFive(-7)), # false
+print(isPositive(15) && isLessThanTen(15) || isGreaterThanFive(15)), # true
+
+print(isEqualToThree(3) && !isEqualToThree(4)), # true
+print(isEqualToThree(4) || !isEqualToThree(3)), # false
+
+print(add(3)(4) < multiply(2)(4)), # true
+print(divide(20)(4) < subtract(10)(5)), # false
+
+print(isPositive(add(3)(4)) && isLessThanTen(multiply(2)(4)) || isGreaterThanFive(subtract(10)(5))), # true
+print(isPositive(subtract(3)(4)) && isLessThanTen(divide(20)(4)) || isGreaterThanFive(add(3)(4))) # true

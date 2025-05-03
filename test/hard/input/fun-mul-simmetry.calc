@@ -1,0 +1,8 @@
+f = fun(x) { fun(y) { x+y} },
+print(f(3)(5)), # 8
+print((f * f)(3)(5)), # 64
+print((2*f)(3)(5)), # 16
+print((f*2)(3)(5)), # 16
+print(2*2), # 4
+print(3 * "hola"), # holaholahola
+print("hola" * 3) # holaholahola

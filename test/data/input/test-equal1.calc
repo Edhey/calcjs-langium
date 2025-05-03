@@ -1,0 +1,4 @@
+isEqual = fun(a) { fun(b) { a == b } },
+print(isEqual(4)(4)), # true
+print(isEqual(4)(5)), # false
+print(isEqual(4)(-1)) # false

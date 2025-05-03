@@ -1,0 +1,12 @@
+{
+    "projectName": "CalcScript",
+    "languages": [{
+        "id": "calc-script",
+        "grammar": "src/language/calc-script.langium",
+        "fileExtensions": [".calc"],
+        "textMate": {
+            "out": "syntaxes/calc-script.tmLanguage.json"
+        }
+    }],
+    "out": "src/language/generated"
+}
