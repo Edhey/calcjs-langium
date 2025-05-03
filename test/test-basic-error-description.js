@@ -1,4 +1,4 @@
-module.exports = [
+export const TestBasicErrorSyntax = [
   {
     input: 'fun-err-bool-div-bool.calc',
     output: 'outerr-fun-err-bool-div-bool.txt',

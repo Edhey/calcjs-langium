@@ -1,4 +1,4 @@
-module.exports = [
+export const TestBasic = [
 {
       input: 'test-string.calc',
       output: 'out-test-string.js',

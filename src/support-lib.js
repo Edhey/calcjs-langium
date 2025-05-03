@@ -3,7 +3,7 @@
  * Escuela Superior de Ingeniería y Tecnología
  * Grado en Ingeniería Informática
  * Procesadores de Lenguajes
- * Práctica 3 - Hello Compilers
+ * TFA - Langium Syntaxis and Errors for Calculator
  *
  * @author Himar Edhey Hernández Alonso
  * @since Wed 26 Feb 2025
@@ -15,11 +15,11 @@
  *
  */
 
-require('./mokey-patch/monkey-patch.js');
-const { Complex } = require('./mokey-patch/handlers/complex-monkey-patch.js');
-const { FunctionObject, functionObject } = require('./function-object/function-object.js');
-const { ArrayFunctionObject, arrayObject } = require('./function-object/array-function-object.js');
-const { ObjectFunctionObject, objectFunctionObject } = require('./function-object/object-function-object.js');
+import './mokey-patch/monkey-patch.js';
+import { Complex } from './mokey-patch/handlers/complex-monkey-patch.js';
+import { FunctionObject, functionObject } from './function-object/function-object.js';
+import { ArrayFunctionObject, arrayObject } from './function-object/array-function-object.js';
+import { ObjectFunctionObject, objectFunctionObject } from './function-object/object-function-object.js';
 
 const P = [Complex(0.99999999999980993),
 Complex(676.5203681218851), Complex(-1259.1392167224028), Complex(771.32342877765313),
@@ -36,7 +36,7 @@ const SQRT2PI = Complex(Math.sqrt(2 * Math.PI)); // sqrt(2 * PI)
 */
 function gamma(zz) {
   if (zz.equals(Complex(0))) { return Complex(1); }
-  z = zz.sub(Complex(1));
+  const z = zz.sub(Complex(1));
   let x = P[0];
   let t = z.add(Complex(7.5)); // z + 7.5
 
@@ -53,7 +53,7 @@ function gamma(zz) {
  */
 function print(...values) {
   let result = '';
-  for (value of values) {
+  for (const value of values) {
     result += (value === null ? 'null' : value.toString()) + ' ';
   }
   console.log(result.trim());
@@ -122,7 +122,7 @@ function complexLessThan(complex1, complex2) {
   else return false;
 }
 
-module.exports = {
+export {
   gamma,
   Complex,
   print,

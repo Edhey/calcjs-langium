@@ -471,7 +471,7 @@ function updateTocScroll(options) {
     if (typeof define === 'function' && define.amd) {
         define([], factory(root))
     } else if (typeof exports === 'object') {
-        module.exports = factory(root)
+        export factory(root)
     } else {
         root.tocbot = factory(root)
     }

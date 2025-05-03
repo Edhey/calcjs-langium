@@ -3,7 +3,7 @@
  * Escuela Superior de Ingeniería y Tecnología
  * Grado en Ingeniería Informática
  * Asignatura: Procesadores de Lenguajes
- * Práctica 6 - While, for
+ * TFA - Langium Syntaxis and Errors for Calculator
  *
  * @author Himar Edhey Hernández Alonso
  * @since Wed 19 Mar 2025 
@@ -12,9 +12,9 @@
  *
  */
 
-const { Complex } = require('complex.js');
-const { operationHandlers, implementedTypes, allOperators } = require('../monkey-patch-handlers.js');
-const lodash = require('lodash');
+import { Complex } from 'complex.js';
+import { operationHandlers, implementedTypes, allOperators } from '../monkey-patch-handlers.js';
+import lodash from 'lodash';
 
 // Initialize the function operators in the operationHandlers
 for(const operator in allOperators) {

@@ -1,4 +1,4 @@
-module.exports = [
+export const TestHard = [
 {
       input: 'fun-equal-simmetry.calc',
       output: 'out-fun-equal-simmetry.js',

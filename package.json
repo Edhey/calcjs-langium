@@ -1,7 +1,12 @@
 {
   "name": "@ull-esit-pl-2425/tfa-himar_edhey-hernandez-alu0101552392",
-  "version": "0.0.0",
   "description": "* See section [TFA](https://apuntes-pl.vercel.app/labs/tfa#task-presentation-of-goals) Final Project - VsCode extension for a transpiler of a simple calculator language to JavaScript.\n* The project is based on the [Langium](https://langium.org/) framework.",
+  "version": "0.0.1",
+  "files": [
+      "bin",
+      "out",
+      "src"
+  ],
   "type": "module",
   "main": "./out/extension/main.cjs",
   "publishConfig": {
@@ -24,18 +29,20 @@
     "langium:watch": "langium generate --watch",
     "vscode:prepublish": "npm run build && npm run lint",
     "test": "npm run build && mocha test/",
-    "test-example": "npm run compile; mocha test/ --grep 'Example Test'",
-    "test-simple": "npm run compile; mocha test/ --grep 'Simple Test'",
-    "test-hard": "npm run compile; mocha test/ --grep 'Hard Test'",
-    "test-error": "npm run compile; mocha test/ --grep 'Error Test'",
-    "compile": "jison src/grammar.jison src/lexer.l -o src/calc.js",
+    "test:example": "npm run compile; mocha test/ --grep 'Example Test'",
+    "test:simple": "npm run compile; mocha test/ --grep 'Simple Test'",
+    "test:hard": "npm run compile; mocha test/ --grep 'Hard Test'",
+    "test:error": "npm run compile; mocha test/ --grep 'Error Test'",
+    "test:transpile": "npm run compile; mocha test/ --grep 'Transpile Test'",
+    "test:run": "npm run compile; mocha test/ --grep 'Run Test'",
+    "compile": "jison src/grammar.jison src/lexer.l -o src/calc.cjs",
     "test:vitest": "vitest run",
     "cov": "nyc npm run test",
     "report": "nyc --report --reporter=html --report-dir=docs/coverage -x src/template.js npm run test",
     "coverage": "c8 --reporter=html --reporter=text --report-dir='docs/coverage' npm run test",
     "jsdocs": "jsdoc -c jsdoc.json",
     "docs": "npm run clean:docs && npm run jsdocs && npm run coverage",
-    "clean": "rm -f src/calc.js && npm run clean:docs",
+    "clean": "rm -f src/calc.cjs && npm run clean:docs",
     "clean:docs": "rm -fR docs/coverage && rm -fR docs/jsdoc",
     "dev": "http-server -c-1 -o docs",
     "trans": "./bin/calc2js.mjs",
@@ -82,6 +89,18 @@
     "mocha": "^11.1.0",
     "nyc": "^17.1.0"
   },
+  "volta": {
+      "node": "18.19.1",
+      "npm": "10.2.4"
+  },
+  "displayName": "calc-script",
+  "engines": {
+      "vscode": "^1.67.0",
+      "node": ">=18.0.0"
+  },
+  "categories": [
+      "Programming Languages"
+  ],
   "contributes": {
     "languages": [
       {

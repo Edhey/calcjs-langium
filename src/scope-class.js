@@ -3,7 +3,7 @@
  * Escuela Superior de Ingeniería y Tecnología
  * Grado en Ingeniería Informática
  * Procesadores de Lenguajes
- * Práctica 3 - Hello Compilers
+ * TFA - Langium Syntaxis and Errors for Calculator
  * 
  * @autor Himar Edhey Hernández Alonso
  * @since Wed 26 Feb 2025
@@ -12,17 +12,17 @@
  *
  */
 
-const {
+import {
   buildIdentifier,
   buildVariableDeclaration,
-  buildVariableDeclarator,
-} = require('./ast-build.js');
+  buildVariableDeclarator
+} from './ast-build.cjs';
 
 /**
  * Represents a scope in which variables can be declared, initialized, and used.
  * This class helps in tracking variable declarations and usage within a given scope.
  */
-class Scope {
+export class Scope {
   /**
    * Creates an instance of Scope.
    * @param {Scope|null} parent - The parent scope, or null if this is the root scope.
@@ -240,5 +240,3 @@ class Scope {
     return this.letDeclarations.length;
   }
 }
-
-module.exports = Scope;

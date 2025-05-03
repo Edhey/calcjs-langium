@@ -5168,4 +5168,4 @@ var hljs = (function () {
   return hljs;
 
 }());
-if (typeof exports === 'object' && typeof module !== 'undefined') { module.exports = hljs; }
+if (typeof exports === 'object' && typeof module !== 'undefined') { export hljs; }

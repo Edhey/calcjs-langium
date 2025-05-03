@@ -3,17 +3,19 @@
  * Escuela Superior de Ingeniería y Tecnología
  * Grado en Ingeniería Informática
  * Procesadores de Lenguajes
- * Práctica 3 - Hello Compilers
+ * TFA - Langium Syntaxis and Errors for Calculator
  * 
  * @autor Himar Edhey Hernández Alonso
  * @since Wed 26 Feb 2025
  * @desc Archivo que contiene la función dependencies que se encarga de detectar
  * las funciones de soporte que se utilizan
  * @see {@link https://github.com/ULL-ESIT-PL-2425/arith2js-himar_edhey-hernandez-alu0101552392}
- *
  */
 
-const astTypes = require('ast-types');
+import astTypes from 'ast-types';
+import * as supportLib from './support-lib.js';
+import { Scope } from './scope-class.js';
+
 const visit = astTypes.visit;
 
 /**
@@ -21,13 +23,13 @@ const visit = astTypes.visit;
  * @param {Object} ast - The AST to analyze
  */
 function findDependecies(ast) {
-  const functionNames = Object.keys(require("./support-lib.js"));
+  const functionNames = Object.keys(supportLib);
 
   ast.dependencies = new Set([]);
   visit(ast.ast, {
     visitCallExpression(path) {
       const node = path.node;
-      let name = node.callee.name;
+      const name = node.callee.name;
       if (functionNames.includes(name)) {
         ast.dependencies.add(name);
       }
@@ -42,7 +44,6 @@ function findDependecies(ast) {
  * @param {Object} ast - The AST to analyze
  */
 const scopeAnalysis = (ast) => {
-  const Scope = require('./scope-class.js');
   let currentScope = new Scope(null);
 
   visit(ast.ast, {
@@ -53,13 +54,10 @@ const scopeAnalysis = (ast) => {
         return false;
       }
       const parentScope = currentScope;
-
-      if (!["FunctionExpression"].includes(node.type)) return false;
       currentScope = new Scope(parentScope);
 
       // Add function parameters to the scope
-      const params = node.params;
-      for (let param of params) {
+      for (const param of node.params) {
         currentScope.setAsInitialized(param.name);
       }
 
@@ -71,34 +69,37 @@ const scopeAnalysis = (ast) => {
 
       currentScope.showErrorMessages("local anonymous function");
 
-      currentScope = parentScope; // Restore the parent scope
+      currentScope = parentScope;
     },
+
     visitAssignmentExpression(path) {
       const node = path.node;
-      if (node.left.type === 'Identifier') {
-        let name = node.left.name;
-        if (name && !currentScope.has(name) && !ast.dependencies.has(name) 
-            && /^[$]/.test(name)) {
-            currentScope.addDefinition(node);
-        }
+      const name = node.left?.name;
+      if (
+        node.left.type === 'Identifier' &&
+        name &&
+        !currentScope.has(name) &&
+        !ast.dependencies.has(name) &&
+        /^[$]/.test(name)
+      ) {
+        currentScope.addDefinition(node);
       }
       this.traverse(path);
     },
+
     visitIdentifier(path) {
       const parent = path.parent.node;
-      const currentNodeName = path.node.name;
-      if (/^[$]/.test(currentNodeName)
-        && !ast.dependencies.has(currentNodeName)) {
-        if (!currentScope.has(currentNodeName)) {
+      const name = path.node.name;
+      if (/^[$]/.test(name) && !ast.dependencies.has(name)) {
+        if (!currentScope.has(name)) {
           currentScope.setAsUsedBeforeDeclaration(path.node);
         }
-        if (!(parent.type === 'AssignmentExpression'
-          && parent.left.name === currentNodeName)) {
+        if (!(parent.type === 'AssignmentExpression' && parent.left.name === name)) {
           currentScope.addUsage(path.node);
         }
       }
       this.traverse(path);
-    },
+    }
   });
 
   if (currentScope.length > 0) {
@@ -106,12 +107,11 @@ const scopeAnalysis = (ast) => {
   }
 
   ast.scope = currentScope;
-
   currentScope.showErrorMessages("global");
   return ast;
 };
 
-module.exports = {
+export {
   scopeAnalysis,
   findDependecies
-}
+};

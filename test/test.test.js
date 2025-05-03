@@ -3,7 +3,7 @@
  * Escuela Superior de Ingeniería y Tecnología
  * Grado en Ingeniería Informática
  * Asignatura Procesadores de Lenguajes
- * Práctica 3 - Hello Compilers
+ * TFA - Langium Syntaxis and Errors for Calculator
  *
  * @autor Himar Edhey Hernández Alonso
  * @since Wed 26 Feb 2025
@@ -11,14 +11,19 @@
  * @see {@link https://github.com/ULL-ESIT-PL-2425/arith2js-himar_edhey-hernandez-alu0101552392}
  */
 
-const TestExample = require('./test-example-description.js');
-const TestBasic = require('./test-basic-description.js');
-const TestSimple = require('./test-description.js');
-const TestHard = require('./test-hard-description.js');
-const TestErrorSyntax = require('./test-error-description.js');
-const TestBasicErrorSyntax = require('./test-basic-error-description.js');
+import { TestExample } from './test-example-description.js';
+import { TestBasic } from './test-basic-description.js';
+import { TestSimple } from './test-description.js';
+import { TestHard } from './test-hard-description.js';
+import { TestErrorSyntax } from './test-error-description.js';
+import { TestBasicErrorSyntax } from './test-basic-error-description.js';
+import { checkTranspile, checkRunConsoleLog, checkRunConsoleError } from './test-utils.js';
 
-const { checkTranspile, checkRunConsoleLog, checkRunConsoleError } = require('./test-utils.js');
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 /**
  * Test data for the examples

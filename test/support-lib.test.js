@@ -3,7 +3,7 @@
  * Escuela Superior de Ingeniería y Tecnología
  * Grado en Ingeniería Informática
  * Asignatura Procesadores de Lenguajes
- * Práctica 3 - Hello Compilers
+ * TFA - Langium Syntaxis and Errors for Calculator
  *
  * @autor Himar Edhey Hernández Alonso
  * @since Wed 26 Feb 2025
@@ -11,8 +11,8 @@
  * @see {@link https://github.com/ULL-ESIT-PL-2425/arith2js-himar_edhey-hernandez-alu0101552392}
  */
 
-const { expect } = require('chai');
-const { gamma, Complex, print, min, max } = require('../src/support-lib.js');
+import { expect } from 'chai';
+import { gamma, Complex, print, min, max } from '../src/support-lib.js';
 
 /**
  * @desc Tests for the support library

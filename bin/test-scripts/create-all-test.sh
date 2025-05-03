@@ -90,7 +90,7 @@ update_output_file() {
     if [ -f "$output_file" ]; then
       existing_content=$(sed '$d' "$output_file")
     else
-      existing_content="module.exports = ["
+      existing_content="export ["
     fi
 
     # Generate the JavaScript code for the new entries
@@ -119,7 +119,7 @@ override_output_file() {
   # Check if there are new entries
   if [ ${#new_entries[@]} -gt 0 ]; then
     # Generate the JavaScript code for the new entries
-    js_code="module.exports = [\n"
+    js_code="export [\n"
     for entry in "${new_entries[@]}"; do
       js_code+="$entry,\n"
     done

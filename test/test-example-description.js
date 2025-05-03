@@ -1,4 +1,4 @@
-module.exports = [
+export const TestExample = [
 {
       input: 'test-array.calc',
       output: 'out-test-array.js',

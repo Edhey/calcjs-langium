@@ -3,7 +3,7 @@
  * Escuela Superior de Ingeniería y Tecnología
  * Grado en Ingeniería Informática
  * Procesadores de Lenguajes
- * Práctica 3 - Hello Compilers
+ * TFA - Langium Syntaxis and Errors for Calculator
  *
  * @author Himar Edhey Hernández Alonso
  * @since Sat 29 Feb 2025
@@ -12,9 +12,16 @@
  *
  */
 
-const recast = require('recast');
-const { findDependecies } = require('./scope.js');
-const { renderFile } = require('template-file');
+import recast from 'recast';
+import { findDependecies } from './scope.js';
+import templateFile from 'template-file';
+const { renderFile } = templateFile;
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 
 /**
  * Generate the code from the AST
@@ -36,6 +43,6 @@ async function codeGeneration(ast) {
   return renderedCode;
 }
 
-module.exports = {
+export {
   codeGeneration
 };

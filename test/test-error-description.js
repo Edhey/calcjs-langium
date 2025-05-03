@@ -1,4 +1,4 @@
-module.exports = [
+export const TestErrorSyntax = [
 {
       input: 'test-err-array-index.calc',
       output: 'outerr-test-err-array-index.txt',

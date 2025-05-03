@@ -3,7 +3,7 @@
  * Escuela Superior de Ingeniería y Tecnología
  * Grado en Ingeniería Informática
  * Asignatura Procesadores de Lenguajes
- * Práctica 3 - Hello Compilers
+ * TFA - Langium Syntaxis and Errors for Calculator
  *
  * @author Himar Edhey Hernández Alonso
  * @since Thu 27 Mar 2025
@@ -12,8 +12,8 @@
  * @see {@link https://github.com/ULL-ESIT-PL-2425/arith2js-himar_edhey-hernandez-alu0101552392}
  */
 
-const CallableInstance = require('callable-instance');
-const { StoreMap } = require('./store-map.js');
+import CallableInstance from 'callable-instance';
+import { StoreMap } from './store-map.js';
 
 /**
  * @class FunctionObject
@@ -99,4 +99,4 @@ function functionObject(rawFunction) {
   return new FunctionObject(rawFunction);
 }
 
-module.exports = { FunctionObject, functionObject };
+export { FunctionObject, functionObject };

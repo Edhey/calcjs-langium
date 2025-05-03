@@ -3,32 +3,23 @@
   * Escuela Superior de Ingeniería y Tecnología
   * Grado en Ingeniería Informática
   * Procesadores del lenguage
-  * Práctica 6 - While and for loops
+  * TFA - Langium Syntaxis and Errors for Calculator
   *
   * @author Himar Edhey Hernández Alonso
   * @since Wed 19 Mar 2025 
   * @desc Handler for string operations
   */
 
-const { operationHandlers, implementedTypes, allOperators } = require('../monkey-patch-handlers.js');
-const Complex = require('complex.js');
-const lodash = require('lodash');
-const { functionObject } = require('../../function-object/function-object.js');
+import { operationHandlers, implementedTypes, allOperators } from '../monkey-patch-handlers.js';
+import Complex from 'complex.js';
+import lodash from 'lodash';
+import { functionObject } from '../../function-object/function-object.js';
 
 // Initialize the string operators in the operationHandlers
 for(const operator in allOperators) {
   lodash.set(operationHandlers, `string.${operator}`, Object.create(Object.prototype));
 }
 implementedTypes.push(String);
-
-/**
- * Not operator for a string
- * @returns false if the string is not empty, 
- * true otherwise
- */
-lodash.set(operationHandlers, 'string.not', function () {
-  return this === '';
-});
 
 const comparisonOperators = {
   equals: '==',
@@ -92,9 +83,9 @@ lodash.set(operationHandlers, 'string.add.boolean', function (other) {
 });
 
 /**
- * Multiplicates a string by a Complex with only real part
- * @param {Complex} other number to multiply the string by
- * @returns multiplied string
+ * Sums a string by a Complex with only real part
+ * @param {Complex} other number to sum the string by
+ * @returns summed string
  */
 lodash.set(operationHandlers, 'string.add.complex', function (other) {
   return this + other.toString();
@@ -116,6 +107,20 @@ lodash.set(operationHandlers, 'string.mul.complex', function (other) {
 lodash.set(operationHandlers, 'string.equals.complex', function (other) {
   return false
 });
+
+const Operators = {
+  add: '+',
+  mul: '*',
+  div: '/',
+  pow: '**',
+  sub: '-',
+  equals: '==',
+  notEquals: '!=',
+  lessThan: '<',
+  greaterThan: '>',
+  lessThanOrEqual: '<=',
+  greaterThanOrEqual: '>='
+};
 
 for (const op in Operators) {
   String.prototype[op] = function (other) {

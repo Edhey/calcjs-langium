@@ -3,7 +3,7 @@
  * Escuela Superior de Ingeniería y Tecnología
  * Grado en Ingeniería Informática
  * Procesadores del lenguage
- * Práctica 6 - While and for loops
+ * TFA - Langium Syntaxis and Errors for Calculator
  *
  * @author Himar Edhey Hernandez Alonso
  * @since Wed 19 Mar 2025 
@@ -11,14 +11,14 @@
  * @see https://github.com/ULL-ESIT-PL-2425/arith2js-himar_edhey-hernandez-alu0101552392
  */
 
-require('./handlers/boolean-monkey-patch.js');
-const { Complex } = require('./handlers/complex-monkey-patch.js');
-require('./handlers/function-monkey-patch.js');
-require('./handlers/string-monkey-patch.js');
-require('./handlers/function-object-monkey-patch.js');
-require('./handlers/array-function-object-monkey-patch.js');
+import './handlers/boolean-monkey-patch.js';
+import { Complex } from './handlers/complex-monkey-patch.js';
+import './handlers/function-monkey-patch.js';
+import './handlers/string-monkey-patch.js';
+import './handlers/function-object-monkey-patch.js';
+import './handlers/array-function-object-monkey-patch.js';
 
-const { allOperators, implementedTypes, operationHandlers } = require('./monkey-patch-handlers.js');
+import { allOperators, implementedTypes, operationHandlers } from './monkey-patch-handlers.js';
 
 for (const type of implementedTypes) {
   for (const operator in allOperators) {

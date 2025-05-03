@@ -5,7 +5,7 @@
  * Escuela Superior de Ingeniería y Tecnología
  * Grado en Ingeniería Informática
  * Procesadores de Lenguajes
- * Práctica 3 - Hello Compilers
+ * TFA - Langium Syntaxis and Errors for Calculator
  *
  * @author Himar Edhey Hernández Alonso
  * @since Wed 26 Feb 2025
@@ -15,13 +15,14 @@
  *
  */
 
-const fileStream = require('fs').promises
-const parser = require("./calc").parser;
-const { scopeAnalysis, findDependecies } = require('./scope.js');
-const { codeGeneration } = require('./code-generation.js');
-const { writeCode } = require('./write-code.js');
+import { promises as fileStream } from 'fs';
+import * as calc from './calc.cjs';
+const parser = calc.parser;
+import { scopeAnalysis, findDependecies } from './scope.js';
+import { codeGeneration } from './code-generation.js';
+import { writeCode } from './write-code.js';
 
-module.exports = {
+export {
   transpile
 };
 

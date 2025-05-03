@@ -1,4 +1,4 @@
-module.exports = [
+export const TestSimple = [
 {
       input: 'test-not-complex.calc',
       output: 'out-test-not-complex.js',

@@ -3,7 +3,7 @@
  * Escuela Superior de Ingeniería y Tecnología
  * Grado en Ingeniería Informática
  * Procesadores de Lenguajes
- * Práctica 3 - Hello Compilers
+ * TFA - Langium Syntaxis and Errors for Calculator
  *
  * @author Himar Edhey Hernández Alonso
  * @since Sat 29 Feb 2025
@@ -11,7 +11,7 @@
  * @see {@link https://github.com/ULL-ESIT-PL-2425/arith2js-himar_edhey-hernandez-alu0101552392}
  */
 
-const fileStream = require('fs').promises;
+import { promises as fileStream } from 'fs';
 
 /**
  * Write the output to the output file
@@ -30,6 +30,6 @@ async function writeCode(output, options) {
   return output;
 }
 
-module.exports = {
+export {
   writeCode
 };
