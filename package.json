@@ -2,8 +2,8 @@
   "name": "@ull-esit-pl-2425/tfa-himar_edhey-hernandez-alu0101552392",
   "version": "0.0.0",
   "description": "* See section [TFA](https://apuntes-pl.vercel.app/labs/tfa#task-presentation-of-goals) Final Project - VsCode extension for a transpiler of a simple calculator language to JavaScript.\n* The project is based on the [Langium](https://langium.org/) framework.",
+  "type": "module",
   "main": "./out/extension/main.cjs",
-  "type": "commonjs",
   "publishConfig": {
     "access": "public",
     "registry": "https://npm.pkg.github.com/"
