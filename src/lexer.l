@@ -20,14 +20,14 @@ string \"((?:[^"\\]|\\.)*)\"
 [/][*](.|\n)*?[*][/]                  /* skip multiple line comments | The * is greedy so we need to make it lazy with ? */;
 {number}                              return 'NUMBER';
 {string}                              { yytext = removeQuotes(yytext); return 'STRING'; }
-[_$a-zA-Z][$\w]*                      return idOrReserved(yytext);
+[_a-zA-Z][$\w]*                      return idOrReserved(yytext);
 '=='                                  return '==';
 '**'                                  return '**'; // It must be before '*' because it is more specific, otherwise it will be recognized as '*'
 '&&'                                  return '&&';
 '||'                                  return '||';
 '=='                                  return '==';
 '!='                                  return '!=';
-[-+*/!()&@|=,{}ç<;:]                   return yytext;
+[-+*/!()&@|=,{}ç<;:]                  return yytext;
 ']'                                   return ']';
 '['                                   return '[';
 <<EOF>>                               return 'EOF';

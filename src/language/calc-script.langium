@@ -1,18 +1,40 @@
 grammar CalcScript
 
 entry Model:
-    (persons+=Person | greetings+=Greeting)*;
+  expression=Expression;
 
-Person:
-    'person' name=ID;
+Expression infers Expression:
+    head=Literal rest+=SequenceExpression*;
 
-Greeting:
-    'Hello' person=[Person:ID] '!';
+SequenceExpression:
+    separator=',' element=Literal;
 
-hidden terminal WS: /\s+/;
-terminal ID: /[_a-zA-Z][\w_]*/;
-terminal INT returns number: /[0-9]+/;
-terminal STRING: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/;
+Literal infers Expression:
+   value=Number | value=String | value=Boolean | value=Null | value=Identifier;
+
+Number infers Expression:
+  value=NUMBER;
+
+String infers Expression:
+  value=STRING;
+
+Boolean infers Expression:
+  value=(TRUE | FALSE);
+
+Null infers Expression:
+  value=NULL;
+
+Identifier infers Expression:
+  name=ID;
 
 hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
 hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
+hidden terminal WS: /\s+/;
+
+terminal TRUE: /true/;
+terminal FALSE: /false/;
+terminal NULL: /null/;
+terminal NUMBER: /\d+(\.\d+)?([eE][-+]?\d+)?i?|i/;
+terminal STRING: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/;
+terminal PID: /print|write/;
+terminal ID: /[a-zA-Z_][$\w]*/;

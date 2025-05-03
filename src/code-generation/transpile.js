@@ -1,66 +1,43 @@
-#!/usr/bin/env node
-
-/**
- * Universidad de La Laguna
- * Escuela Superior de Ingeniería y Tecnología
- * Grado en Ingeniería Informática
- * Procesadores de Lenguajes
- * TFA - Langium Syntaxis and Errors for Calculator
- *
- * @author Himar Edhey Hernández Alonso
- * @since Wed 26 Feb 2025
- * @desc Este archivo contiene el código para la ejecución del programa que
- *       convierte una expresión aritmética en un programa en JavaScript
- * @see {@link https://github.com/ULL-ESIT-PL-2425/arith2js-himar_edhey-hernandez-alu0101552392}
- *
- */
-
-import { promises as fileStream } from 'fs';
-import * as calc from '../calc.cjs';
-const parser = calc.parser;
+import { NodeFileSystem } from 'langium/node';
+import { createCalcScriptServices } from '../language/calc-script-module.js';
+// import { extractAst } from './extract-ast.js';
 import { scopeAnalysis, findDependecies } from '../scope/scope.js';
 import { codeGeneration } from './code-generation.js';
-import { writeCode } from './write-code.js';
+import { writeCode } from './write-code.ts';
 
-export {
-  transpile
-};
+import fs from 'fs/promises';
 
-/**
- * Transpile an arithmetic expression into a JavaScript program asynchronically
- * - Gets the code from the input file
- * - Parses the code to an AST
- * - Finds the used functions
- * - Generates the output code
- * - Writes the output code to the output file
- * @param {string} inputFile - file with the original code to transpile
- * @param {Object} options - options to transpile
- * @returns {string} - The output code
- */
-async function transpile(inputFile, options) {
-  let input;
+export interface TranspileOptions {
+  verbose?: boolean;
+  output?: string;
+  ast?: boolean;
+  definitions?: boolean;
+  scope?: boolean;
+}
+
+
+export async function transpile(inputFile: string, options: TranspileOptions): Promise<string> {
+  const services = createCalcScriptServices(NodeFileSystem).CalcScript;
+
+  let input: string;
   try {
-    input = await fileStream.readFile(inputFile, 'utf-8')          // 1. Read the input file
-  }
-  catch (error) {
-    console.error(`Can't read file "${inputFile}"`);
-    return error;
-  }
-
-  let ast;
-  try {
-    ast = parser.parse(input); // 2. parse the input code
+    input = await fs.readFile(inputFile, 'utf-8');
   } catch (error) {
-    let message = error.message;
-    console.error(message);
-    return message;
+    console.error(`Can't read file "${inputFile}"`);
+    return error as string;
   }
 
-  ast = findDependecies(ast); // 3. find the dependencies
-  ast = scopeAnalysis(ast); // 4. create the scope
+  // Crear documento Langium y obtener AST
+  const document = services.shared.workspace.LangiumDocumentFactory.fromString(input, inputFile);
+  await services.shared.workspace.DocumentBuilder.build([document]);
+  let ast = extractAst(document);
 
-  if (options.ast)
+  ast = findDependecies(ast);
+  ast = scopeAnalysis(ast);
+
+  if (options.ast) {
     console.log(JSON.stringify(ast, null, 2));
+  }
 
   if (options.definitions) {
     console.log("Definitions:");
@@ -76,8 +53,7 @@ async function transpile(inputFile, options) {
     }
   }
 
-  let output = await codeGeneration(ast); // 5. generate the output code (JS)
-
-  await writeCode(output, options); // 6. write the output (JS code) to the output file
+  const output = await codeGeneration(ast);
+  await writeCode(output, options);
   return output;
 }

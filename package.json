@@ -14,7 +14,7 @@
     "registry": "https://npm.pkg.github.com/"
   },
   "bin": {
-    "calc2js": "./bin/calc2js.js"
+    "calc2js": "./bin/cli"
   },
   "repository": {
     "type": "git",

@@ -1,17 +1,17 @@
 import type { ValidationAcceptor, ValidationChecks } from 'langium';
-import type { CalcScriptAstType, Person } from './generated/ast.js';
+import type { CalcScriptAstType, Expression } from './generated/ast.js';
 import type { CalcScriptServices } from './calc-script-module.js';
 
 /**
  * Register custom validation checks.
  */
 export function registerValidationChecks(services: CalcScriptServices) {
-    const registry = services.validation.ValidationRegistry;
-    const validator = services.validation.CalcScriptValidator;
-    const checks: ValidationChecks<CalcScriptAstType> = {
-        Person: validator.checkPersonStartsWithCapital
-    };
-    registry.register(checks, validator);
+  const registry = services.validation.ValidationRegistry;
+  const validator = services.validation.CalcScriptValidator;
+  const checks: ValidationChecks<CalcScriptAstType> = {
+    Expression: validator.checkIdentifierNotReserved
+  };
+  registry.register(checks, validator);
 }
 
 /**
@@ -19,13 +19,14 @@ export function registerValidationChecks(services: CalcScriptServices) {
  */
 export class CalcScriptValidator {
 
-    checkPersonStartsWithCapital(person: Person, accept: ValidationAcceptor): void {
-        if (person.name) {
-            const firstChar = person.name.substring(0, 1);
-            if (firstChar.toUpperCase() !== firstChar) {
-                accept('warning', 'Person name should start with a capital.', { node: person, property: 'name' });
-            }
-        }
+  checkIdentifierNotReserved(node: Expression, accept: ValidationAcceptor): void {
+    const reserved = ['fun', 'true', 'false', 'null', 'while', 'for', 'do', 'print', 'write'];
+    if (node.name && reserved.includes(node.name)) {
+      accept('error', `Identifier '${node.name}' is a reserved word.`, {
+        node,
+        property: 'name'
+      });
     }
+  }
 
 }

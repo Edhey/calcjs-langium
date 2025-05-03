@@ -21,7 +21,7 @@
     "include": [
         "src/**/*.ts",
         "test/**/*.ts"
-    ],
+, "src/code-generation/code-generation.js", "src/code-generation/transpile.js", "src/code-generation/write-code.js", "src/cli/main.ts"    ],
     "exclude": [
         "out",
         "node_modules"

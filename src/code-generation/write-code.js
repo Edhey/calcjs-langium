@@ -12,24 +12,21 @@
  */
 
 import { promises as fileStream } from 'fs';
+import type { TranspileOptions } from './transpile.js';
 
 /**
- * Write the output to the output file
- * @param {string} output - The output code
- * @param {Object} options - The options to transpile
- * @returns {string} - The output code
+ * Write the output to the output file.
+ * @param output - The output code
+ * @param options - The options to transpile
+ * @returns The output code
  */
-async function writeCode(output, options) {
-  if (options.verbose) console.log(output); // if verbose, print the output
+export async function writeCode(output: string, options: TranspileOptions): Promise<string> {
+  if (options.verbose) console.log(output);
 
-  if (!options.output) 
-    return output; // if there is no output file, return the output
-  
-  await fileStream.writeFile(options.output, output, 'utf-8'); // write the output to the output file
+  if (!options.output) {
+    return output;
+  }
 
+  await fileStream.writeFile(options.output, output, 'utf-8');
   return output;
 }
-
-export {
-  writeCode
-};
