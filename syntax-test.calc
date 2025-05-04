@@ -12,4 +12,12 @@ false, // Single line comment
 null, 
 (2),
 3 + 4,
-3.14
+3.14, # single line hash comment
+for (index = 0; i < 10; index + 1) {
+  index = index + 1,
+  2 * 3,
+  3333i + 5i
+},
+a = 3,
+a = 3 + 4,
+a = [3; 4; 5]

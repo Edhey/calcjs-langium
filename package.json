@@ -27,6 +27,7 @@
     "langium:generate": "langium generate",
     "langium:generate:production": "langium generate --mode=production",
     "langium:watch": "langium generate --watch",
+    "langium:bgenerate": "langium generate && npm run build",
     "vscode:prepublish": "npm run build && npm run lint",
     "test": "npm run build && mocha test/",
     "test:example": "mocha test/ --grep 'Example Test'",

@@ -85,9 +85,10 @@ ForExpr infers Expr:
 FunctionExpr infers Expr:
     'fun' '(' params+=ID (';' params+=ID)* ')' '{' body=Expr '}';
 
+hidden terminal WS: /\s+/;
 hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
 hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
-hidden terminal WS: /\s+/;
+hidden terminal HASH_SL_COMMENT: /\#.*/;
 
 terminal TRUE: /true/;
 terminal FALSE: /false/;

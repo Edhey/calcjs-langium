@@ -4,7 +4,7 @@ grammar CalcScript
  * Regla de entrada: 
  * El programa es una lista de expresiones separadas por comas
  */
-entry Module:
+entry Model:
   expressions+=Expression (',' expressions+=Expression)*;
 
 /**
@@ -12,8 +12,39 @@ entry Module:
  * Aquí se hace el "dispatch" a las distintas formas de expresión.
  */
 Expression infers Expression:
-  AssignmentExpression
+  ControlExpression | AssignmentExpression
 ;
+
+ControlExpression infers Expression:
+  ForExpression
+    | WhileExpression
+    | DoWhileExpression
+;
+
+fragment Block:
+  '{' body+=Expression (',' body+=Expression )* '}';
+
+ForExpression infers Expression:
+  'for' '(' init=Expression ';' condition=Expression ';' update=Expression ')' Block;
+
+WhileExpression infers Expression:
+  'while' condition=Expression Block;
+
+DoWhileExpression infers Expression:
+  'do' Block 'while' '(' condition=Expression ')';
+
+ArrayExpression infers Expression:
+  '[' elements+=Expression ( ';' elements+=Expression )* ']';
+
+ObjectExpression infers Expression:
+  '{' props+=KeyValue ( ';' props+=KeyValue )* '}';
+
+KeyValue:
+  key=STRING ':' value=Expression;
+
+FunctionExpression infers Expression:
+  'fun' '(' params+=ID (';' params+=ID)* ')' Block;
+
 
 /**
  * La asignación '=' es _right associative_, es decir, se agrupa de derecha a izquierda.
@@ -47,8 +78,8 @@ ComparativeExpression infers ComparativeExpression:
  */
 AbsoluteValueExpression infers AbsoluteValueExpression:
   '|' inner=Expression '|' 
-  | MaxExpression;
-
+  | MaxExpression
+;
 
 /**
  * Operador izquierdo: '@'
@@ -88,18 +119,40 @@ UnaryExpression infers UnaryExpression:
  * Se implementa mediante recursión a la derecha.
  */
 ExponentiationExpression infers ExponentiationExpression:
-  ExponentialExpression ( '**' right=ExponentiationExpression )?;
+  ExponentialExpression ({infer BinaryExpression.left=current} op='**' right=ExponentiationExpression)*;
 
 /**
  * Operador postfix: '!'
- * Se aplica repetidamente en ExponentialExpression (por ejemplo, para representar factorial).
+ * Se aplica a la expresión exponencial.
  */
 ExponentialExpression infers ExponentialExpression:
   NotExpression ({infer ExponentialExpression.op+=current} op+='!' )*;
 
+/**
+ * Operador unario: '!'
+ * Se aplica el operador NOT logico.
+ */
 NotExpression infers NotExpression:
   '!' NotExpression
   | PrimaryExpression ({infer ExponentialExpression.op+=current} op+='!' )*;
+
+/**
+ * Expresión primaria: 
+ * - Paréntesis
+ * - Literales (números, cadenas, booleanos, nulos)
+ * - Identificadores
+ */
+PrimaryExpression infers Expression:
+  '(' Expression ')' 
+  | Number 
+  | String 
+  | Boolean 
+  | Null 
+  | Identifier 
+  | ArrayExpression 
+  | ObjectExpression 
+  | FunctionExpression
+;
 
 Number infers Expression:
   value=NUMBER;
@@ -116,18 +169,14 @@ Null infers Expression:
 Identifier infers Expression:
   name=ID;
 
-PrimaryExpression infers Expression:
-  LPAREN Expression RPAREN | Number | String | Boolean | Null | Identifier;
-
-hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
-hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
-hidden terminal WS: /\s+/;
-
 terminal TRUE: /true/;
 terminal FALSE: /false/;
 terminal NULL: /null/;
-terminal NUMBER: /\d+(\.\d+)?([eE][-+]?\d+)?i?|i/;
 terminal STRING: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/;
 terminal ID: /[a-zA-Z_][$\w]*/;
-terminal LPAREN: '(';
-terminal RPAREN: ')';
+terminal NUMBER: /\d+(\.\d+)?([eE][-+]?\d+)?i?|i/;
+
+hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
+hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
+hidden terminal HASH_SL_COMMENT: /#.*/;
+hidden terminal WS: /\s+/;

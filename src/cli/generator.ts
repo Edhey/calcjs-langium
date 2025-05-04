@@ -9,7 +9,7 @@ export function generateJavaScript(model: Model, filePath: string, destination: 
     const generatedFilePath = `${path.join(data.destination, data.name)}.js`;
 
     // TODO: Implement the transpile function
-    const jsCode = JSON.stringify(model.expression, null, 2); // Debugging purpose
+    const jsCode = JSON.stringify(model.expressions, null, 2); // Debugging purpose
     console.log(jsCode);
     // const jsCode = transpile(model);
     if (!fs.existsSync(data.destination)) {
