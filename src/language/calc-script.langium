@@ -42,10 +42,6 @@ ObjectExpression infers ObjectExpression:
 KeyValue:
   key=STRING ':' value=Expression;
 
-FunctionExpression infers FunctionExpression:
-  'fun' '(' params+=ID (';' params+=ID)* ')' Block;
-
-
 /**
  * La asignación '=' es _right associative_, es decir, se agrupa de derecha a izquierda.
  */
@@ -149,13 +145,14 @@ PrimaryExpression infers Expression:
   | BooleanLiteral 
   | NullLiteral 
   | Identifier 
+  | FunctionCall
   | ArrayExpression 
   | ObjectExpression 
   | FunctionExpression
 ;
 
 NumberLiteral infers NumberLiteral:
-  value=NUMBER;
+  value+=NUMBER;
 
 StringLiteral infers StringLiteral:
   value=STRING;
@@ -168,6 +165,12 @@ NullLiteral infers NullLiteral:
 
 Identifier infers Identifier:
   name=ID;
+
+FunctionExpression infers FunctionExpression:
+  'fun' '(' params+=ID (';' params+=ID)* ')' Block;
+
+FunctionCall infers FunctionCall:
+  callee=Identifier '(' args+=Expression (';' args+=Expression)* ')';
 
 terminal TRUE: /true/;
 terminal FALSE: /false/;

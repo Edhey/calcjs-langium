@@ -3,7 +3,7 @@ import { createCalcScriptServices } from '../language/calc-script-module.js';
 // import { extractAst } from './extract-ast.js';
 import { scopeAnalysis, findDependecies } from '../scope/scope.js';
 import { codeGeneration } from './code-generation.js';
-import { writeCode } from './write-code.ts';
+import { writeCode } from './write-code.js';
 
 import fs from 'fs/promises';
 

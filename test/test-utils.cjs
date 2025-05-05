@@ -3,7 +3,7 @@
  * Escuela Superior de Ingeniería y Tecnología
  * Grado en Ingeniería Informática
  * Asignatura Procesadores de Lenguajes
- * TFA - Langium Syntaxis and Errors for Calculator
+ * Práctica 3 - Hello Compilers
  *
  * @autor Himar Edhey Hernández Alonso
  * @since Fri 28 Feb 2025
@@ -11,9 +11,9 @@
  * @see {@link https://github.com/ULL-ESIT-PL-2425/arith2js-himar_edhey-hernandez-alu0101552392}
  */
 
-import { transpile } from '../src/code-generation/transpile.js';
-import fileStream from 'fs/promises';
-import { expect } from 'chai';
+const { transpile } = require("../src/transpile.js");
+const fileStream = require("fs/promises");
+const { expect } = require('chai');
 
 /**
  * Remove spaces and requires from the code
@@ -89,7 +89,7 @@ async function checkRunConsoleError(testsFiles) {
   }
 }
 
-export { 
+module.exports = { 
   removeSpaces, 
   checkTranspile, 
   checkRunConsoleLog, 

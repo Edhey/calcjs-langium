@@ -1,5 +1,5 @@
 import type { ValidationAcceptor, ValidationChecks } from 'langium';
-import type { CalcScriptAstType, Identifier } from './generated/ast.js';
+import type { CalcScriptAstType, Identifier, NumberLiteral } from './generated/ast.js';
 import type { CalcScriptServices } from './calc-script-module.js';
 
 /**
@@ -35,4 +35,8 @@ export class CalcScriptValidator {
       });
     }
   }
+
+  checkNumberLiteral(node: NumberLiteral, accept: ValidationAcceptor): void {
+    
+  } 
 }

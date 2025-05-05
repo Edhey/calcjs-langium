@@ -4,7 +4,7 @@ import { Command } from 'commander';
 import { CalcScriptLanguageMetaData } from '../language/generated/module.js';
 import { createCalcScriptServices } from '../language/calc-script-module.js';
 import { extractAstNode, extractDestinationAndName } from './cli-util.js';
-import { generateJavaScript } from './generator.js';
+import { transpileJavaScript } from './transpile.js';
 import { NodeFileSystem } from 'langium/node';
 import * as url from 'node:url';
 import * as fs from 'node:fs';
@@ -14,13 +14,6 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 const packagePath = path.resolve(__dirname, '..', '..', 'package.json');
 const packageContent = await fspromise.readFile(packagePath, 'utf-8');
-
-export const transpileJSAction = async (fileName: string, opts: GenerateOptions): Promise<void> => {
-  const services = createCalcScriptServices(NodeFileSystem).CalcScript;
-  const model = await extractAstNode<Model>(fileName, services);
-  const generatedFilePath = generateJavaScript(model, fileName, opts.destination);
-  console.log(chalk.green(`JavaScript code generated successfully: ${generatedFilePath}`));
-};
 
 export type GenerateOptions = {
   destination?: string,
@@ -54,7 +47,7 @@ export default function (): void {
     .action(async (fileName: string, options: GenerateOptions) => {
       const services = createCalcScriptServices(NodeFileSystem).CalcScript;
       const model = await extractAstNode<Model>(fileName, services);
-      const jsCode = generateJavaScript(model, fileName, options.destination);
+      const jsCode = transpileJavaScript(model, fileName, options);
       if (options.destination) {
         const data = extractDestinationAndName(fileName, options.destination);
         const generatedFilePath = `${path.join(data.destination, data.name)}.js`;
@@ -62,6 +55,8 @@ export default function (): void {
           fs.mkdirSync(data.destination, { recursive: true });
         }
         fs.writeFileSync(generatedFilePath, jsCode);
+      } else {
+        console.log(jsCode);
       }
       if (options.verbose) {
         console.log(chalk.blue('Generated JavaScript code:'));
