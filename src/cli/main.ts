@@ -4,12 +4,15 @@ import { Command } from 'commander';
 import { CalcScriptLanguageMetaData } from '../language/generated/module.js';
 import { createCalcScriptServices } from '../language/calc-script-module.js';
 import { extractAstNode, extractDestinationAndName } from './cli-util.js';
-import { transpileJavaScript } from './transpile.js';
 import { NodeFileSystem } from 'langium/node';
 import * as url from 'node:url';
 import * as fs from 'node:fs';
 import * as fspromise from 'node:fs/promises';
 import * as path from 'node:path';
+import pkg from 'template-file';
+import { JavaScriptTranspiler } from '../code-generation/transpile.js';
+import { exec } from 'node:child_process';
+const { renderFile } = pkg;
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 const packagePath = path.resolve(__dirname, '..', '..', 'package.json');
@@ -25,6 +28,7 @@ export type GenerateOptions = {
   return?: boolean,
   string?: boolean;
 }
+
 export default function (): void {
   const program = new Command();
 
@@ -47,20 +51,26 @@ export default function (): void {
     .action(async (fileName: string, options: GenerateOptions) => {
       const services = createCalcScriptServices(NodeFileSystem).CalcScript;
       const model = await extractAstNode<Model>(fileName, services);
-      const jsCode = transpileJavaScript(model, fileName, options);
+      const transpiler = new JavaScriptTranspiler(model);
+      let code = transpiler.transpile();
+      const dependencies = Array.from(transpiler.getDependencies());
+      const root = __dirname.replace(/\/out.*$/, ''); // get the root path (Linux)
+      if (dependencies.length > 0) {
+        code = await renderFile(`${root}/src/code-generation/templates.txt`, { dependencies, root, code });
+      }
+
       if (options.destination) {
         const data = extractDestinationAndName(fileName, options.destination);
         const generatedFilePath = `${path.join(data.destination, data.name)}.js`;
         if (!fs.existsSync(data.destination)) {
           fs.mkdirSync(data.destination, { recursive: true });
         }
-        fs.writeFileSync(generatedFilePath, jsCode);
-      } else {
-        console.log(jsCode);
+        fs.writeFileSync(generatedFilePath, code);
+        console.log(chalk.green(`JavaScript code written to ${generatedFilePath}`));
       }
       if (options.verbose) {
-        console.log(chalk.blue('Generated JavaScript code:'));
-        console.log(jsCode);
+        // console.log(chalk.blue('Generated JavaScript code:'));
+        console.log(code);
       }
       if (options.ast) {
         console.log(chalk.blue('Parsed AST:'));
@@ -68,6 +78,31 @@ export default function (): void {
         const parsed = JSON.parse(jsonStr);
         const prettyJson = JSON.stringify(parsed, null, 2);
         console.log(prettyJson);
+      }
+      if (options.run || options.string || options.return) {
+        const tempFile = path.join(__dirname, 'tempCode.js');
+        fs.writeFileSync(tempFile, code);
+
+        exec(`node "${tempFile}"`, (error, stdout, stderr) => {
+          if (error) {
+            console.error(chalk.red(`Error: ${error.message}`));
+            return;
+          }
+          if (stderr) {
+            console.error(chalk.red(`stderr: ${stderr}`));
+            return;
+          }
+          if (options.string) {
+            try {
+              console.log(stdout.toString().trim());
+            } catch (error) {
+              console.error(chalk.red('Error converting output to string'));
+            }
+          } else if (options.return) {
+            console.log(chalk.blue('Return value:'));
+            console.log(stdout.trim());
+          }
+        });
       }
     });
 

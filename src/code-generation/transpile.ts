@@ -1,59 +1,89 @@
-import { NodeFileSystem } from 'langium/node';
-import { createCalcScriptServices } from '../language/calc-script-module.js';
-// import { extractAst } from './extract-ast.js';
-import { scopeAnalysis, findDependecies } from '../scope/scope.js';
-import { codeGeneration } from './code-generation.js';
-import { writeCode } from './write-code.js';
+import { BinaryExpression, FunctionCall, isBinaryExpression, isFunctionCall, isNumberLiteral, NumberLiteral, type Expression, type Model } from '../language/generated/ast.js';
+import * as supportLib from './support-lib.js';
 
-import fs from 'fs/promises';
+export function findDependencies(model: Model): Set<string> {
+  const dependencies: Set<string> = new Set();
+  const functionNames = Object.keys(supportLib);
 
-export interface TranspileOptions {
-  verbose?: boolean;
-  output?: string;
-  ast?: boolean;
-  definitions?: boolean;
-  scope?: boolean;
+  function exploreExpression(expr: Expression): void {
+    if (isFunctionCall(expr)) {
+      const functionName = expr.callee.name;
+      if (functionNames.includes(functionName)) {
+        dependencies.add(functionName);
+      }
+      expr.args.forEach(arg => exploreExpression(arg));
+    } else if (isBinaryExpression(expr)) {
+      exploreExpression(expr.left);
+      exploreExpression(expr.right);
+    } else if (isNumberLiteral(expr)) {
+      dependencies.add('Complex');
+    }
+  }
+
+  model.expressions.forEach(expr => exploreExpression(expr));
+  return dependencies;
 }
 
+export class JavaScriptTranspiler {
+  private dependencies: Set<string> = new Set();
+  private functionNames: string[] = Object.keys(supportLib);
 
-export async function transpile(inputFile: string, options: TranspileOptions): Promise<string> {
-  const services = createCalcScriptServices(NodeFileSystem).CalcScript;
+  constructor(private model: Model) { }
 
-  let input: string;
-  try {
-    input = await fs.readFile(inputFile, 'utf-8');
-  } catch (error) {
-    console.error(`Can't read file "${inputFile}"`);
-    return error as string;
+  public transpile(): string {
+    return this.model.expressions
+      .map(expr => this.transpileExpression(expr))
+      .join(';\n');
   }
 
-  // Crear documento Langium y obtener AST
-  const document = services.shared.workspace.LangiumDocumentFactory.fromString(input, inputFile);
-  await services.shared.workspace.DocumentBuilder.build([document]);
-  let ast = extractAst(document);
-
-  ast = findDependecies(ast);
-  ast = scopeAnalysis(ast);
-
-  if (options.ast) {
-    console.log(JSON.stringify(ast, null, 2));
+  public getDependencies(): Set<string> {
+    return this.dependencies;
   }
 
-  if (options.definitions) {
-    console.log("Definitions:");
-    for (const [key, value] of ast.scope.definitions) {
-      console.log(key + " -> " + JSON.stringify(value, null, 2));
+  /**
+   * Function to transpile a CalcScript expression into JavaScript code.
+   * @param expr The expression to transpile
+   * @returns The transpiled JavaScript code
+   */
+  public transpileExpression(expr: Expression): string {
+    if (isNumberLiteral(expr)) {
+      return this.transpileNumberLiteral(expr);
+    } else if (isBinaryExpression(expr)) {
+      return this.transpileBinaryExpression(expr);
+    } else if (isFunctionCall(expr)) {
+      return this.transpileFunctionCall(expr);
     }
+    return '';
   }
 
-  if (options.scope) {
-    console.log("Scope:");
-    for (const [key, value] of ast.scope.scope) {
-      console.log(key + " -> " + JSON.stringify(value, null, 2));
+  /**
+   * Transpila una BinaryExpression.
+   * Para ello, transpila la parte izquierda, luego el operador y la parte derecha.
+   */
+  private transpileBinaryExpression(expr: BinaryExpression): string {
+    const left = this.transpileExpression(expr.left);
+    const right = this.transpileExpression(expr.right);
+    return `(${left} ${expr.op} ${right})`;
+  }
+
+  /**
+   * Transpila una llamada a función.
+   */
+  private transpileFunctionCall(expr: FunctionCall): string {
+    const functionName = expr.callee.name;
+    if (this.functionNames.includes(functionName)) {
+      this.dependencies.add(functionName);
     }
+    const args = expr.args.map((arg: Expression) => this.transpileExpression(arg)).join(', ');
+    return `${functionName}(${args})`;
   }
 
-  const output = await codeGeneration(ast);
-  await writeCode(output, options);
-  return output;
+  /**
+   * Transpila un NumberLiteral. Se transforma a un número complejo en una 
+   * llamada a "Complex".
+   */
+  private transpileNumberLiteral(expr: NumberLiteral): string {
+    this.dependencies.add('Complex');
+    return `Complex(${expr.value})`;
+  }
 }

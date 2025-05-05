@@ -1,14 +1,23 @@
 // import { NodeFileSystem } from 'langium/node';
 // import { createCalcScriptServices } from '../language/calc-script-module.js';
-// // import { scopeAnalysis, findDependecies } from '../scope/scope-analisys.js';
-// // import { codeGeneration } from './code-generation.js';
-// // import { writeCode } from './write-code.js';
+// // import { extractAst } from './extract-ast.js';
+// import { scopeAnalysis, findDependecies } from '../scope/scope.js';
+// import { codeGeneration } from './code-generation.js';
+// import { writeCode } from './write-code.js';
 
 // import fs from 'fs/promises';
-// import { GenerateOptions } from '../cli/main-original.js';
-// import { Model } from '../language/generated/ast.js';
+// import { URI } from 'langium';
 
-// export async function transpile(model: Model, inputFile: string, options: GenerateOptions): Promise<string> {
+// export interface TranspileOptions {
+//   verbose?: boolean;
+//   output?: string;
+//   ast?: boolean;
+//   definitions?: boolean;
+//   scope?: boolean;
+// }
+
+
+// export async function transpile(inputFile: string, options: TranspileOptions): Promise<string> {
 //   const services = createCalcScriptServices(NodeFileSystem).CalcScript;
 
 //   let input: string;
@@ -20,9 +29,9 @@
 //   }
 
 //   // Crear documento Langium y obtener AST
-//   const document = services.shared.workspace.LangiumDocumentFactory.fromString(input, inputFile);
+//   const document = services.shared.workspace.LangiumDocumentFactory.fromString(input, URI.file(inputFile));
 //   await services.shared.workspace.DocumentBuilder.build([document]);
-//   let ast = extractAst(document);
+//   // let ast = extractAst(document);
 
 //   ast = findDependecies(ast);
 //   ast = scopeAnalysis(ast);

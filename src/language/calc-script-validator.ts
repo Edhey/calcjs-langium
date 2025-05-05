@@ -1,5 +1,5 @@
 import type { ValidationAcceptor, ValidationChecks } from 'langium';
-import type { CalcScriptAstType, Identifier, NumberLiteral } from './generated/ast.js';
+import type { BinaryExpression, CalcScriptAstType, Expression, Identifier, NumberLiteral } from './generated/ast.js';
 import type { CalcScriptServices } from './calc-script-module.js';
 
 /**
@@ -9,7 +9,9 @@ export function registerValidationChecks(services: CalcScriptServices) {
   const registry = services.validation.ValidationRegistry;
   const validator = services.validation.CalcScriptValidator;
   const checks: ValidationChecks<CalcScriptAstType> = {
-    Identifier: validator.checkIdentifierNotReserved
+    Identifier: validator.checkIdentifierNotReserved,
+    BinaryExpression: validator.checkDivByZero,
+    NumberLiteral: validator.checkNumberLiteral
   };
   registry.register(checks, validator);
 }
@@ -20,15 +22,8 @@ export function registerValidationChecks(services: CalcScriptServices) {
 export class CalcScriptValidator {
 
   checkIdentifierNotReserved(node: Identifier, accept: ValidationAcceptor): void {
-    const printerWords = ['print', 'write'];
-    const reserved = ['fun', 'true', 'false', 'null', 'while', 'for', 'do'];
+    const reserved = ['class'];
     if (node.name && reserved.includes(node.name)) {
-      accept('error', `Identifier '${node.name}' is a reserved word.`, {
-        node,
-        property: 'name'
-      });
-    }
-    if (node.name && printerWords.includes(node.name)) {
       accept('error', `Identifier '${node.name}' is a reserved word.`, {
         node,
         property: 'name'
@@ -36,7 +31,13 @@ export class CalcScriptValidator {
     }
   }
 
+  // checkDivByZero(binExpr: BinaryExpression, accept: ValidationAcceptor): void {
+  //   if ((binExpr.op === '/') && (binExpr.right) === '0') {
+  //     accept('error', 'Division by zero is detected.', { node: binExpr, property: 'right' });
+  //   }
+  // }
+
   checkNumberLiteral(node: NumberLiteral, accept: ValidationAcceptor): void {
-    
-  } 
+
+  }
 }

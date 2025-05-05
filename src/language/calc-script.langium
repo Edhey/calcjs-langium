@@ -73,7 +73,7 @@ ComparativeExpression infers Expression:
  * Se aplica a la expresión de valor absoluto.
  */
 AbsoluteValueExpression infers Expression:
-  '|' inner=Expression '|' 
+  '|' AbsoluteValueExpression '|' {infer AbsoluteValueExpression.left=current}
   | MaxExpression
 ;
 
@@ -99,19 +99,19 @@ AdditiveExpression infers Expression:
  * Operadores de multiplicación y división ('*' y '/'), izquierda asociativa
  */
 MultiplicativeExpression infers Expression:
-  UnaryExpression ({infer BinaryExpression.left=current} op=('*' | '/') right=UnaryExpression)*;
+  UnarySubExpression ({infer BinaryExpression.left=current} op=('*' | '/') right=UnarySubExpression)*;
 
 /**
  * Operador unario: UMINUS (no asociativo)
- * Se define en la regla UnaryExpression, junto con otros posibles operadores unarios.
+ * Se define en la regla UnarySubExpression, junto con otros posibles operadores unarios.
  */
-UnaryExpression infers Expression:
-  '-' UnaryExpression {infer UnaryExpression.op=current}  // UMINUS
+UnarySubExpression infers Expression:
+  '-' UnarySubExpression {infer UnarySubExpression.op=current}  // UMINUS
     | ExponentiationExpression
 ;
 
 /**
- * Operador de exponenciación '**' es _right associative_.
+ * Operador de exponenciación '**' es right associative.
  * Se implementa mediante recursión a la derecha.
  */
 ExponentiationExpression infers Expression:
@@ -152,7 +152,7 @@ PrimaryExpression infers Expression:
 ;
 
 NumberLiteral infers NumberLiteral:
-  value+=NUMBER;
+  value=NUMBER;
 
 StringLiteral infers StringLiteral:
   value=STRING;
