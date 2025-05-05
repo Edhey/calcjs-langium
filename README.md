@@ -162,3 +162,7 @@ By the end of this project, I will have successfully migrated the calculator lan
 
 To sum up, in this project I will demonstrate my ability to design a domain-specific language, develop a full language server, and integrate it into a modern development environment.
 ---
+
+
+# Development
+## Environment Setup

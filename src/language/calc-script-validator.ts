@@ -20,12 +20,15 @@ export function registerValidationChecks(services: CalcScriptServices) {
 export class CalcScriptValidator {
 
   checkIdentifierNotReserved(node: Expression, accept: ValidationAcceptor): void {
-    const reserved = ['fun', 'true', 'false', 'null', 'while', 'for', 'do', 'print', 'write'];
+    const printerWords = ['print', 'write'];
+    const reserved = ['fun', 'true', 'false', 'null', 'while', 'for', 'do'];
     if (node.name && reserved.includes(node.name)) {
       accept('error', `Identifier '${node.name}' is a reserved word.`, {
         node,
         property: 'name'
       });
+    }
+    if (node.name && printerWords.includes(node.name)) {
     }
   }
 
