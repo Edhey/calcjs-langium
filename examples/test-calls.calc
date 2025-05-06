@@ -1,1 +1,4 @@
-calle(4) + calle(5)
+calle(4) + calle(5),
+calle(4 + 4) + calle(5 + 4),
+(calle + 1),
+(calle(2) + 1)(2)

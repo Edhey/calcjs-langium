@@ -1,5 +1,5 @@
 import type { ValidationAcceptor, ValidationChecks } from 'langium';
-import type { BinaryExpression, CalcScriptAstType, CallExpression, Identifier } from './generated/ast.js';
+import type { BinaryExpression, CalcScriptAstType, CallLiteral, Identifier } from './generated/ast.js';
 import type { CalcScriptServices } from './calc-script-module.js';
 import { JavaScriptTranspiler } from '../code-generation/transpile.js';
 
@@ -31,12 +31,12 @@ export class CalcScriptValidator {
   }
 
   checkDivByZero(binExpr: BinaryExpression, accept: ValidationAcceptor): void {
-    if ((binExpr.op === '/') && JavaScriptTranspiler.transpileExpression(binExpr.right) === 'Complex(0)') {
+    if ((binExpr.operator === '/') && JavaScriptTranspiler.transpileExpression(binExpr.right) === 'Complex(0)') {
       accept('error', 'You can not divide by 0.', { node: binExpr, property: 'right' });
     }
   }
 
-  checkCallExpression(callExpression: CallExpression, accept: ValidationAcceptor): void {
+  checkCallLiteral(callLiCallLiteral: CallLiteral, accept: ValidationAcceptor): void {
 
   }
 }

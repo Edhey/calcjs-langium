@@ -1,4 +1,4 @@
-import { BinaryExpression, CallExpression, isBinaryExpression, isCallExpression, isIdentifier, isNumberLiteral, NumberLiteral, type Expression, type Model } from '../language/generated/ast.js';
+import { BinaryExpression, CallLiteral, Identifier, isBinaryExpression, isCallLiteral, isIdentifier, isNumberLiteral, NumberLiteral, type Expression, type Model } from '../language/generated/ast.js';
 import * as supportLib from './support-lib.js';
 
 export function findDependencies(model: Model): Set<string> {
@@ -6,16 +6,16 @@ export function findDependencies(model: Model): Set<string> {
   const dependenciesNames = Object.keys(supportLib);
 
   function exploreExpression(expr: Expression): void {
-    if (isCallExpression(expr)) {
-      const callExpression = expr as CallExpression;
-      if (!isIdentifier(callExpression.callee)) {
+    if (isCallLiteral(expr)) {
+      const call = expr as CallLiteral;
+      if (!isIdentifier(call.callee)) {
         throw new Error('It is not possible to call a non-identified function');
       }
-      const functionName = callExpression.callee.name;
+      const functionName = call.callee.name;
       if (dependenciesNames.includes(functionName)) {
         dependencies.add(functionName);
       }
-      callExpression.arguments.forEach(arg => exploreExpression(arg));
+      call.arguments.forEach(arg => exploreExpression(arg));
     } else if (isBinaryExpression(expr)) {
       exploreExpression(expr.left);
       exploreExpression(expr.right);
@@ -58,8 +58,10 @@ export class JavaScriptTranspiler {
       return this.transpileNumberLiteral(expr);
     } else if (isBinaryExpression(expr)) {
       return this.transpileBinaryExpression(expr);
-    } else if (isCallExpression(expr)) {
-      return this.transpileFunctionCall(expr);
+    } else if (isCallLiteral(expr)) {
+      return this.transpileFunctionCallLiteral(expr);
+    } else if (isIdentifier(expr)) {
+      return this.transpileIdentifier(expr);
     }
     return '';
   }
@@ -75,17 +77,17 @@ export class JavaScriptTranspiler {
   private static transpileBinaryExpression(expr: BinaryExpression): string {
     const left = this.transpileExpression(expr.left);
     const right = this.transpileExpression(expr.right);
-    return `${left} ${expr.op} ${right}`; // TODO: Error handling for unsupported operators??
+    return `${left} ${expr.operator} ${right}`; // TODO: Error handling for unsupported operators??
   }
 
   /**
-   * Transpiles a CallExpression into JavaScript code.
+   * Transpiles a CallLiteral into JavaScript code.
    * It adds the function name to the list of dependencies if it is a supported 
    * function.
-   * @param expr The CallExpression to transpile
+   * @param expr The CallLiteral to transpile
    * @returns The transpiled JavaScript code
    */
-  private static transpileFunctionCall(expr: CallExpression): string {
+  private static transpileFunctionCallLiteral(expr: CallLiteral): string {
     if (!isIdentifier(expr.callee)) {
       throw new Error('It is not possible to call a non-identified function');
     }
@@ -105,6 +107,13 @@ export class JavaScriptTranspiler {
   private static transpileNumberLiteral(expr: NumberLiteral): string {
     this.dependencies.add('Complex');
     return `Complex(${expr.value})`;
+  }
+
+  private static transpileIdentifier(expr: Identifier): string {
+    if (this.dependenciesNames.includes(expr.name)) {
+      this.dependencies.add(expr.name);
+    }
+    return expr.name;
   }
 
   /**

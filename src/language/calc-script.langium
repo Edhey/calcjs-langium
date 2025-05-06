@@ -5,7 +5,8 @@ grammar CalcScript
  * El programa es una lista de expresiones separadas por comas
  */
 entry Model:
-  expressions+=Expression (',' expressions+=Expression)*;
+  expressions+=Expression (',' expressions+=Expression)*
+;
 
 /**
  * Todas las expresiones se unifican en la regla Expression.
@@ -34,11 +35,11 @@ DoWhileExpression infers DoWhileExpression:
   'do' Body 'while' '(' condition=Expression ')';
 
 AssignmentExpression infers Expression:
-  CallExpression ({infer AssignmentExpression.left=current} op='=' right=AssignmentExpression)?
+  CallExpression ({infer AssignmentExpression.left=current} operator='=' right=AssignmentExpression)?
 ;
 
 CallExpression infers Expression:
-  ArithmeticExpression ({infer CallExpression.callee=current} '(' (arguments+=Expression (';' arguments+=Expression)*)* ')')*
+  ArithmeticExpression ({infer CallExpression.callee=current} '(' (arguments+=Expression (';' arguments+=Expression)*)* ')')* // TODO: Check if + could be used
 ;
 
 ArithmeticExpression infers Expression:
@@ -49,26 +50,29 @@ ArithmeticExpression infers Expression:
  * Operadores de igualdad: '==' y '!=' (izquierda asociativa)
  */
 EqualityExpression infers Expression:
-  LogicalExpression ({infer BinaryExpression.left=current} op=('==' | '!=') right=LogicalExpression)*;
+  LogicalExpression ({infer BinaryExpression.left=current} operator=('==' | '!=') right=LogicalExpression)*
+;
 
 /**
  * Operadores lógicos: '&&' y '||' (izquierda asociativa)
  */
 LogicalExpression infers Expression:
-  ComparativeExpression ({infer BinaryExpression.left=current} op=('&&' | '||') right=ComparativeExpression)*;
+  ComparativeExpression ({infer BinaryExpression.left=current} operator=('&&' | '||') right=ComparativeExpression)*
+;
 
 /**
  * Operador relacional: '<'
  */
 ComparativeExpression infers Expression:
-  AbsoluteValueExpression ({infer BinaryExpression.left=current} op=('<') right=AbsoluteValueExpression)*;
+  AbsoluteValueExpression ({infer BinaryExpression.left=current} operator=('<') right=AbsoluteValueExpression)*
+;
 
 /**
  * Operador no asociativo: '|' x '|'
  * Se aplica a la expresión de valor absoluto.
  */
 AbsoluteValueExpression infers Expression:
-  '|' AbsoluteValueExpression '|' {infer AbsoluteValueExpression.left=current}
+  '|' AbsoluteValueExpression '|' {infer UnaryExpression.left=current}
   | MaxExpression
 ;
 
@@ -76,32 +80,36 @@ AbsoluteValueExpression infers Expression:
  * Operador izquierdo: '@'
  */
 MaxExpression infers Expression:
-  MinExpression ({infer BinaryExpression.left=current} op=('@') right=MinExpression)*;
+  MinExpression ({infer BinaryExpression.left=current} operator=('@') right=MinExpression)*
+;
 
 /**
  * Operador izquierdo: '&'
  */
 MinExpression infers Expression:
-  AdditiveExpression ({infer BinaryExpression.left=current} op=('&') right=AdditiveExpression)*;
+  AdditiveExpression ({infer BinaryExpression.left=current} operator=('&') right=AdditiveExpression)*
+;
 
 /**
  * Operadores de adición y sustracción ('+' y '-'), izquierda asociativa
  */
 AdditiveExpression infers Expression:
-  MultiplicativeExpression ({infer BinaryExpression.left=current} op=('+' | '-') right=MultiplicativeExpression)*;
+  MultiplicativeExpression ({infer BinaryExpression.left=current} operator=('+' | '-') right=MultiplicativeExpression)*
+;
 
 /**
  * Operadores de multiplicación y división ('*' y '/'), izquierda asociativa
  */
 MultiplicativeExpression infers Expression:
-  UnarySubExpression ({infer BinaryExpression.left=current} op=('*' | '/') right=UnarySubExpression)*;
+  UnarySubExpression ({infer BinaryExpression.left=current} operator=('*' | '/') right=UnarySubExpression)*
+;
 
 /**
  * Operador unario: UMINUS (no asociativo)
  * Se define en la regla UnarySubExpression, junto con otros posibles operadores unarios.
  */
 UnarySubExpression infers Expression:
-  '-' UnarySubExpression {infer UnarySubExpression.op=current}  // UMINUS
+  '-' UnarySubExpression {infer UnaryExpression.operand=current}  // UMINUS
     | ExponentiationExpression
 ;
 
@@ -110,14 +118,16 @@ UnarySubExpression infers Expression:
  * Se implementa mediante recursión a la derecha.
  */
 ExponentiationExpression infers Expression:
-  ExponentialExpression ({infer BinaryExpression.left=current} op='**' right=ExponentiationExpression)*;
+  ExponentialExpression ({infer BinaryExpression.left=current} operator='**' right=ExponentiationExpression)*
+;
 
 /**
  * Operador postfix: '!'
  * Se aplica a la expresión exponencial.
  */
 ExponentialExpression infers Expression:
-  NotExpression ({infer ExponentialExpression.op+=current} op+='!' )*;
+  NotExpression ({infer UnaryExpression.operand+=current} operator='!' )*
+;
 
 /**
  * Operador unario: '!'
@@ -125,7 +135,8 @@ ExponentialExpression infers Expression:
  */
 NotExpression infers Expression:
   '!' NotExpression
-  | PrimaryExpression ({infer ExponentialExpression.op+=current} op+='!' )*;
+  | PrimaryExpression ({infer UnaryExpression.operand+=current} operator='!' )*
+;
 
 /**
  * Expresión primaria: 
@@ -140,9 +151,10 @@ PrimaryExpression infers Expression:
   | BooleanLiteral 
   | NullLiteral 
   | Identifier 
-  | ArrayExpression 
-  | ObjectExpression 
+  | ArrayLiteral 
+  | ObjectLiteral 
   | FunctionDeclaration
+  | CallLiteral
 ;
 
 NumberLiteral infers NumberLiteral:
@@ -163,14 +175,17 @@ Identifier infers Identifier:
 FunctionDeclaration infers FunctionDeclaration:
   'fun' '(' (arguments+=ID (';' arguments+=ID)*)* ')' Body;
 
-ArrayExpression infers ArrayExpression:
+ArrayLiteral infers ArrayLiteral:
   '[' (elements+=Expression ( ';' elements+=Expression )*)* ']';
 
-ObjectExpression infers ObjectExpression:
+ObjectLiteral infers ObjectLiteral:
   '{' (props+=KeyValue ( ';' props+=KeyValue )*)* '}';
 
 KeyValue:
   key=STRING ':' value=Expression;
+
+CallLiteral infers CallLiteral:
+  callee=Identifier ('(' (arguments+=Expression (';' arguments+=Expression)*)* ')')+;
 
 terminal TRUE: /true/;
 terminal FALSE: /false/;
