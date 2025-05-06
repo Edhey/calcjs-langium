@@ -51,9 +51,8 @@ export default function (): void {
     .action(async (fileName: string, options: GenerateOptions) => {
       const services = createCalcScriptServices(NodeFileSystem).CalcScript;
       const model = await extractAstNode<Model>(fileName, services);
-      const transpiler = new JavaScriptTranspiler(model);
-      let code = transpiler.transpile();
-      const dependencies = Array.from(transpiler.getDependencies());
+      let code = JavaScriptTranspiler.transpile(model);
+      const dependencies = Array.from(JavaScriptTranspiler.getDependencies());
       const root = __dirname.replace(/\/out.*$/, ''); // get the root path (Linux)
       if (dependencies.length > 0) {
         code = await renderFile(`${root}/src/code-generation/templates.txt`, { dependencies, root, code });

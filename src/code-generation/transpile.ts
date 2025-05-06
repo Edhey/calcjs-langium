@@ -24,20 +24,24 @@ export function findDependencies(model: Model): Set<string> {
   return dependencies;
 }
 
+/**
+ * Class to transpile CalcScript expressions into JavaScript code.
+ * It collects dependencies during the transpilation process.
+ */
 export class JavaScriptTranspiler {
-  private dependencies: Set<string> = new Set();
-  private functionNames: string[] = Object.keys(supportLib);
+  private static dependencies: Set<string> = new Set();
+  private static functionNames: string[] = Object.keys(supportLib);
 
-  constructor(private model: Model) { }
-
-  public transpile(): string {
-    return this.model.expressions
+  /**
+   * Transpiles a CalcScript model into JavaScript code.
+   * @param model The CalcScript model to transpile
+   * @returns The transpiled JavaScript code
+   */
+  public static transpile(model: Model): string {
+    this.dependencies.clear();
+    return model.expressions
       .map(expr => this.transpileExpression(expr))
       .join(';\n');
-  }
-
-  public getDependencies(): Set<string> {
-    return this.dependencies;
   }
 
   /**
@@ -45,7 +49,7 @@ export class JavaScriptTranspiler {
    * @param expr The expression to transpile
    * @returns The transpiled JavaScript code
    */
-  public transpileExpression(expr: Expression): string {
+  public static transpileExpression(expr: Expression): string {
     if (isNumberLiteral(expr)) {
       return this.transpileNumberLiteral(expr);
     } else if (isBinaryExpression(expr)) {
@@ -57,19 +61,27 @@ export class JavaScriptTranspiler {
   }
 
   /**
-   * Transpila una BinaryExpression.
-   * Para ello, transpila la parte izquierda, luego el operador y la parte derecha.
+   * Transpiles a BinaryExpression into JavaScript code.
+   * It transpiles the left and right operands and combines them with the 
+   * operator.
+   * @param expr The BinaryExpression to transpile
+   * @returns The transpiled JavaScript code
+   * @throws Error if the operator is not supported
    */
-  private transpileBinaryExpression(expr: BinaryExpression): string {
+  private static transpileBinaryExpression(expr: BinaryExpression): string {
     const left = this.transpileExpression(expr.left);
     const right = this.transpileExpression(expr.right);
-    return `(${left} ${expr.op} ${right})`;
+    return `(${left} ${expr.op} ${right})`; // TODO: Error handling for unsupported operators
   }
 
   /**
-   * Transpila una llamada a función.
+   * Transpiles a FunctionCall into JavaScript code.
+   * It adds the function name to the list of dependencies if it is a supported 
+   * function.
+   * @param expr The FunctionCall to transpile
+   * @returns The transpiled JavaScript code
    */
-  private transpileFunctionCall(expr: FunctionCall): string {
+  private static transpileFunctionCall(expr: FunctionCall): string {
     const functionName = expr.callee.name;
     if (this.functionNames.includes(functionName)) {
       this.dependencies.add(functionName);
@@ -79,11 +91,19 @@ export class JavaScriptTranspiler {
   }
 
   /**
-   * Transpila un NumberLiteral. Se transforma a un número complejo en una 
-   * llamada a "Complex".
+   * Transpiles a NumberLiteral into JavaScript code using the Complex library.
+   * It adds the 'Complex' dependency to the list of dependencies.
+   * @param expr The NumberLiteral to transpile
    */
-  private transpileNumberLiteral(expr: NumberLiteral): string {
+  private static transpileNumberLiteral(expr: NumberLiteral): string {
     this.dependencies.add('Complex');
     return `Complex(${expr.value})`;
+  }
+
+  /**
+   * Get the dependencies collected during the last transpilation.
+   */
+  public static getDependencies(): Set<string> {
+    return new Set(this.dependencies);
   }
 }

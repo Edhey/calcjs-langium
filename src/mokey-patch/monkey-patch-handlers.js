@@ -19,7 +19,7 @@ const operationHandlers = {
 };
 
 const AritmeticOperators = {
-  add: '+', mul: '*', div: '/', equals: '==', pow: '**', sub: '-', neg: '-'
+  add: '+', mul: '*', div: '/', pow: '**', sub: '-', neg: '-'
 };
 
 const ComparisonOperators = {

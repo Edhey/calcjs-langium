@@ -1,6 +1,7 @@
 import type { ValidationAcceptor, ValidationChecks } from 'langium';
-import type { BinaryExpression, CalcScriptAstType, Expression, Identifier, NumberLiteral } from './generated/ast.js';
+import type { BinaryExpression, CalcScriptAstType, Identifier, NumberLiteral } from './generated/ast.js';
 import type { CalcScriptServices } from './calc-script-module.js';
+import { JavaScriptTranspiler } from '../code-generation/transpile.js';
 
 /**
  * Register custom validation checks.
@@ -31,11 +32,11 @@ export class CalcScriptValidator {
     }
   }
 
-  // checkDivByZero(binExpr: BinaryExpression, accept: ValidationAcceptor): void {
-  //   if ((binExpr.op === '/') && (binExpr.right) === '0') {
-  //     accept('error', 'Division by zero is detected.', { node: binExpr, property: 'right' });
-  //   }
-  // }
+  checkDivByZero(binExpr: BinaryExpression, accept: ValidationAcceptor): void {
+    if ((binExpr.op === '/') && JavaScriptTranspiler.transpileExpression(binExpr.right) === 'Complex(0)') {
+      accept('error', 'Division by zero is detected.', { node: binExpr, property: 'right' });
+    }
+  }
 
   checkNumberLiteral(node: NumberLiteral, accept: ValidationAcceptor): void {
 

@@ -35,9 +35,18 @@ const comparisonOperators = {
  */
 for (const operator in comparisonOperators) {
   lodash.set(operationHandlers, `string.${operator}.string`, function (other) {
-    return eval(`this ${comparisonOperators[operator]} other`);
+    switch (operator) {                             // TODO: Check eval aplication - Origial code:
+      case 'equals': return this == other;          // for (const operator in comparisonOperators) {
+      case 'notEquals': return this != other;       //   lodash.set(operationHandlers, `string.${operator}.string`, function (other) {
+      case 'lessThan': return this < other;         //     return eval(`this ${comparisonOperators[operator]} other`);
+      case 'greaterThan': return this > other;      //   });
+      case 'lessThanOrEqual': return this <= other; // }
+      case 'greaterThanOrEqual': return this >= other;
+      default: throw new Error(`Unsupported operator: ${operator}`);
+    }
   });
 }
+
 
 /**
  * Not operator for a string

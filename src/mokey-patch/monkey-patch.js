@@ -23,7 +23,7 @@ import { allOperators, implementedTypes, operationHandlers } from './monkey-patc
 for (const type of implementedTypes) {
   for (const operator in allOperators) {
     type.prototype[operator] = function (other) {
-      const thisValue = this;
+      let thisValue = this;
       if (this === null) {
         thisValue = Complex(0);
       }

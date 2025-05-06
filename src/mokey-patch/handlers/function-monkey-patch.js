@@ -27,7 +27,7 @@ implementedTypes.push(Function);
  * @type {{add: string, mul: string, div: string, equals: string, pow: string, neg: string}}
  */
 const Operators = {
-  add: '+', mul: '*', div: '/', equals: '==', pow: '**', sub: '-', equals: '==', notEquals: '!=',
+  add: '+', mul: '*', div: '/', pow: '**', sub: '-', equals: '==', notEquals: '!=',
 };
 
 for (let operator in Operators) {
