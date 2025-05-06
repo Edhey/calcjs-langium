@@ -202,7 +202,7 @@ function buildVariableDeclarator(id, init = null) {
  * @param {Object} endLocation - The end location information
  * @returns {Object} - The function expression node
  */
-function buildFunctionExpression(params, expression, startLocation, endLocation) {
+function buildFunctionDeclaration(params, expression, startLocation, endLocation) {
   let wrappedExpression = expression;
   for (let i = params.length - 1; i > 0; i--) {
     wrappedExpression = {
@@ -213,7 +213,7 @@ function buildFunctionExpression(params, expression, startLocation, endLocation)
       },
       arguments: [
         {
-          type: 'FunctionExpression',
+          type: 'FunctionDeclaration',
           params: [params[i]],
           body: {
             type: 'BlockStatement',
@@ -253,7 +253,7 @@ function buildFunctionExpression(params, expression, startLocation, endLocation)
     param = params[0];
   }
   return {
-    type: 'FunctionExpression',
+    type: 'FunctionDeclaration',
     id: null,
     params: [param],
     body: {
@@ -415,8 +415,8 @@ function buildWhileStatement(conditionStatement, bodyStatement, startLocation,
       returnStatement
     ],
   };
-  const arrowFunctionExpression = {
-    type: 'ArrowFunctionExpression',
+  const arrowFunctionDeclaration = {
+    type: 'ArrowFunctionDeclaration',
     id: null,
     params: [],
     body: blockStatement,
@@ -426,7 +426,7 @@ function buildWhileStatement(conditionStatement, bodyStatement, startLocation,
     },
   }
   return buildCallExpression(
-    arrowFunctionExpression, 
+    arrowFunctionDeclaration, 
     [], 
     {
       start: startLocation,
@@ -486,8 +486,8 @@ function buildDoWhileStatement(bodyStatement, conditionStatement, startLocation,
       returnStatement
     ],
   };
-  const arrowFunctionExpression = {
-    type: 'ArrowFunctionExpression',
+  const arrowFunctionDeclaration = {
+    type: 'ArrowFunctionDeclaration',
     id: null,
     params: [],
     body: blockStatement,
@@ -497,7 +497,7 @@ function buildDoWhileStatement(bodyStatement, conditionStatement, startLocation,
     },
   }
   return buildCallExpression(
-    arrowFunctionExpression, 
+    arrowFunctionDeclaration, 
     [], 
     {
       start: startLocation,
@@ -554,7 +554,7 @@ function buildForStatement(init, test, update, body, startLocation, endLocation)
     ],
   };
   const arrowFunction = {
-    type: 'ArrowFunctionExpression',
+    type: 'ArrowFunctionDeclaration',
     id: null,
     params: [],
     body: arrowFunctionBody,
@@ -651,7 +651,7 @@ module.exports = {
   buildSequenceExpression,
   buildVariableDeclaration,
   buildVariableDeclarator,
-  buildFunctionExpression,
+  buildFunctionDeclaration,
   buildIdentifierOrCalls,
   // buildParOrCallExpression,
   buildLogicalExpression,

@@ -180,7 +180,7 @@ case 32:
  this.$ = buildDoWhileStatement($$[$0-5], $$[$0-1], _$[$0-7], _$[$0-5], _$[$0-1]); 
 break;
 case 33:
- this.$ = buildCallExpression(buildIdentifier('functionObject', _$[$0-6]), [buildFunctionExpression($$[$0-4], $$[$0-1], _$[$0-6], _$[$0-1])]); 
+ this.$ = buildCallExpression(buildIdentifier('functionObject', _$[$0-6]), [buildFunctionDeclaration($$[$0-4], $$[$0-1], _$[$0-6], _$[$0-1])]); 
 break;
 case 34:
  this.$ = buildCallExpression(buildIdentifier('arrayObject', _$[$0-2]), $$[$0-1]); 
@@ -385,7 +385,7 @@ const {
   buildCallMemberExpression,
   buildAssigmentExpression,
   buildSequenceExpression,
-  buildFunctionExpression,
+  buildFunctionDeclaration,
   buildIdentifierOrCalls,
   buildParOrCallExpression,
   buildLogicalExpression,

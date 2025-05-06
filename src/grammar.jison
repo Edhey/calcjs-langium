@@ -7,7 +7,7 @@ const {
   buildCallMemberExpression,
   buildAssigmentExpression,
   buildSequenceExpression,
-  buildFunctionExpression,
+  buildFunctionDeclaration,
   buildIdentifierOrCalls,
   buildParOrCallExpression,
   buildLogicalExpression,
@@ -85,7 +85,7 @@ expression:
       | ID calls                         { $$ = buildIdentifierOrCalls('$' + $1, $calls, @ID, @calls); } 
       | WHILE expression '{'expression'}'                   { $$ = buildWhileStatement($expression1, $expression2, @1, @5);}
       | DO '{' expression '}' WHILE '(' expression ')'      { $$ = buildDoWhileStatement($expression1, $expression2, @1, @3, @7); }
-      | FUN '(' idListOrEmpty ')' '{' expression '}'        { $$ = buildCallExpression(buildIdentifier('functionObject', @1), [buildFunctionExpression($idListOrEmpty, $expression, @1, @6)]); } // Function definition
+      | FUN '(' idListOrEmpty ')' '{' expression '}'        { $$ = buildCallExpression(buildIdentifier('functionObject', @1), [buildFunctionDeclaration($idListOrEmpty, $expression, @1, @6)]); } // Function definition
       | '[' argsList ']'                                    { $$ = buildCallExpression(buildIdentifier('arrayObject', @1), $argsList); }
       | '{' keyValueList '}'                                { $$ = buildCallExpression(buildIdentifier('objectFunctionObject', @1), [(buildObjectExpression($2, @1, @3))]); }
       | FOR '(' expression ';' expression ';' expression ')' '{' expression '}' { $$ = buildForStatement($expression1, $expression2, $expression3, $expression4, @1, @11); }

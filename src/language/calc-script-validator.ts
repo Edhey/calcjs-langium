@@ -1,5 +1,5 @@
 import type { ValidationAcceptor, ValidationChecks } from 'langium';
-import type { BinaryExpression, CalcScriptAstType, Identifier, NumberLiteral } from './generated/ast.js';
+import type { BinaryExpression, CalcScriptAstType, CallExpression, Identifier } from './generated/ast.js';
 import type { CalcScriptServices } from './calc-script-module.js';
 import { JavaScriptTranspiler } from '../code-generation/transpile.js';
 
@@ -11,8 +11,7 @@ export function registerValidationChecks(services: CalcScriptServices) {
   const validator = services.validation.CalcScriptValidator;
   const checks: ValidationChecks<CalcScriptAstType> = {
     Identifier: validator.checkIdentifierNotReserved,
-    BinaryExpression: validator.checkDivByZero,
-    NumberLiteral: validator.checkNumberLiteral
+    BinaryExpression: validator.checkDivByZero
   };
   registry.register(checks, validator);
 }
@@ -21,7 +20,6 @@ export function registerValidationChecks(services: CalcScriptServices) {
  * Implementation of custom validations.
  */
 export class CalcScriptValidator {
-
   checkIdentifierNotReserved(node: Identifier, accept: ValidationAcceptor): void {
     const reserved = ['class'];
     if (node.name && reserved.includes(node.name)) {
@@ -34,11 +32,11 @@ export class CalcScriptValidator {
 
   checkDivByZero(binExpr: BinaryExpression, accept: ValidationAcceptor): void {
     if ((binExpr.op === '/') && JavaScriptTranspiler.transpileExpression(binExpr.right) === 'Complex(0)') {
-      accept('error', 'Division by zero is detected.', { node: binExpr, property: 'right' });
+      accept('error', 'You can not divide by 0.', { node: binExpr, property: 'right' });
     }
   }
 
-  checkNumberLiteral(node: NumberLiteral, accept: ValidationAcceptor): void {
+  checkCallExpression(callExpression: CallExpression, accept: ValidationAcceptor): void {
 
   }
 }

@@ -9,45 +9,40 @@ entry Model:
 
 /**
  * Todas las expresiones se unifican en la regla Expression.
- * Aquí se hace el "dispatch" a las distintas formas de expresión.
  */
 Expression infers Expression:
-  ControlExpression | AssignmentExpression
+  AssignmentExpression
+  | ControlExpression
 ;
 
-ControlExpression infers Expression:
+ControlExpression infers ControlExpression:
   ForExpression
-    | WhileExpression
-    | DoWhileExpression
+  | WhileExpression
+  | DoWhileExpression
 ;
 
-fragment Block:
+fragment Body:
   '{' body+=Expression (',' body+=Expression )* '}';
 
 ForExpression infers ForExpression:
-  'for' '(' init=Expression ';' condition=Expression ';' update=Expression ')' Block;
+  'for' '(' init=Expression ';' condition=Expression ';' update=Expression ')' Body;
 
 WhileExpression infers WhileExpression:
-  'while' condition=Expression Block;
+  'while' condition=Expression Body;
 
 DoWhileExpression infers DoWhileExpression:
-  'do' Block 'while' '(' condition=Expression ')';
+  'do' Body 'while' '(' condition=Expression ')';
 
-ArrayExpression infers ArrayExpression:
-  '[' elements+=Expression ( ';' elements+=Expression )* ']';
-
-ObjectExpression infers ObjectExpression:
-  '{' props+=KeyValue ( ';' props+=KeyValue )* '}';
-
-KeyValue:
-  key=STRING ':' value=Expression;
-
-/**
- * La asignación '=' es _right associative_, es decir, se agrupa de derecha a izquierda.
- */
 AssignmentExpression infers Expression:
+  CallExpression ({infer AssignmentExpression.left=current} op='=' right=AssignmentExpression)?
+;
+
+CallExpression infers Expression:
+  ArithmeticExpression ({infer CallExpression.callee=current} '(' (arguments+=Expression (';' arguments+=Expression)*)* ')')*
+;
+
+ArithmeticExpression infers Expression:
   EqualityExpression
-  | Identifier '=' AssignmentExpression {infer AssignmentExpression}
 ;
 
 /**
@@ -145,10 +140,9 @@ PrimaryExpression infers Expression:
   | BooleanLiteral 
   | NullLiteral 
   | Identifier 
-  | FunctionCall
   | ArrayExpression 
   | ObjectExpression 
-  | FunctionExpression
+  | FunctionDeclaration
 ;
 
 NumberLiteral infers NumberLiteral:
@@ -166,11 +160,17 @@ NullLiteral infers NullLiteral:
 Identifier infers Identifier:
   name=ID;
 
-FunctionExpression infers FunctionExpression:
-  'fun' '(' params+=ID (';' params+=ID)* ')' Block;
+FunctionDeclaration infers FunctionDeclaration:
+  'fun' '(' (arguments+=ID (';' arguments+=ID)*)* ')' Body;
 
-FunctionCall infers FunctionCall:
-  callee=Identifier '(' args+=Expression (';' args+=Expression)* ')';
+ArrayExpression infers ArrayExpression:
+  '[' (elements+=Expression ( ';' elements+=Expression )*)* ']';
+
+ObjectExpression infers ObjectExpression:
+  '{' (props+=KeyValue ( ';' props+=KeyValue )*)* '}';
+
+KeyValue:
+  key=STRING ':' value=Expression;
 
 terminal TRUE: /true/;
 terminal FALSE: /false/;

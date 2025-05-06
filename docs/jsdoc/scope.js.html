@@ -127,7 +127,7 @@
           </div>
           <div class="sidebar-section-children"><a href="global.html#buildForStatement">buildForStatement</a></div>
           <div class="sidebar-section-children"><a
-              href="global.html#buildFunctionExpression">buildFunctionExpression</a></div>
+              href="global.html#buildFunctionDeclaration">buildFunctionDeclaration</a></div>
           <div class="sidebar-section-children"><a href="global.html#buildIdentifier">buildIdentifier</a></div>
           <div class="sidebar-section-children"><a href="global.html#buildIdentifierOrCalls">buildIdentifierOrCalls</a>
           </div>
@@ -254,13 +254,13 @@ const scopeAnalysis = (ast) => {
   visit(ast.ast, {
     visitFunction(path) {
       const node = path.node;
-      if (node.type !== 'FunctionExpression') {
+      if (node.type !== 'FunctionDeclaration') {
         this.traverse(path);
         return false;
       }
       const parentScope = currentScope;
 
-      if (!["FunctionExpression"].includes(node.type)) return false;
+      if (!["FunctionDeclaration"].includes(node.type)) return false;
       currentScope = new Scope(parentScope);
 
       // Add function parameters to the scope
@@ -385,7 +385,7 @@ export {
           </div>
           <div class="sidebar-section-children"><a href="global.html#buildForStatement">buildForStatement</a></div>
           <div class="sidebar-section-children"><a
-              href="global.html#buildFunctionExpression">buildFunctionExpression</a></div>
+              href="global.html#buildFunctionDeclaration">buildFunctionDeclaration</a></div>
           <div class="sidebar-section-children"><a href="global.html#buildIdentifier">buildIdentifier</a></div>
           <div class="sidebar-section-children"><a href="global.html#buildIdentifierOrCalls">buildIdentifierOrCalls</a>
           </div>

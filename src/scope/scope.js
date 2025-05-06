@@ -49,7 +49,7 @@ const scopeAnalysis = (ast) => {
   visit(ast.ast, {
     visitFunction(path) {
       const node = path.node;
-      if (node.type !== 'FunctionExpression') {
+      if (node.type !== 'FunctionDeclaration') {
         this.traverse(path);
         return false;
       }

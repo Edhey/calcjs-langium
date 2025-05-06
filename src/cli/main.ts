@@ -51,6 +51,13 @@ export default function (): void {
     .action(async (fileName: string, options: GenerateOptions) => {
       const services = createCalcScriptServices(NodeFileSystem).CalcScript;
       const model = await extractAstNode<Model>(fileName, services);
+      if (options.ast) {
+        console.log(chalk.blue('Parsed AST:'));
+        const jsonStr = services.serializer.JsonSerializer.serialize(model);
+        const parsed = JSON.parse(jsonStr);
+        const prettyJson = JSON.stringify(parsed, null, 2);
+        console.log(prettyJson);
+      }
       let code = JavaScriptTranspiler.transpile(model);
       const dependencies = Array.from(JavaScriptTranspiler.getDependencies());
       const root = __dirname.replace(/\/out.*$/, ''); // get the root path (Linux)
@@ -70,13 +77,6 @@ export default function (): void {
       if (options.verbose) {
         // console.log(chalk.blue('Generated JavaScript code:'));
         console.log(code);
-      }
-      if (options.ast) {
-        console.log(chalk.blue('Parsed AST:'));
-        const jsonStr = services.serializer.JsonSerializer.serialize(model);
-        const parsed = JSON.parse(jsonStr);
-        const prettyJson = JSON.stringify(parsed, null, 2);
-        console.log(prettyJson);
       }
       if (options.run || options.string || options.return) {
         const tempFile = path.join(__dirname, 'tempCode.js');
