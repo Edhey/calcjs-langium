@@ -1,4 +1,4 @@
-import { AssignmentExpression, BinaryExpression, BooleanLiteral, CallLiteral, FunctionDeclaration, Identifier, isAssignmentExpression, isBinaryExpression, isBooleanLiteral, isCallLiteral, isFunctionDeclaration, isIdentifier, isNullLiteral, isNumberLiteral, isStringLiteral, NullLiteral, NumberLiteral, StringLiteral, type Expression, type Model } from '../language/generated/ast.js';
+import { AssignmentExpression, BinaryExpression, BooleanLiteral, CallLiteral, ForExpression, FunctionDeclaration, Identifier, isAssignmentExpression, isBinaryExpression, isBooleanLiteral, isCallLiteral, isForExpression, isFunctionDeclaration, isIdentifier, isNullLiteral, isNumberLiteral, isStringLiteral, NullLiteral, NumberLiteral, StringLiteral, type Expression, type Model } from '../language/generated/ast.js';
 import * as supportLib from './support-lib.js';
 
 export function findDependencies(model: Model): Set<string>[] {
@@ -65,7 +65,7 @@ export class JavaScriptTranspiler {
     }
     jsCode += model.expressions
       .map(expr => this.transpileExpression(expr))
-      .join(';\n');
+      .join(';\n') + ';';
     return jsCode;
   }
 
@@ -93,6 +93,8 @@ export class JavaScriptTranspiler {
       return this.transpileFunctionDeclaration(expr);
     } else if (isAssignmentExpression(expr)) {
       return this.transpileAssignmentExpression(expr);
+    } else if (isForExpression(expr)) {
+      return this.transpileForExpression(expr);
     }
     return '';
   }
@@ -122,9 +124,11 @@ export class JavaScriptTranspiler {
     if (!isIdentifier(expr.callee)) {
       throw new Error('It is not possible to call a non-identified function');
     }
-    const functionName = expr.callee.name;
+    let functionName = expr.callee.name;
     if (this.dependenciesNames.includes(functionName)) {
       this.dependencies.add(functionName);
+    } else {
+      functionName = '$' + functionName;
     }
     const args = expr.arguments.map((arg: Expression) => this.transpileExpression(arg)).join(', ');
     return `${functionName}(${args})`;
@@ -137,7 +141,7 @@ export class JavaScriptTranspiler {
    */
   private static transpileNumberLiteral(expr: NumberLiteral): string {
     this.dependencies.add('Complex');
-    return `Complex(${expr.value})`;
+    return `Complex('${expr.value}')`;
   }
 
   private static transpileIdentifier(expr: Identifier): string {
@@ -168,6 +172,14 @@ export class JavaScriptTranspiler {
 
   private static transpileAssignmentExpression(expr: AssignmentExpression): string {
     return `${this.transpileExpression(expr.left)} = ${this.transpileExpression(expr.right)}`;
+  }
+
+  private static transpileForExpression(expr: ForExpression): string {
+    const init = this.transpileExpression(expr.init);
+    const condition = this.transpileExpression(expr.condition);
+    const update = this.transpileExpression(expr.update);
+    const body = expr.body.map((stmt: Expression) => this.transpileExpression(stmt)).join(';\n');
+    return `for (${init}; ${condition}; ${update}) {\n${body}\n}`;
   }
 
   /**

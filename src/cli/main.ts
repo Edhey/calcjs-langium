@@ -45,8 +45,6 @@ export default function (): void {
     .option('-s, --scope', 'Show variable scope')
     .option('-D, --definitions', 'Show variable definitions')
     .option('-r, --run', 'Execute the resulting JS code')
-    .option('-re, --return', 'Print return value of last expression')
-    .option('-S, --string', 'Print return value as string')
     .description("Transpile an arithmetic expression into a JavaScript program")
     .action(async (fileName: string, options: GenerateOptions) => {
       const services = createCalcScriptServices(NodeFileSystem).CalcScript;
@@ -80,9 +78,8 @@ export default function (): void {
       }
       if (options.run || options.string || options.return) {
         const tempFile = path.join(__dirname, 'tempCode.js');
-        fs.writeFileSync(tempFile, code);
-
-        exec(`node "${tempFile}"`, (error, stdout, stderr) => {
+        await fs.writeFileSync(tempFile, code);
+        await exec(`node ${tempFile}`, (error, stdout, stderr) => {
           if (error) {
             console.error(chalk.red(`Error: ${error.message}`));
             return;
@@ -91,16 +88,7 @@ export default function (): void {
             console.error(chalk.red(`stderr: ${stderr}`));
             return;
           }
-          if (options.string) {
-            try {
-              console.log(stdout.toString().trim());
-            } catch (error) {
-              console.error(chalk.red('Error converting output to string'));
-            }
-          } else if (options.return) {
-            console.log(chalk.blue('Return value:'));
-            console.log(stdout.trim());
-          }
+          console.log(stdout.trim());
         });
       }
     });

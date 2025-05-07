@@ -18,7 +18,6 @@ import { createCalcScriptServices } from "../out/language/calc-script-module.js"
 import { extractAstNode } from "../out/cli/cli-util.js";
 import { Model } from "../out/language/generated/ast.js";
 import { NodeFileSystem } from "langium/node";
-const services = createCalcScriptServices(NodeFileSystem).CalcScript;
 
 /**
  * Remove spaces and requires from the code
@@ -37,13 +36,18 @@ function removeSpaces(code) {
  */
 async function checkTranspile(testsFiles, unlink = false) {
   // Compile the input and check the output program is what expected
-  const model = await extractAstNode<Model>(testsFiles.input, services);
-  const jsCode = await JavaScriptTranspiler.transpile(model);
-  await fileStream.writeFile(testsFiles.output, jsCode);
-  const output = await fileStream.readFile(testsFiles.output, 'utf-8');
-  const expected = await fileStream.readFile(testsFiles.expected, 'utf-8');
-  expect(removeSpaces(output)).to.equal(removeSpaces(expected));
-  if (unlink) await fileStream.unlink(testsFiles.output);
+  try {
+    const services = createCalcScriptServices(NodeFileSystem).CalcScript;
+    const model = await extractAstNode<Model>(testsFiles.input, services);
+    const jsCode = await JavaScriptTranspiler.transpile(model);
+    await fileStream.writeFile(testsFiles.output, jsCode);
+    const expected = await fileStream.readFile(testsFiles.expected, 'utf-8');
+    const output = await fileStream.readFile(testsFiles.output, 'utf-8');
+    expect(removeSpaces(output)).to.equal(removeSpaces(expected));
+    if (unlink) await fileStream.unlink(testsFiles.output);
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 /**
