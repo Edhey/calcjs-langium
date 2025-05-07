@@ -24,7 +24,7 @@ try {
     grammar.patterns.unshift(printRule);
 
     fs.writeFileSync(tmLanguagePath, JSON.stringify(grammar, null, 4), 'utf8');
-    console.log("Postproceso aplicado exitosamente.");
+    console.log("Syntax post-processing applyed suscefully.");
 } catch (error) {
     console.error("Error al modificar el archivo TextMate:", error);
 }

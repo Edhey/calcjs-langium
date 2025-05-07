@@ -23,7 +23,7 @@
     "src/**/*.ts",
     "src/**/*.js",
     "test/**/*.ts"
-  ],
+, "test/test.test.js", "test/test-utils.js"  ],
   "exclude": [
     "out",
     "node_modules"

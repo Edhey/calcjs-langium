@@ -173,7 +173,7 @@ Identifier infers Identifier:
   name=ID;
 
 FunctionDeclaration infers FunctionDeclaration:
-  'fun' '(' (arguments+=ID (';' arguments+=ID)*)* ')' Body;
+  'fun' ('(' (parameters+=Identifier (';' parameters+=Identifier)*)* ')')+ Body;
 
 ArrayLiteral infers ArrayLiteral:
   '[' (elements+=Expression ( ';' elements+=Expression )*)* ']';

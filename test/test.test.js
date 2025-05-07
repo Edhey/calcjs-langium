@@ -72,6 +72,7 @@ const HardTest = TestHard.map(testDescription => ({
 const ErrorSyntaxTest = TestErrorSyntax.map(testDescription => ({
   input: __dirname + '/errors/syntax-error/' + testDescription.input,
   output: __dirname + '/errors/output/' + testDescription.output,
+  expected: '', // Default value for the required 'expected' property
   correctErr: __dirname + '/errors/correct-err/' + testDescription.correctErr,
 }));
 
@@ -81,6 +82,7 @@ const ErrorSyntaxTest = TestErrorSyntax.map(testDescription => ({
 const BasicErrorTest = TestBasicErrorSyntax.map(testDescription => ({
   input: __dirname + '/basic-errors/basic-syntax-error/' + testDescription.input,
   output: __dirname + '/basic-errors/output/' + testDescription.output,
+  expected: '', // Default value for the required 'expected' property
   correctErr: __dirname + '/basic-errors/correct-err/' + testDescription.correctErr,
 }));
 

@@ -1,7 +1,11 @@
 import type { ValidationAcceptor, ValidationChecks } from 'langium';
-import type { BinaryExpression, CalcScriptAstType, CallLiteral, Identifier } from './generated/ast.js';
+import { AssignmentExpression, Identifier, isArrayLiteral, isIdentifier, isObjectLiteral, type BinaryExpression, type CalcScriptAstType, type CallLiteral, type FunctionDeclaration } from './generated/ast.js';
 import type { CalcScriptServices } from './calc-script-module.js';
 import { JavaScriptTranspiler } from '../code-generation/transpile.js';
+// import * as supportLib from '../code-generation/support-lib.js';
+// const dependenciesNames = Object.keys(supportLib);
+const reservedWords = ['class'];
+const assignableTypes = [isIdentifier, isArrayLiteral, isObjectLiteral];
 
 /**
  * Register custom validation checks.
@@ -38,5 +42,25 @@ export class CalcScriptValidator {
 
   checkCallLiteral(callLiCallLiteral: CallLiteral, accept: ValidationAcceptor): void {
 
+  }
+
+  checkFunctionDeclaration(funcDecl: FunctionDeclaration, accept: ValidationAcceptor): void {
+    for (const param of funcDecl.parameters) {
+      if (!isIdentifier(param)) {
+        accept('error', 'Function parameters must be identifiers.', { node: param, property: 'name' });
+      }
+      if (reservedWords.includes(param.name)) {
+        accept('error', `Function parameter '${param.name}' is a reserved word.`, { node: param, property: 'name' });
+      }
+    }
+  }
+
+  checkAssignment(assignment: AssignmentExpression, accept: ValidationAcceptor): void {
+    if (assignment.operator !== '=') {
+      accept('error', `Assignment operator '${assignment.operator}' is not supported.`, { node: assignment, property: 'operator' });
+    }
+    if (!assignableTypes.some(type => type(assignment.left))) {
+      accept('error', `Left side of assignment must be an identifier, array or object literal.`, { node: assignment, property: 'left' });
+    }
   }
 }

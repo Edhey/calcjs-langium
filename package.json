@@ -21,7 +21,7 @@
     "url": "git+https://github.com/ULL-ESIT-PL-2425/arith2js-himar_edhey-hernandez-alu0101552392.git"
   },
   "scripts": {
-    "build": "tsc -b tsconfig.src.json && node esbuild.mjs",
+    "build": "tsc -b tsconfig.src.json && node esbuild.mjs && npm run syntax",
     "watch": "concurrently -n tsc,esbuild -c blue,yellow \"tsc -b tsconfig.src.json --watch\" \"node esbuild.mjs --watch\"",
     "lint": "eslint src --ext ts",
     "langium:generate": "langium generate",
@@ -47,7 +47,8 @@
     "clean:docs": "rm -fR docs/coverage && rm -fR docs/jsdoc",
     "dev": "http-server -c-1 -o docs",
     "trans": "./bin/calc2js.mjs",
-    "exec": "./bin/calc2js.mjs --run"
+    "exec": "./bin/calc2js.mjs --run",
+    "syntax": "node ./src/language/syntaxes-post-processing.js"
   },
   "keywords": [
     "ull",
@@ -72,7 +73,9 @@
     "vscode-languageserver": "~9.0.1"
   },
   "devDependencies": {
+    "@types/jest": "^29.5.14",
     "@types/lodash": "^4.17.16",
+    "@types/mocha": "^10.0.10",
     "@types/node": "^18.0.0",
     "@types/vscode": "~1.67.0",
     "@typescript-eslint/eslint-plugin": "~7.3.1",

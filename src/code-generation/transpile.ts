@@ -1,9 +1,10 @@
-import { BinaryExpression, CallLiteral, Identifier, isBinaryExpression, isCallLiteral, isIdentifier, isNumberLiteral, NumberLiteral, type Expression, type Model } from '../language/generated/ast.js';
+import { AssignmentExpression, BinaryExpression, BooleanLiteral, CallLiteral, FunctionDeclaration, Identifier, isAssignmentExpression, isBinaryExpression, isBooleanLiteral, isCallLiteral, isFunctionDeclaration, isIdentifier, isNullLiteral, isNumberLiteral, isStringLiteral, NullLiteral, NumberLiteral, StringLiteral, type Expression, type Model } from '../language/generated/ast.js';
 import * as supportLib from './support-lib.js';
 
-export function findDependencies(model: Model): Set<string> {
+export function findDependencies(model: Model): Set<string>[] {
   const dependencies: Set<string> = new Set();
   const dependenciesNames = Object.keys(supportLib);
+  const declaredVariables: Set<string> = new Set();
 
   function exploreExpression(expr: Expression): void {
     if (isCallLiteral(expr)) {
@@ -21,12 +22,20 @@ export function findDependencies(model: Model): Set<string> {
       exploreExpression(expr.right);
     } else if (isNumberLiteral(expr)) {
       dependencies.add('Complex');
+    } else if (isIdentifier(expr)) {
+      if (dependenciesNames.includes(expr.name)) {
+        dependencies.add(expr.name);
+      }
+      if (!declaredVariables.has(expr.name)) {
+        declaredVariables.add(expr.name);
+      }
     }
   }
 
   model.expressions.forEach(expr => exploreExpression(expr));
-  return dependencies;
+  return [dependencies, declaredVariables];
 }
+
 
 /**
  * Class to transpile CalcScript expressions into JavaScript code.
@@ -42,10 +51,22 @@ export class JavaScriptTranspiler {
    * @returns The transpiled JavaScript code
    */
   public static transpile(model: Model): string {
+    const allDependencies = findDependencies(model);
+    this.dependencies = allDependencies[0];
+    const declaredVariablesSet = allDependencies[1];
     this.dependencies.clear();
-    return model.expressions
+    let jsCode = '';
+    if (declaredVariablesSet.size > 0) {
+      jsCode = 'let ';
+      jsCode += Array.from(declaredVariablesSet)
+        .map(variable => '$' + variable)
+        .join(', ');
+      jsCode += ';\n';
+    }
+    jsCode += model.expressions
       .map(expr => this.transpileExpression(expr))
       .join(';\n');
+    return jsCode;
   }
 
   /**
@@ -59,9 +80,19 @@ export class JavaScriptTranspiler {
     } else if (isBinaryExpression(expr)) {
       return this.transpileBinaryExpression(expr);
     } else if (isCallLiteral(expr)) {
-      return this.transpileFunctionCallLiteral(expr);
+      return this.transpileCallLiteral(expr);
     } else if (isIdentifier(expr)) {
       return this.transpileIdentifier(expr);
+    } else if (isStringLiteral(expr)) {
+      return this.transpileStringLiteral(expr);
+    } else if (isBooleanLiteral(expr)) {
+      return this.transpileBooleanLiteral(expr);
+    } else if (isNullLiteral(expr)) {
+      return this.transpileNullLiteral(expr);
+    } else if (isFunctionDeclaration(expr)) {
+      return this.transpileFunctionDeclaration(expr);
+    } else if (isAssignmentExpression(expr)) {
+      return this.transpileAssignmentExpression(expr);
     }
     return '';
   }
@@ -87,7 +118,7 @@ export class JavaScriptTranspiler {
    * @param expr The CallLiteral to transpile
    * @returns The transpiled JavaScript code
    */
-  private static transpileFunctionCallLiteral(expr: CallLiteral): string {
+  private static transpileCallLiteral(expr: CallLiteral): string {
     if (!isIdentifier(expr.callee)) {
       throw new Error('It is not possible to call a non-identified function');
     }
@@ -113,7 +144,30 @@ export class JavaScriptTranspiler {
     if (this.dependenciesNames.includes(expr.name)) {
       this.dependencies.add(expr.name);
     }
-    return expr.name;
+    return '$' + expr.name;
+  }
+
+  private static transpileStringLiteral(expr: StringLiteral): string {
+    return `'${expr.value}'`;
+  }
+
+  private static transpileBooleanLiteral(expr: BooleanLiteral): string {
+    return Boolean(expr.value).toString();
+  }
+
+  private static transpileNullLiteral(expr: NullLiteral): string {
+    return 'null';
+  }
+
+  private static transpileFunctionDeclaration(expr: FunctionDeclaration): string {
+    const nameInvocation = 'functionObject';
+    const args = expr.parameters.map((param) => this.transpileIdentifier(param)).join(', ');
+    const body = expr.body.map((stmt: Expression) => this.transpileExpression(stmt)).join(';\n');
+    return `function ${nameInvocation}(${args}) {\n${body}\n}`;
+  }
+
+  private static transpileAssignmentExpression(expr: AssignmentExpression): string {
+    return `${this.transpileExpression(expr.left)} = ${this.transpileExpression(expr.right)}`;
   }
 
   /**
