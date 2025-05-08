@@ -67,13 +67,9 @@ ComparativeExpression infers Expression:
   AbsoluteValueExpression ({infer BinaryExpression.left=current} operator=('<') right=AbsoluteValueExpression)*
 ;
 
-/**
- * Operador no asociativo: '|' x '|'
- * Se aplica a la expresión de valor absoluto.
- */
 AbsoluteValueExpression infers Expression:
-  '|' AbsoluteValueExpression '|' {infer UnaryExpression.left=current}
-  | MaxExpression
+  {infer AbsoluteValueExpression} '|' operand=MaxExpression '|'
+    | MaxExpression
 ;
 
 /**
@@ -109,7 +105,7 @@ MultiplicativeExpression infers Expression:
  * Se define en la regla UnarySubExpression, junto con otros posibles operadores unarios.
  */
 UnarySubExpression infers Expression:
-  '-' UnarySubExpression {infer UnaryExpression.operand=current}  // UMINUS
+  {infer UnarySubExpression} operator='-' operand=ExponentiationExpression
     | ExponentiationExpression
 ;
 
@@ -118,24 +114,20 @@ UnarySubExpression infers Expression:
  * Se implementa mediante recursión a la derecha.
  */
 ExponentiationExpression infers Expression:
-  ExponentialExpression ({infer BinaryExpression.left=current} operator='**' right=ExponentiationExpression)*
+  FactorialExpression ({infer BinaryExpression.left=current} operator='**' right=ExponentiationExpression)*
 ;
 
 /**
  * Operador postfix: '!'
- * Se aplica a la expresión exponencial.
+ * Se aplica a la expresión factorial.
  */
-ExponentialExpression infers Expression:
-  NotExpression ({infer UnaryExpression.operand+=current} operator='!' )*
+FactorialExpression infers Expression:
+  NotExpression ({infer UnaryPostfixExpression.operand=current} operator='!')*
 ;
 
-/**
- * Operador unario: '!'
- * Se aplica el operador NOT logico.
- */
 NotExpression infers Expression:
-  '!' NotExpression
-  | PrimaryExpression ({infer UnaryExpression.operand+=current} operator='!' )*
+  {infer NotExpression} operator='!' operand=PrimaryExpression
+  | PrimaryExpression
 ;
 
 /**
@@ -179,9 +171,9 @@ ArrayLiteral infers ArrayLiteral:
   '[' (elements+=Expression ( ';' elements+=Expression )*)* ']';
 
 ObjectLiteral infers ObjectLiteral:
-  '{' (props+=KeyValue ( ';' props+=KeyValue )*)* '}';
+  '{' (properties+=KeyValuePair ( ';' properties+=KeyValuePair )*)* '}';
 
-KeyValue:
+KeyValuePair:
   key=STRING ':' value=Expression;
 
 CallLiteral infers CallLiteral:
@@ -190,9 +182,9 @@ CallLiteral infers CallLiteral:
 terminal TRUE: /true/;
 terminal FALSE: /false/;
 terminal NULL: /null/;
+terminal NUMBER: /\d+(\.\d+)?([eE][-+]?\d+)?i?|(i(?![$\w]))/; // Important to be before STRING and ID for i
 terminal STRING: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/;
 terminal ID: /[a-zA-Z_][$\w]*/;
-terminal NUMBER: /\d+(\.\d+)?([eE][-+]?\d+)?i?|i/;
 
 hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
 hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;

@@ -164,5 +164,44 @@ To sum up, in this project I will demonstrate my ability to design a domain-spec
 ---
 
 
-# Development
+# Langium Calculator Experience
 ## Environment Setup
+First of all I need to install the Langium CLI. I set up a new Langium project using the following command:
+```bash
+npm i -g yo generator-langium
+yo --version
+yo langium
+```
+Then I configured the project options for my calculator language (CalcScript). At this point, I needed to finally set up the project, Langium uses typescript, so the old calculator language code was not compatible at all with the new project. I needed to start from scratch transpiling some files into ts. That was not the big deal. Also Langium uses vitest for testing, In my opinion vitest is not bad at all, very similar to jest, but trying to run the jest tests in the new environment was a mess.
+
+## Grammar Definition
+Before I could start to define the grammar I need to read the Langium documentation. Langium uses a LL(k) parser, so the grammar was not similar at all to the jison grammar we used in the old calculator language (god save the jison grammar). This was a bit tricky, but I managed to define the grammar using the recomended level hierarchy appling the inferences in the rule. This way an after too many tries and hours I got the grammar working as well as I could avoiding the left recursion. So my final grammar is all Expression as the old one. the expressions are separated by a comma (,) and there are two main types of expressions:
+  - **AssignmentExpression**: This is the expression that assigns a value to a variable.
+  - **ControlExpression**: This is the expression that controls the flow of the program (like if, while, etc.).
+
+```langium
+Expression infers Expression:
+  AssignmentExpression
+  | ControlExpression
+;
+```
+
+The assignment expression delegates to the next level rule and this one to the next one and so on. The root of the grammar are the PrimaryExpressions
+
+```langium	 
+PrimaryExpression infers Expression:
+  '(' Expression ')' 
+  | NumberLiteral 
+  | StringLiteral 
+  | BooleanLiteral 
+  | NullLiteral 
+  | Identifier 
+  | ArrayLiteral 
+  | ObjectLiteral 
+  | FunctionDeclaration
+  | CallLiteral
+;
+```
+
+Defining the Call as an Expression was the most difficult part. The recursion was giving me a lot of problems. I needed to define the CallExpression as an expression and then delegate to the next level and the CallLiteral as an PrimaryExpression. The grammar is a bit long, but I will not go into more details about it. The important part is that I managed to define the grammar and the parser was able to parse the code correctly.
+

@@ -64,6 +64,7 @@ async function checkRunConsoleLog(testsFiles, verbose = false) {
 
   // Transpile the input and receive the output in the result variable
   try {
+    const services = createCalcScriptServices(NodeFileSystem).CalcScript;
     const model = await extractAstNode<Model>(testsFiles.input, services);
     const transpileResult = await JavaScriptTranspiler.transpile(model);
     const evaluatedCode = await eval(transpileResult);
@@ -90,6 +91,7 @@ async function checkRunConsoleError(testsFiles) {
   const correctErr = await fileStream.readFile(testsFiles.correctErr, 'utf-8');
 
   try {
+    const services = createCalcScriptServices(NodeFileSystem).CalcScript;
     const model = await extractAstNode<Model>(testsFiles.input, services);
     const output = await JavaScriptTranspiler.transpile(model);
     expect(removeSpaces(output)).to.equal(removeSpaces(correctErr));
