@@ -12,16 +12,16 @@ try {
         match: "\\b(?:true|false)\\b"
     };
 
-    const printRule = {
-        name: "constant.function.print.calcscript",
-        match: "\\b(?:print|write)\\b"
+    const keywordRule = {
+        name: "keyword.calcscript",
+        match: "\\b(?:class|gamma|Complex|objectFunctionObject|functionObject|arrayObject|min|max|print|write)\\b"
     };
 
     if (!grammar.patterns) {
         grammar.patterns = [];
     }
     grammar.patterns.unshift(booleanRule);
-    grammar.patterns.unshift(printRule);
+    grammar.patterns.unshift(keywordRule);
 
     fs.writeFileSync(tmLanguagePath, JSON.stringify(grammar, null, 4), 'utf8');
     console.log("Syntax post-processing applyed suscefully.");
