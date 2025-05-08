@@ -69,4 +69,7 @@ I used the vitest framework for testing the support library method and it was no
 The cli was not difficult to implement. Is very similar to the old one. In this case you need to use ts and use the services and parser from Langium. This generates a problem with the importation in the code generation. now require is not able to use, as well as eval. It couldn't be used in the same way as before. So now I used an external temporary file to store the code and then use the exec command to run the code in node. The importations are checked by the parser and the code generated only imports the libraries that are used in the code as in the original calculator.
 
 ## Packaging
-Finally, the packaging 
+Finally, the packaging was practically automatic. Using vsce to package the project and the extension generates the .vsix file that can be used to install the extension in Visual Studio Code. 
+
+## Conclusion
+In conclusion, the project was a bit difficult to implement. I needed to learn a lot about Langium and how to use it. The documentation is not very extense, but I managed to find some examples that helped me a lot. Langium is not bad but It is not the think I expected.
