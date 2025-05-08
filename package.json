@@ -1,5 +1,5 @@
 {
-  "name": "@ull-esit-pl-2425/tfa-himar_edhey-hernandez-alu0101552392",
+  "name": "calc-script",
   "description": "* See section [TFA](https://apuntes-pl.vercel.app/labs/tfa#task-presentation-of-goals) Final Project - VsCode extension for a transpiler of a simple calculator language to JavaScript.\n* The project is based on the [Langium](https://langium.org/) framework.",
   "version": "0.0.1",
   "files": [
@@ -8,7 +8,7 @@
     "src"
   ],
   "type": "module",
-  "main": "./out/extension/main.cjs",
+  "main": "./out/extension/main",
   "publishConfig": {
     "access": "public",
     "registry": "https://npm.pkg.github.com/"
@@ -21,6 +21,7 @@
     "url": "git+https://github.com/ULL-ESIT-PL-2425/arith2js-himar_edhey-hernandez-alu0101552392.git"
   },
   "scripts": {
+    "esbuild-base": "esbuild ./src/extension/main.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
     "build": "tsc -b tsconfig.src.json && node esbuild.mjs && npm run syntax",
     "watch": "concurrently -n tsc,esbuild -c blue,yellow \"tsc -b tsconfig.src.json --watch\" \"node esbuild.mjs --watch\"",
     "lint": "eslint src --ext ts",
