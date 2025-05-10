@@ -1,13 +1,43 @@
-const { functionObject,Complex,print } = require("/home/usuario/practicas/tfa-himar_edhey-hernandez-alu0101552392/src/code-generation/support-lib.js");
-
-/* end of preamble of generated code */
-
-let $f, $g;
-
-((((($f = functionObject(function($x) {
-  return $x.add(Complex('1'));
-}), $f.assign([Complex('0')], Complex('8'))), print($f(Complex('0')))), $g = functionObject(function($x) {
-  return functionObject(function($y) {
-    return $x.add($y);
-  });
-})), $g.assign([Complex('1'), Complex('0')], Complex('9'))), print($g(Complex('1'))(Complex('0')))), print($g(Complex('1'))(Complex('2'))); 
+8
+(...args) => {
+      let auxFunction = currentFunction;
+      if (cacheArgument == null) {
+        throw new Error("Invalid null argument on the left side of the assignment");
+      }
+      let equal = false;
+      try {
+        args[0]?.equals(cacheArgument);
+        equal = args[0].equals(cacheArgument);
+      } catch (e) {
+        equal = args[0] === cacheArgument;
+      }
+      if (equal) {
+        if (cacheArgs.length === index + 1) {
+          return cacheValue;
+        }
+        auxFunction = currentFunction(...args);
+        return this._assing(auxFunction, cacheArgs, cacheValue, index + 1);
+      }
+      return currentFunction(...args);
+    }
+(...args) => {
+      let auxFunction = currentFunction;
+      if (cacheArgument == null) {
+        throw new Error("Invalid null argument on the left side of the assignment");
+      }
+      let equal = false;
+      try {
+        args[0]?.equals(cacheArgument);
+        equal = args[0].equals(cacheArgument);
+      } catch (e) {
+        equal = args[0] === cacheArgument;
+      }
+      if (equal) {
+        if (cacheArgs.length === index + 1) {
+          return cacheValue;
+        }
+        auxFunction = currentFunction(...args);
+        return this._assing(auxFunction, cacheArgs, cacheValue, index + 1);
+      }
+      return currentFunction(...args);
+    }

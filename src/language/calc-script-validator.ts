@@ -1,11 +1,14 @@
 import type { ValidationAcceptor, ValidationChecks } from 'langium';
-import { AssignmentExpression, Identifier, isArrayLiteral, isIdentifier, isObjectLiteral, type BinaryExpression, type CalcScriptAstType, type CallLiteral, type FunctionDeclaration } from './generated/ast.js';
+import { AssignmentExpression, Expression, Identifier, isArrayLiteral, isIdentifier, isObjectLiteral, type BinaryExpression, type CalcScriptAstType, type CallLiteral, type FunctionDeclaration } from './generated/ast.js';
 import type { CalcScriptServices } from './calc-script-module.js';
 import { JavaScriptTranspiler } from '../code-generation/transpile.js';
 // import * as supportLib from '../code-generation/support-lib.js';
 // const dependenciesNames = Object.keys(supportLib);
 const reservedWords = ['class'];
 const assignableTypes = [isIdentifier, isArrayLiteral, isObjectLiteral];
+import { operationHandlers } from '../mokey-patch/monkey-patch-handlers.js';
+import '../mokey-patch/monkey-patch.js';
+import lodash from 'lodash';
 
 /**
  * Register custom validation checks.
@@ -15,7 +18,8 @@ export function registerValidationChecks(services: CalcScriptServices) {
   const validator = services.validation.CalcScriptValidator;
   const checks: ValidationChecks<CalcScriptAstType> = {
     Identifier: validator.checkIdentifierNotReserved,
-    BinaryExpression: validator.checkDivByZero
+    BinaryExpression: [validator.checkDivByZero, validator.checkBinaryExpressionTypes],
+    CallLiteral: validator.checkCallLiteral,
   };
   registry.register(checks, validator);
 }
@@ -42,6 +46,30 @@ export class CalcScriptValidator {
 
   checkCallLiteral(callLiCallLiteral: CallLiteral, accept: ValidationAcceptor): void {
 
+  }
+
+  checkBinaryExpressionTypes(binExpr: BinaryExpression, accept: ValidationAcceptor): void {
+    const leftType = this.inferType(binExpr.left);
+    const rightType = this.inferType(binExpr.right);
+    const operator = JavaScriptTranspiler.transpileOperator(binExpr.operator);
+    try {
+      const operation = lodash.get(operationHandlers, `${leftType}.${operator}.${rightType}`);
+      if (!operation) {
+        throw new Error();
+      }
+    } catch {
+      accept('error', `Operator '${binExpr.operator}' is not supported for types '${leftType}' and '${rightType}'.`, {
+        node: binExpr,
+        property: 'operator'
+      });
+    }
+  }
+
+  inferType(expr: Expression): string {
+    if (expr.$type === 'NumberLiteral') return 'number';
+    if (expr.$type === 'StringLiteral') return 'string';
+    if (expr.$type === 'BooleanLiteral') return 'boolean';
+    return 'unknown';
   }
 
   checkFunctionDeclaration(funcDecl: FunctionDeclaration, accept: ValidationAcceptor): void {

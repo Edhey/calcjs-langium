@@ -1,11 +1,15 @@
-const { arrayObject,Complex,print } = require("/home/usuario/practicas/tfa-himar_edhey-hernandez-alu0101552392/src/code-generation/support-lib.js");
-
-/* end of preamble of generated code */
-
-let $a, $b;
-
-((($a = arrayObject(
-  Complex('4').add(Complex('2')),
-  Complex('5').add(Complex('3i')),
-  Complex('9').sub(Complex('i'))
-), print('a = ', $a)), $b = $a('concat')(arrayObject(Complex('12'), Complex('13')))), print('b is of length: ', $b('length'))), print('b = ', $b); 
+a =  [ 6, 5 + 3i, 9 - i ]
+b is of length:  [ 6, 5 + 3i, 9 - i, length ]
+b =  (...args) => {
+    const concatArray = this.indexArray.map(index => this._call(index));
+    for (const arg of args) {
+      if (arg instanceof ArrayFunctionObject) {
+        for (const index of arg.indexArray) {
+          concatArray.push(arg._call(index));
+        }
+      } else {
+        concatArray.push(arg);
+      }
+    }
+    return new ArrayFunctionObject(...concatArray);
+  }

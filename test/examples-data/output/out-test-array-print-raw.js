@@ -1,5 +1,1 @@
-const { print,arrayObject,Complex } = require("/home/usuario/practicas/tfa-himar_edhey-hernandez-alu0101552392/src/code-generation/support-lib.js");
-
-/* end of preamble of generated code */
-
-print(arrayObject(Complex('2'), Complex('3'), Complex('4'))); 
+[ 2, 3, 4 ]

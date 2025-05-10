@@ -1,6 +1,3 @@
-const { arrayObject,Complex,print } = require("/home/usuario/practicas/tfa-himar_edhey-hernandez-alu0101552392/src/code-generation/support-lib.js");
-
-/* end of preamble of generated code */
-
-let $a, $b, $c;
-(((($a = arrayObject(Complex('2'), Complex('8'), Complex('10')), $b = arrayObject(Complex('4'), Complex('4'), Complex('5'))), $c = arrayObject(Complex('10'), Complex('5'), Complex('4'), Complex('2'))), print($a.div($b))), print($b.div($a))), print($a.div($c)); 
+[ 0.5, 2, 2 ]
+[ 2, 0.5, 0.5 ]
+[ 0.2, 1.6, 2.5, 0 ]

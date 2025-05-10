@@ -38,7 +38,6 @@ export function findDependencies(model: Model): Set<string>[] {
       exploreExpression(expr.right);
     }
   }
-
   model.expressions.forEach(expr => exploreExpression(expr));
   return [dependencies, declaredVariables];
 }
@@ -280,7 +279,7 @@ export class JavaScriptTranspiler {
     return `do {\n${body}\n} while (${condition});`;
   }
 
-  private static transpileOperator(operator: string): string {
+  public static transpileOperator(operator: string): string {
     switch (operator) {
       case '+':
         return '.add(';
@@ -290,6 +289,8 @@ export class JavaScriptTranspiler {
         return '.mul(';
       case '/':
         return '.div(';
+      case '**':
+        return '.pow(';
       default:
         return operator;
     }

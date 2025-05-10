@@ -2,7 +2,9 @@
   "compilerOptions": {
     "target": "ES2017",
     "module": "Node16",
-    "lib": ["ESNext"],
+    "lib": [
+      "ESNext"
+    ],
     "sourceMap": true,
     "outDir": "out",
     "strict": true,
@@ -13,17 +15,19 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "allowJs": true, 
+    "allowJs": true,
     "checkJs": false,
     "resolveJsonModule": true,
-    "noEmit": true, 
-    "rootDir": "."                
+    "noEmit": true,
+    "rootDir": "."
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.js",
-    "test/**/*.ts"
-, "test/test.test.js", "test/test-utils.js"  ],
+    "test/**/*.ts",
+    "test/test.test.js",
+    "test/test-utils.ts"
+  ],
   "exclude": [
     "out",
     "node_modules"

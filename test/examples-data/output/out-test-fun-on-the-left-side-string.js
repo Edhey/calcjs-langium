@@ -1,11 +1,63 @@
-const { functionObject,Complex,write } = require("/home/usuario/practicas/tfa-himar_edhey-hernandez-alu0101552392/src/code-generation/support-lib.js");
-
-/* end of preamble of generated code */
-
-let $f;
-
-(((($f = functionObject(function($x) {
-  return functionObject(function($y) {
-    return $x.add($y);
-  });
-}), $f.assign(['cadena', Complex('3')], Complex('8'))), $f.assign([Complex('2'), 'cadena'], Complex('9'))), write($f('cadena')(Complex('3')))), write($f('cadena')(Complex('4')))), write($f(Complex('2'))('cadena')); 
+(...args) => {
+      let auxFunction = currentFunction;
+      if (cacheArgument == null) {
+        throw new Error("Invalid null argument on the left side of the assignment");
+      }
+      let equal = false;
+      try {
+        args[0]?.equals(cacheArgument);
+        equal = args[0].equals(cacheArgument);
+      } catch (e) {
+        equal = args[0] === cacheArgument;
+      }
+      if (equal) {
+        if (cacheArgs.length === index + 1) {
+          return cacheValue;
+        }
+        auxFunction = currentFunction(...args);
+        return this._assing(auxFunction, cacheArgs, cacheValue, index + 1);
+      }
+      return currentFunction(...args);
+    }
+(...args) => {
+      let auxFunction = currentFunction;
+      if (cacheArgument == null) {
+        throw new Error("Invalid null argument on the left side of the assignment");
+      }
+      let equal = false;
+      try {
+        args[0]?.equals(cacheArgument);
+        equal = args[0].equals(cacheArgument);
+      } catch (e) {
+        equal = args[0] === cacheArgument;
+      }
+      if (equal) {
+        if (cacheArgs.length === index + 1) {
+          return cacheValue;
+        }
+        auxFunction = currentFunction(...args);
+        return this._assing(auxFunction, cacheArgs, cacheValue, index + 1);
+      }
+      return currentFunction(...args);
+    }
+(...args) => {
+      let auxFunction = currentFunction;
+      if (cacheArgument == null) {
+        throw new Error("Invalid null argument on the left side of the assignment");
+      }
+      let equal = false;
+      try {
+        args[0]?.equals(cacheArgument);
+        equal = args[0].equals(cacheArgument);
+      } catch (e) {
+        equal = args[0] === cacheArgument;
+      }
+      if (equal) {
+        if (cacheArgs.length === index + 1) {
+          return cacheValue;
+        }
+        auxFunction = currentFunction(...args);
+        return this._assing(auxFunction, cacheArgs, cacheValue, index + 1);
+      }
+      return currentFunction(...args);
+    }

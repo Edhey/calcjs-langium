@@ -1,5 +1,6 @@
 {
   "name": "calc-script",
+  "publisher": "Himar Edhey Hernández Alonso",
   "displayName": "CalcScript",
   "icon": "images/CalcScript-icon.png",
   "description": "* See section [TFA](https://apuntes-pl.vercel.app/labs/tfa#task-presentation-of-goals) Final Project - VsCode extension for a transpiler of a simple calculator language to JavaScript.\n* The project is based on the [Langium](https://langium.org/) framework.",

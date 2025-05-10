@@ -1,8 +1,1 @@
-const { print,objectFunctionObject,Complex } = require("/home/usuario/practicas/tfa-himar_edhey-hernandez-alu0101552392/src/code-generation/support-lib.js");
-
-/* end of preamble of generated code */
-
-print(objectFunctionObject({
-  'x': Complex('4'),
-  'y': Complex('5')
-})); 
+{"x":{"re":4,"im":0},"y":{"re":5,"im":0}}
