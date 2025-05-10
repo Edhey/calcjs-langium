@@ -11,7 +11,7 @@
     "src"
   ],
   "type": "module",
-  "main": "./out/extension/main",
+  "main": "./out/extension/main.cjs",
   "publishConfig": {
     "access": "public",
     "registry": "https://npm.pkg.github.com/"

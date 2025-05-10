@@ -18,7 +18,7 @@ export function registerValidationChecks(services: CalcScriptServices) {
   const validator = services.validation.CalcScriptValidator;
   const checks: ValidationChecks<CalcScriptAstType> = {
     Identifier: validator.checkIdentifierNotReserved,
-    BinaryExpression: [validator.checkDivByZero, validator.checkBinaryExpressionTypes],
+    BinaryExpression: validator.checkDivByZero,
     CallLiteral: validator.checkCallLiteral,
   };
   registry.register(checks, validator);
@@ -39,7 +39,7 @@ export class CalcScriptValidator {
   }
 
   checkDivByZero(binExpr: BinaryExpression, accept: ValidationAcceptor): void {
-    if ((binExpr.operator === '/') && JavaScriptTranspiler.transpileExpression(binExpr.right) === 'Complex(0)') {
+    if ((binExpr.operator === '/') && JavaScriptTranspiler.transpileExpression(binExpr.right) === 'Complex(\'0\')') {
       accept('error', 'You can not divide by 0.', { node: binExpr, property: 'right' });
     }
   }
@@ -53,7 +53,9 @@ export class CalcScriptValidator {
     const rightType = this.inferType(binExpr.right);
     const operator = JavaScriptTranspiler.transpileOperator(binExpr.operator);
     try {
+      // const operation = lodash.get(operationHandlers, `${leftType}.${operator}.${rightType}`);
       const operation = lodash.get(operationHandlers, `${leftType}.${operator}.${rightType}`);
+      console.log('operation', operation);
       if (!operation) {
         throw new Error();
       }
@@ -66,9 +68,11 @@ export class CalcScriptValidator {
   }
 
   inferType(expr: Expression): string {
-    if (expr.$type === 'NumberLiteral') return 'number';
+    if (expr.$type === 'NumberLiteral') return 'complex';
     if (expr.$type === 'StringLiteral') return 'string';
     if (expr.$type === 'BooleanLiteral') return 'boolean';
+    if (expr.$type === 'ArrayLiteral') return 'object';
+    if (expr.$type === 'ObjectLiteral') return 'object';
     return 'unknown';
   }
 

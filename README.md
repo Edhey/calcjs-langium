@@ -30,9 +30,47 @@ There is an Example:
 ![syntax](images/syntax.png)
 
 ## Error Detection
-The error detection is based on the validation system used by Langium. The error detection includes syntax errors, semantic errors and runtime errors. The syntax errors are detected by the parser and the semantic errors are detected by the validator. The runtime errors are detected by the code generator.
-The error detection includes:
-- Syntax errors: These are errors that occur when the code is not valid according to the grammar. For example, if a variable is not defined or if a function is called with the wrong number of arguments.
+The error detection is based on the validation system used by Langium. The error detection includes syntax errors, semantic errors and runtime errors. The syntax errors occur when the code is not valid according to the grammar. For example, if a variable is not defined or if a not possible operation is used. I used the validation system to define the rules for the error detection. 
+Zero Division Example:
+![Zero Division](zero-division.png)
+
+Incorrect Syntax Example:
+![Incorrect Syntax](images/incorrect-syntax.png)
+
+Also I implemented keywords errors for future reserved words as class:
+
+Reserved Keywords Example:
+
+![Class Reserved Word](class-reserved.png)
+
+The idea was to detect the errors in the operations types for validation, as it is done in the monkey patch. For get errors like the next one:
+
+![type error](images/type-error.png)
+
+So checking it the types of the operations are aviable in the operationHandler for the operator should be enoght to know is the operation is valid. For this I need to transpile new the types into the original ones , but for some reason the validation is not working as expected. It recognizes everything as an error. The implementation uses the operationsHandlers to check the types of the operations, as said, but I allways get undefined. Also I don't know how to debug the validation so I have no idea how to fix it. Furthermore, the next implementation should be accepting everything as a valid expression since the operationsHandlers are defining the defult values for all the operations. Anyway, it is not working as expected:
+
+```javascript
+  checkBinaryExpressionTypes(binExpr: BinaryExpression, accept: ValidationAcceptor): void {
+    const leftType = this.inferType(binExpr.left);
+    const rightType = this.inferType(binExpr.right);
+    const operator = JavaScriptTranspiler.transpileOperator(binExpr.operator);
+    try {
+      // const operation = operationHandlers[leftType]?.[operator]?.[rightType]?`);
+      const operation = lodash.get(operationHandlers, `${leftType}.${operator}.${rightType}`);
+      console.log('operation', operation);
+      if (!operation) {
+        throw new Error();
+      }
+    } catch {
+      accept('error', `Operator '${binExpr.operator}' is not supported for types '${leftType}' and '${rightType}'.`, {
+        node: binExpr,
+        property: 'operator'
+      });
+    }
+  }
+```
+Another posibility is to define all the posible types in the grammar and then check it but I think it is not the best way to do it. It is not extensible and is really difficult to maintain. So I will focus on other implementations first.
+
 # Langium Calculator Experience
 ## Environment Setup
 First of all I need to install the Langium CLI. I set up a new Langium project using the following command:
@@ -93,4 +131,4 @@ The cli was not difficult to implement. Is very similar to the old one. In this 
 Finally, the packaging was practically automatic. Using vsce to package the project and the extension generates the .vsix file that can be used to install the extension in Visual Studio Code. 
 
 ## Conclusion
-In conclusion, the project was a bit difficult to implement. I needed to learn a lot about Langium and how to use it. The documentation is not very extense, but I managed to find some examples that helped me a lot. Langium is not bad but It is not the think I expected.
+In conclusion, the project was a bit difficult to implement. I needed to learn a lot about Langium and how to use it. The documentation is not very extense, but I managed to find some examples that helped me a lot. Langium is not bad but It is not the think I expected. After all, I think that the project was a success. I learned a lot about new tools and how to use them and I managed to implement the project good enough to be able to use it.
