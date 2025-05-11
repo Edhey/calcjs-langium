@@ -32,18 +32,23 @@ There is an Example:
 ## Error Detection
 The error detection is based on the validation system used by Langium. The error detection includes syntax errors, semantic errors and runtime errors. The syntax errors occur when the code is not valid according to the grammar. For example, if a variable is not defined or if a not possible operation is used. I used the validation system to define the rules for the error detection. 
 Zero Division Example:
-![Zero Division](zero-division.png)
+![Zero Division](images/zero-division.png)
+![Terminal Zero Division](images/terminal-zero-division.png)
 
 Incorrect Syntax Example:
+
 ![Incorrect Syntax](images/incorrect-syntax.png)
 
 Also I implemented keywords errors for future reserved words as class:
 
 Reserved Keywords Example:
 
-![Class Reserved Word](class-reserved.png)
+![Class Reserved Word](images/class-reserved.png)
 
-The idea was to detect the errors in the operations types for validation, as it is done in the monkey patch. For get errors like the next one:
+Another implementation was to check if the assignments are valid. For example, a number cannot be assigned so a message as the next one should be shown:
+
+![Not Assignable](images/not-assignable.png)
+Other idea was to detect the errors in the operations types for validation, as it is done in the monkey patch. For get errors like the next one:
 
 ![type error](images/type-error.png)
 
@@ -70,6 +75,70 @@ So checking it the types of the operations are aviable in the operationHandler f
   }
 ```
 Another posibility is to define all the posible types in the grammar and then check it but I think it is not the best way to do it. It is not extensible and is really difficult to maintain. So I will focus on other implementations first.
+
+Also I tried to cover the errors in bad variable usage, as using a variable before it is defined. This was difficult to implement since Langium doesn't provide any visitor pattern to traverse the AST. So You need to implement it by yourself. This was the initial aproach, but It didn't work as expected.
+
+```javascript
+/**
+ * Recorre recursivamente el AST aplicando una función "visitor" a cada nodo.
+ * @param node El nodo actual del AST.
+ * @param visitor Función callback que se invoca en cada nodo.
+ */
+function traverseAst(node: any, visitor: (node: any) => void): void {
+  if (!node || typeof node !== 'object') {
+    return;
+  }
+
+  // Llamamos a la función visitor para el nodo actual.
+  visitor(node);
+
+  // Recorremos todas las propiedades del nodo.
+  for (const key of Object.keys(node)) {
+    const value = node[key];
+    if (Array.isArray(value)) {
+      // Si es un array, recorremos cada elemento.
+      for (const element of value) {
+        // Comprobamos que sea un posible nodo del AST (por ejemplo, que tenga $type)
+        if (element && typeof element === 'object' && '$type' in element) {
+          traverseAst(element, visitor);
+        }
+      }
+    } else if (value && typeof value === 'object' && '$type' in value) {
+      // Si es un objeto y tiene $type, se considera nodo y se recorre.
+      traverseAst(value, visitor);
+    }
+  }
+}
+```
+
+In my case I didn't have enough time to do it so I tried a kind of visitor pattern starting from a simple identifier finding. The idea is to traverse the AST and find all the identifiers in the code:
+```javascript
+  findIdentifiers(node: any): Set<string> {
+    const identifiers = new Set<string>();
+    if (node.$type === 'Identifier') {
+      identifiers.add(node.name);
+    } else if (Array.isArray(node)) {
+      for (const item of node) {
+        const childIdentifiers = this.findIdentifiers(item);
+        childIdentifiers.forEach(id => identifiers.add(id));
+      }
+    } else if (node && typeof node === 'object') {
+      for (const key in node) {
+        const childIdentifiers = this.findIdentifiers(node[key]);
+        childIdentifiers.forEach(id => identifiers.add(id));
+      }
+    }
+    return identifiers;
+  }
+```
+
+This was not working:
+
+![Visit Pattern Error](images/visit-pattern-error.png)
+
+Finally, I managed It in other way without using the visitor pattern. I could traverse the AST and find variables used without declaration. So The implementation is not the best one, but it works as expected. I will try to improve it in the future.
+
+![Used Before Declaration](images/used-before-declaration.png)
 
 # Langium Calculator Experience
 ## Environment Setup

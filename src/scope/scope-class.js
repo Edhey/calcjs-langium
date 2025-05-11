@@ -57,7 +57,7 @@ export class Scope {
     this.add(name);
     this.scope.set(name, { declaration: node, usage: [] });
   }
-
+  
   /**
    * Adds a variable usage to the scope.
    * @param {Object} node - The AST node representing the variable usage.
