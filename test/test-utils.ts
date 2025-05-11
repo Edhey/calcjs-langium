@@ -82,32 +82,20 @@ export async function checkRunConsoleLog(testsFiles: TestFiles): Promise <CliRes
   });
 }
 
-// /**
-//  * Function that executes the run function and checks the error output
-//  * @param testsFiles Object with the input, output, expectedjs and correcterr files
-//  */
-// async function checkRunConsoleError(testsFiles) {
-//   let consoleOutput = "";
-//   const originalConsoleError = console.error; // Mock console.error
-//   console.error = (message) => { consoleOutput += message; };
-//   const correctErr = await fileStream.readFile(testsFiles.correctErr, 'utf-8');
-
-//   try {
-//     const services = createCalcScriptServices(NodeFileSystem).CalcScript;
-//     const model = await extractAstNode<Model>(testsFiles.input, services);
-//     const output = await JavaScriptTranspiler.transpile(model);
-//     expect(removeSpaces(output)).to.equal(removeSpaces(correctErr));
-//   } catch (error) {
-//     await fileStream.writeFile(testsFiles.output, error.message);
-//     expect(removeSpaces(consoleOutput)).to.equal(removeSpaces(correctErr));
-//   } finally {
-//     console.error = originalConsoleError; // Restore console.error
-//   }
-// }
-
-// export {
-//   removeSpaces,
-//   checkTranspile,
-//   checkRunConsoleLog,
-//   checkRunConsoleError
-// };
+/**
+ * Function that executes the run function and checks the error output
+ * @param testsFiles Object with the input, output, expectedjs and correcterr files
+ */
+export async function checkRunConsoleError(testsFiles: TestFiles): Promise <CliResult> {
+  return new Promise(resolve => {
+    const cmd = `node ${cliPath} "${testsFiles.input}" -r`;
+    exec(cmd, async (error, stdout, stderr) => {
+      resolve({
+        code: error && error.code ? error.code : 0,
+        error,
+        stderr,
+        stdout
+      });
+    });
+  });
+}

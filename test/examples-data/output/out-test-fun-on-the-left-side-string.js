@@ -1,63 +1,9 @@
-(...args) => {
-      let auxFunction = currentFunction;
-      if (cacheArgument == null) {
-        throw new Error("Invalid null argument on the left side of the assignment");
-      }
-      let equal = false;
-      try {
-        args[0]?.equals(cacheArgument);
-        equal = args[0].equals(cacheArgument);
-      } catch (e) {
-        equal = args[0] === cacheArgument;
-      }
-      if (equal) {
-        if (cacheArgs.length === index + 1) {
-          return cacheValue;
-        }
-        auxFunction = currentFunction(...args);
-        return this._assing(auxFunction, cacheArgs, cacheValue, index + 1);
-      }
-      return currentFunction(...args);
-    }
-(...args) => {
-      let auxFunction = currentFunction;
-      if (cacheArgument == null) {
-        throw new Error("Invalid null argument on the left side of the assignment");
-      }
-      let equal = false;
-      try {
-        args[0]?.equals(cacheArgument);
-        equal = args[0].equals(cacheArgument);
-      } catch (e) {
-        equal = args[0] === cacheArgument;
-      }
-      if (equal) {
-        if (cacheArgs.length === index + 1) {
-          return cacheValue;
-        }
-        auxFunction = currentFunction(...args);
-        return this._assing(auxFunction, cacheArgs, cacheValue, index + 1);
-      }
-      return currentFunction(...args);
-    }
-(...args) => {
-      let auxFunction = currentFunction;
-      if (cacheArgument == null) {
-        throw new Error("Invalid null argument on the left side of the assignment");
-      }
-      let equal = false;
-      try {
-        args[0]?.equals(cacheArgument);
-        equal = args[0].equals(cacheArgument);
-      } catch (e) {
-        equal = args[0] === cacheArgument;
-      }
-      if (equal) {
-        if (cacheArgs.length === index + 1) {
-          return cacheValue;
-        }
-        auxFunction = currentFunction(...args);
-        return this._assing(auxFunction, cacheArgs, cacheValue, index + 1);
-      }
-      return currentFunction(...args);
-    }
+const { Complex,print } = await import("/home/usuario/practicas/tfa-himar_edhey-hernandez-alu0101552392/src/code-generation/support-lib.js");
+
+
+/* end of preamble of generated code */
+
+let $a, $b;
+$a = Complex('1').add(Complex('2i'));
+$b = Complex('5').add(Complex('6i'));
+print($a & $b); 

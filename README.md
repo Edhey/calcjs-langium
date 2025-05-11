@@ -140,6 +140,60 @@ Finally, I managed It in other way without using the visitor pattern. I could tr
 
 ![Used Before Declaration](images/used-before-declaration.png)
 
+## Testing
+I used the vitest framework for testing the support library methods and it was not difficult at all. Also I tried to use the same tests as the old calculator language, but the code generation was not exactly the same as the recast one so transpile is not passing all the old tests. The difference are the , are transpiled in ; when dividing expressions and the parentification is not the same. But the run is passing in almost all cases. I had to change the tests for the could work now because using the CalcScriptService to run the code was not working as expected in test, so now I use the exec command to run the cli and then transpile or run the code. This makes the testing slower, but I didn't have time to implement a better solution. So I let the tests as they are now, not passing all the tests but I think this is a good way to now how much I could approach to the original calculator language. So transpile test are not really informative but run test are, so you can use npm run 
+
+### Coverage
+The following table provides an overview of the test coverage for the project:
+
+| File                                                              | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                                                            |
+|-------------------------------------------------------------------|---------|----------|---------|---------|-----------------------------------------------------------------------------|
+| All files                                                         |   93.21 |    92.32 |   73.33 |   93.21 |                                                                             |
+| tfa-himar_edhey-hernandez-alu0101552392                          |   98.14 |    71.42 |     100 |   98.14 |                                                                             |
+| esbuild.mjs                                                     |   98.14 |    71.42 |     100 |   98.14 | 50                                                                          |
+| tfa-himar_edhey-hernandez-alu0101552392/out/cli                  |     100 |      100 |     100 |     100 |                                                                             |
+| tempCode.js                                                     |     100 |      100 |     100 |     100 |                                                                             |
+| tfa-himar_edhey-hernandez-alu0101552392/src/cli                  |    80.4 |    73.07 |      75 |    80.4 |                                                                             |
+| cli-util.ts                                                     |   76.47 |    66.66 |   66.66 |   76.47 | 10-12,15-17,46-51                                                            |
+| main.ts                                                         |   82.47 |    78.57 |     100 |   82.47 | 53-58,67-74,88-90                                                            |
+| tfa-himar_edhey-hernandez-alu0101552392/src/code-generation      |   94.81 |    91.93 |   96.87 |   94.81 |                                                                             |
+| support-lib.js                                                  |    92.8 |    70.58 |   83.33 |    92.8 | 81,86-87,100,105,119-123                                                     |
+| transpile.ts                                                    |   95.73 |    95.32 |     100 |   95.73 | 123-128,171-173,196-197,226-227                                              |
+| tfa-himar_edhey-hernandez-alu0101552392/src/function-object      |   74.61 |    82.45 |   43.18 |   74.61 |                                                                             |
+| array-function-object.js                                        |   91.66 |       75 |   81.81 |   91.66 | 45-46,52-53,55-56,76-77,89-91                                                |
+| function-object.js                                              |   96.07 |    88.88 |   85.71 |   96.07 | 38-39,69-70                                                                 |
+| function-object.ts                                              |   52.33 |      100 |       0 |   52.33 | 29-33,36-37,40-41,44-45,55-61,64-92,102-105                                  |
+| object-function-object.js                                       |     100 |      100 |      75 |     100 |                                                                             |
+| object-function-object.ts                                       |   72.72 |      100 |       0 |   72.72 | 18-24,31-32,40-42                                                            |
+| store-map.js                                                    |   51.38 |      100 |   16.66 |   51.38 | 25-32,35-41,45-51,55-62,65-69                                                |
+| store-map.ts                                                    |   62.24 |      100 |       0 |   62.24 | 20-21,30-37,45-51,59-65,73-80,91-95                                         |
+| tfa-himar_edhey-hernandez-alu0101552392/src/language             |   78.98 |    69.69 |   78.57 |   78.98 |                                                                             |
+| calc-script-module.ts                                           |     100 |      100 |     100 |     100 |                                                                             |
+| calc-script-validator.ts                                        |   70.55 |    71.42 |      75 |   70.55 | 77-81,87-89,115-130,134-135,139-155,158-164,169-170,173-174,183-184,187-188 |
+| syntaxes-post-processing.js                                     |   86.66 |    33.33 |     100 |   86.66 | 21-22,29-30                                                                 |
+| tfa-himar_edhey-hernandez-alu0101552392/src/language/generated   |   99.43 |    98.57 |   83.87 |   99.43 |                                                                             |
+| ast.ts                                                          |    97.6 |      100 |   81.48 |    97.6 | 61-62,72-73,231-232,246-247,422-428                                         |
+| grammar.ts                                                      |     100 |       50 |     100 |     100 | 10                                                                          |
+| module.ts                                                       |     100 |      100 |     100 |     100 |                                                                             |
+| tfa-himar_edhey-hernandez-alu0101552392/src/mokey-patch          |   93.61 |      100 |     100 |   93.61 |                                                                             |
+| monkey-patch-handlers.js                                        |     100 |      100 |     100 |     100 |                                                                             |
+| monkey-patch.js                                                 |   88.46 |      100 |     100 |   88.46 | 28-29,31-32,40-41                                                            |
+| tfa-himar_edhey-hernandez-alu0101552392/src/mokey-patch/handlers |   91.92 |    97.29 |       0 |   91.92 |                                                                             |
+| array-function-object-monkey-patch.js                           |   89.21 |      100 |     100 |   89.21 | 52-53,64,74,82,90-93,97,101                                                 |
+| boolean-monkey-patch.js                                         |    96.2 |      100 |     100 |    96.2 | 49-50,78                                                                     |
+| complex-monkey-patch.js                                         |   91.97 |      100 |     100 |   91.97 | 59-63,95,105-107,117,127,137,147                                             |
+| function-monkey-patch.js                                        |   86.17 |      100 |     100 |   86.17 | 40,49-53,64,74,82,90-93                                                      |
+| function-object-monkey-patch.js                                 |   96.11 |    93.75 |     100 |   96.11 | 53-54,83,102                                                                 |
+| string-monkey-patch.js                                          |   92.19 |       95 |       0 |   92.19 | 57,78-82,91,136-139                                                         |
+| tfa-himar_edhey-hernandez-alu0101552392/src/scope                |     100 |      100 |     100 |     100 |                                                                             |
+| scope-class.js                                                  |     100 |      100 |     100 |     100 |                                                                             |
+
+## Packaging
+You can package the project using the following command:
+```bash
+npm run package
+```
+
 # Langium Calculator Experience
 ## Environment Setup
 First of all I need to install the Langium CLI. I set up a new Langium project using the following command:

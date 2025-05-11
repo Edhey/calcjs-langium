@@ -233,7 +233,7 @@ export class JavaScriptTranspiler {
   }
 
   private static transpileBooleanLiteral(expr: BooleanLiteral): string {
-    return Boolean(expr.value).toString();
+    return expr.value;
   }
 
   private static transpileNullLiteral(expr: NullLiteral): string {
@@ -292,7 +292,7 @@ export class JavaScriptTranspiler {
       case '**':
         return '.pow(';
       default:
-        return operator;
+        return ` ${operator} `;
     }
   }
 

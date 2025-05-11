@@ -1,11 +1,6 @@
-function($y) {
-return $y.mul($y);
-}
-function($y) {
-return functionObject(function($z) {
-return $x.add($y).add($z);
-});
-}
-function($y) {
-return $y.mul($y);
-}
+const { Complex } = await import("/home/usuario/practicas/tfa-himar_edhey-hernandez-alu0101552392/src/code-generation/support-lib.js");
+
+
+/* end of preamble of generated code */
+
+Complex('2').neg().add(Complex('3i').mul(Complex('4').sub(Complex('1i')))).sub(Complex('5').add(Complex('6i')).mul(Complex('7').sub(Complex('8i')))); 

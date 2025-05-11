@@ -17,7 +17,7 @@ import { TestSimple } from './test-description.mjs';
 import { TestHard } from './test-hard-description.mjs';
 import { TestErrorSyntax } from './test-error-description.mjs';
 import { TestBasicErrorSyntax } from './test-basic-error-description.mjs';
-import { checkRunConsoleLog, checkTranspile, removeSpaces } from './test-utils.ts';
+import { checkRunConsoleError, checkRunConsoleLog, checkTranspile, removeSpaces } from './test-utils.ts';
 import * as fileStream from "fs/promises";
 import path from 'path';
 import { fileURLToPath } from 'url';

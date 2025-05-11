@@ -1,3 +1,6 @@
-6
-333
-[ 6, 333, 9 - i ]
+const { print } = await import("/home/usuario/practicas/tfa-himar_edhey-hernandez-alu0101552392/src/code-generation/support-lib.js");
+
+
+/* end of preamble of generated code */
+
+print('hello'.add('world')); 

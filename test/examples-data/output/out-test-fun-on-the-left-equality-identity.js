@@ -1,13 +1,11 @@
-false
-function($y) {
-return $x.add($y);
-}
-function($v) {
-return $f($g($v), Complex('3'));
-}
-function($y) {
-return $x.add($y);
-}
-function($y) {
-return $x.add($y);
-}
+const { Complex } = await import("/home/usuario/practicas/tfa-himar_edhey-hernandez-alu0101552392/src/code-generation/support-lib.js");
+
+
+/* end of preamble of generated code */
+
+let $a, $b, $c, $d;
+$a = Complex('3');
+$b = $a.add(Complex('2'));
+$c = $b ! ;
+$d = $c.add(Complex('1'));
+$d ! ; 

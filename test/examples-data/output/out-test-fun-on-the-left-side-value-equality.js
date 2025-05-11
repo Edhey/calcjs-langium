@@ -1,85 +1,11 @@
-(...args) => {
-      let auxFunction = currentFunction;
-      if (cacheArgument == null) {
-        throw new Error("Invalid null argument on the left side of the assignment");
-      }
-      let equal = false;
-      try {
-        args[0]?.equals(cacheArgument);
-        equal = args[0].equals(cacheArgument);
-      } catch (e) {
-        equal = args[0] === cacheArgument;
-      }
-      if (equal) {
-        if (cacheArgs.length === index + 1) {
-          return cacheValue;
-        }
-        auxFunction = currentFunction(...args);
-        return this._assing(auxFunction, cacheArgs, cacheValue, index + 1);
-      }
-      return currentFunction(...args);
-    }
-(...args) => {
-      let auxFunction = currentFunction;
-      if (cacheArgument == null) {
-        throw new Error("Invalid null argument on the left side of the assignment");
-      }
-      let equal = false;
-      try {
-        args[0]?.equals(cacheArgument);
-        equal = args[0].equals(cacheArgument);
-      } catch (e) {
-        equal = args[0] === cacheArgument;
-      }
-      if (equal) {
-        if (cacheArgs.length === index + 1) {
-          return cacheValue;
-        }
-        auxFunction = currentFunction(...args);
-        return this._assing(auxFunction, cacheArgs, cacheValue, index + 1);
-      }
-      return currentFunction(...args);
-    }
-(...args) => {
-      let auxFunction = currentFunction;
-      if (cacheArgument == null) {
-        throw new Error("Invalid null argument on the left side of the assignment");
-      }
-      let equal = false;
-      try {
-        args[0]?.equals(cacheArgument);
-        equal = args[0].equals(cacheArgument);
-      } catch (e) {
-        equal = args[0] === cacheArgument;
-      }
-      if (equal) {
-        if (cacheArgs.length === index + 1) {
-          return cacheValue;
-        }
-        auxFunction = currentFunction(...args);
-        return this._assing(auxFunction, cacheArgs, cacheValue, index + 1);
-      }
-      return currentFunction(...args);
-    }
-10
-(...args) => {
-      let auxFunction = currentFunction;
-      if (cacheArgument == null) {
-        throw new Error("Invalid null argument on the left side of the assignment");
-      }
-      let equal = false;
-      try {
-        args[0]?.equals(cacheArgument);
-        equal = args[0].equals(cacheArgument);
-      } catch (e) {
-        equal = args[0] === cacheArgument;
-      }
-      if (equal) {
-        if (cacheArgs.length === index + 1) {
-          return cacheValue;
-        }
-        auxFunction = currentFunction(...args);
-        return this._assing(auxFunction, cacheArgs, cacheValue, index + 1);
-      }
-      return currentFunction(...args);
-    }
+const { Complex } = await import("/home/usuario/practicas/tfa-himar_edhey-hernandez-alu0101552392/src/code-generation/support-lib.js");
+
+
+/* end of preamble of generated code */
+
+let $p, $q, $r, $s;
+$p = Complex('2');
+$q = Complex('3');
+$r = $p.pow($q);
+$s = $r.pow(Complex('2'));
+$s.pow(Complex('1')); 
