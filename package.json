@@ -11,7 +11,7 @@
     "src"
   ],
   "type": "module",
-  "main": "./out/extension/main.cjs",
+  "main": "./out/extension/main.js",
   "publishConfig": {
     "access": "public",
     "registry": "https://npm.pkg.github.com/"
@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ULL-ESIT-PL-2425/arith2js-himar_edhey-hernandez-alu0101552392.git"
+    "url": "https://github.com/ULL-ESIT-PL-2425/tfa-himar_edhey-hernandez-alu0101552392.git"
   },
   "scripts": {
     "esbuild-base": "esbuild ./src/extension/main.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
@@ -50,8 +50,8 @@
     "clean": "rm -f src/calc.cjs && npm run clean:docs",
     "clean:docs": "rm -fR docs/coverage && rm -fR docs/jsdoc",
     "dev": "http-server -c-1 -o docs",
-    "trans": "./bin/calc2js.mjs",
-    "exec": "./bin/calc2js.mjs --run",
+    "trans": "./bin/cli --verbose",
+    "exec": "./bin/cli --run",
     "syntax": "node ./src/language/syntaxes-post-processing.js"
   },
   "keywords": [

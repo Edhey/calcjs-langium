@@ -24,12 +24,10 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.js",
-    "test/**/*.ts",
-    "test/test.test.js",
-    "test/test-utils.ts"
+    "test/**/*.ts"
   ],
   "exclude": [
     "out",
-    "node_modules"
+    "node_modules",
   ]
 }

@@ -191,7 +191,7 @@ The following table provides an overview of the test coverage for the project:
 ## Packaging
 You can package the project using the following command:
 ```bash
-npm run package
+vsce package
 ```
 
 # Langium Calculator Experience

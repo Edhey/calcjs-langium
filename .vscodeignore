@@ -1,4 +1,10 @@
+# Langium Quickstart
 .vscode/**
 .vscode-test/**
 .gitignore
 langium-quickstart.md
+
+# Excluir carpetas de tests, documentación y src que ya fue empaquetada
+test/
+docs/
+src/
