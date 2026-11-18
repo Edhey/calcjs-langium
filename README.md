@@ -1,12 +1,16 @@
+# TFA
+
 [![Open in Codespaces](https://classroom.github.com/assets/launch-codespace-2972f46106e565e64193e422d61a12cf1da4916b45550586e14ef0a7c637dd04.svg)](https://classroom.github.com/open-in-codespaces?assignment_repo_id=19363861)
-# TFA 
+
 - **Author:** Himar Edhey Hernández Alonso
 - **Subject:** Language Processing
-- **Email:** alu0101552392@ull.edu.es
+- **Email:** <alu0101552392@ull.edu.es>
 - **GitHub:** [Edhey](https://github.com/Edhey)
 
 ## Initial TFA Goals
+
 The goal of my TFA project is to migrate the current calculator language transpiler into a fully Langium-based implementation. So we need to:
+
 - Define the grammar for the calculator language using Langium.
 - Build a Language Server Protocol that supports syntax highlighting, error detection, and basic validation in Visual Studio Code.
 - Redo the JavaScript code generator to migrate the original functionality of converting calculator programs into executable JavaScript from recast to Langium.
@@ -14,9 +18,11 @@ The goal of my TFA project is to migrate the current calculator language transpi
 In summary, with this project we will make a user-friendly environment for the calculator language, allowing users to write the code easily.
 
 ### Example
+
 The code generation should be similar to the original calculator language:
 
 **DSL code example:**
+
 ```calculator
 f = fun(x) { 2*x },
 g = fun(x) { 3*x },
@@ -27,6 +33,7 @@ print(k(2-i)) # 18 - 24i
 ```
 
 **Expected JavaScript transpile:**
+
 ```javascript
 let $f, $g, $h, $k; 
 (((($f = functionObject(function ($x) { 
@@ -38,6 +45,7 @@ print($h(Complex('1').add(Complex('i'))))), print($k(Complex('2').sub(Complex('i
 ```
 
 Error report:
+
 ```calculator
 a = 4i,
 b = 3i,
@@ -45,22 +53,27 @@ c = a + b
 ```
 
 **Expected error report:**
+
 ```calculator
 Error: Variable 'c' is at line 3, column 1 is not used.
 ```
 
 But now when coding in VSCode it should:
+
 - Highlight keywords (`fun`, `write`), operators (`+`, `-`, etc.), literals, and identifiers.
 - Report syntax errors (missing parentheses, incorrect expressions, etc.).
 - Report semantic errors (calling a function/variable that hasn't been used, etc.).
+
 ---
 
 ### Tasks
+
 We will divide our project in 6 main tasks:
+
 1. **Define the Grammar**:
    - We must create the `.langium` grammar file for the calculator language.
      - We will use reference examples like [Langium MiniLogo](https://github.com/TypeFox/langium-minilogo) for this task.
-     - The grammar should be similar to the original calculator language, so it needs to include:       
+     - The grammar should be similar to the original calculator language, so it needs to include:
        - **Literals** (`1`, `2.3`, `true`, `false`)
          - **Complex numbers** (`1.5 + 2.3i`)
          - **Booleans** (`true`, `false`)
@@ -95,11 +108,14 @@ We will divide our project in 6 main tasks:
 6. **Final Documentation**:
    - Write a complete README with instructions about how to use the extension.
    - Include examples, screenshots, and detail instructions.
+
 ---
 
 ### Evaluation of Difficulties
+
 **Expected Difficulties**:
 The Langium learning curve could be steep, especially for:
+
 - Properly defining the calculator grammar (handling operator precedence, parentheses).
   - Build the priority of the Langium grammar rules to ensure correct parsing.
   - Our original calculator language has a complex grammar that could be difficult to translate.
@@ -115,8 +131,9 @@ The Langium learning curve could be steep, especially for:
   - Ensure that the language server communicates correctly with the VSCode client could be tricky.
 
 **Estimated Time**: 25–30 hours
+
 | Task | Estimated Hours |
-|:-----|:---------------:|
+| :----- | :---------------: |
 | Environment setup | 2h |
 | Grammar definition | 6h |
 | AST generation and syntax validation | 5h |
@@ -126,10 +143,13 @@ The Langium learning curve could be steep, especially for:
 | Testing, documentation, packaging | 3h |
 
 **Fallback Plan**:
-If necessary, I will focus on a simpler grammar first, ensuring grammar definition, parsing, highlighting, and semantic validation are completed. Then, if time allows, I will work on maintaining the original functionality of the transpiler.
+
+If necessary, I will focus on a simpler grammar first, ensuring grammar definition, parsing, highlighting, and semantic validation are completed. Then, if time allows, I will work on maintaining the original functionality of the transpiler
+
 ---
 
 ### Tools and Technologies
+
 - **Languages**: TypeScript, JavaScript
 - **Frameworks and Libraries**:
   - [Langium](https://langium.org/)
@@ -143,22 +163,31 @@ If necessary, I will focus on a simpler grammar first, ensuring grammar definiti
   - Langium Grammar Language documentation
 - **AI Assistance**:
   - I will use Github Copilot for assistance with explanations, examples, debugging suggestions.
+
 ---
 
 ### Methodologies
+
 I will follow the next methodologies in the project:
+
 - **TDD** for validators: start by writing failing tests for syntax/semantic errors.
 - **Automation scripts**: Use the scripts provided for make testing easier.
 - **Version control**: Regular commits in Git with descriptive messages.
 - **GitHub Project Board**: Track progress in the project board. [GitHub Project Board](https://github.com/orgs/ULL-ESIT-PL-2425/projects/496)
+
+> Consideration: The original repository was attached to the organization ULL-ESIT-PL-2425, this is a clone for my personal use. Some of the links in this README may not work because of this, as they are private to the organization. I will try to provide alternative links when possible.
+
 ---
 
 ### Conclusion
-By the end of this project, I will have successfully migrated the calculator language into a Langium-based DSL with:
+
+By the end of this project, I will have successfully migrated the calculator language into a Langium-based DSL with:F
+
 - Syntax highlighting.
 - Syntax and semantic validation.
 - JavaScript code generation.
 - Packaged as a working VSCode extension.
 
-To sum up, in this project I will demonstrate my ability to design a domain-specific language, develop a full language server, and integrate it into a modern development environment.
+To sum up, in this project I will demonstrate my ability to design a domain-specific language, develop a full language server, and integrate it into a modern development environment
+
 ---
