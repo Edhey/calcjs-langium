@@ -1,15 +1,10 @@
 {
-  "name": "@ull-esit-pl-2425/tfa-himar_edhey-hernandez-alu0101552392",
-  "publisher": "Himar Edhey Hernández Alonso",
+  "name": "calc-script",
+  "publisher": "Edhey",
   "displayName": "CalcScript",
   "icon": "images/CalcScript-icon.png",
   "description": "* See section [TFA](https://apuntes-pl.vercel.app/labs/tfa#task-presentation-of-goals) Final Project - VsCode extension for a transpiler of a simple calculator language to JavaScript.\n* The project is based on the [Langium](https://langium.org/) framework.",
   "version": "1.0.2",
-  "files": [
-    "bin",
-    "out",
-    "src"
-  ],
   "type": "module",
   "main": "./out/extension/main.js",
   "publishConfig": {
@@ -21,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ULL-ESIT-PL-2425/tfa-himar_edhey-hernandez-alu0101552392.git"
+    "url": "https://github.com/Edhey/calcjs-langium.git"
   },
   "scripts": {
     "esbuild-base": "esbuild ./src/extension/main.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",

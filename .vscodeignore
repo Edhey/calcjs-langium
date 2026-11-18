@@ -5,6 +5,15 @@
 langium-quickstart.md
 
 # Excluir carpetas de tests, documentación y src que ya fue empaquetada
-test/
-docs/
-src/
+test/**
+src/**
+docs/**
+
+# Excluir archivos de configuración y dependencias
+node_modules/**
+.gitignore
+tsconfig.json
+tsconfig.src.json
+esbuild.mjs
+vitest.config.ts
+.eslintrc.json
