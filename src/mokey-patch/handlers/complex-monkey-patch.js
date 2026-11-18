@@ -3,7 +3,7 @@
   * Escuela Superior de Ingeniería y Tecnología
   * Grado en Ingeniería Informática
   * Procesadores del lenguage
-  * Práctica 6 - While and for loops
+  * TFA - Langium Syntaxis and Errors for Calculator
   *
   * @author Himar Edhey Hernández Alonso
   * @since Wed 19 Mar 2025 
@@ -11,10 +11,10 @@
   */
 
 let oldComplex = {};
-const Complex = require('complex.js');
-const { operationHandlers, implementedTypes, allOperators } = require('../monkey-patch-handlers.js');
-const lodash = require('lodash');
-const { functionObject } = require('../../function-object/function-object.js');
+import Complex from 'complex.js';
+import { operationHandlers, implementedTypes, allOperators } from '../monkey-patch-handlers.js';
+import lodash from 'lodash';
+import { functionObject } from '../../function-object/function-object.js';
 
 // Initialize the complex operators in the operationHandlers
 for(const operator in allOperators) {
@@ -22,7 +22,7 @@ for(const operator in allOperators) {
 }
 implementedTypes.push(Complex);
 
-Operators = {
+const Operators = {
   add: '+', mul: '*', div: '/', pow: '**', sub: '-', equals: '==', notEquals: '!=',
 }
 
@@ -157,6 +157,6 @@ lodash.set(operationHandlers, 'complex.neg', function () {
   return oldComplex['neg'].call(this);
 });
 
-module.exports = {
+export {
   Complex
 };

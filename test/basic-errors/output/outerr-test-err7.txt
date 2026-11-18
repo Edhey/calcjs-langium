@@ -1,1 +1,1 @@
-expected 'expected\'expected\\'expected\\\'expe…' to equal 'Parseerroronline1:(4+5i)**(6-7i)-----…'
+Cannot read properties of undefined (reading 'forEach')

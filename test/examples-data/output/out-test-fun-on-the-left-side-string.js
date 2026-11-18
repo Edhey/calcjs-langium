@@ -1,11 +1,9 @@
-const { functionObject,Complex,write } = require("/home/usuario/practicas/02-Translating-Arithmetic-Expressions-to-JavaScript/arith2js-himar_edhey-hernandez-alu0101552392/src/support-lib.js");
+const { Complex,print } = await import("/home/usuario/practicas/tfa-himar_edhey-hernandez-alu0101552392/src/code-generation/support-lib.js");
+
 
 /* end of preamble of generated code */
 
-let $f;
-
-(((($f = functionObject(function($x) {
-  return functionObject(function($y) {
-    return $x.add($y);
-  });
-}), $f.assign(['cadena', Complex('3')], Complex('8'))), $f.assign([Complex('2'), 'cadena'], Complex('9'))), write($f('cadena')(Complex('3')))), write($f('cadena')(Complex('4')))), write($f(Complex('2'))('cadena')); 
+let $a, $b;
+$a = Complex('1').add(Complex('2i'));
+$b = Complex('5').add(Complex('6i'));
+print($a & $b); 

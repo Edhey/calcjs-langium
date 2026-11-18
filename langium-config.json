@@ -3,7 +3,7 @@
     "languages": [{
         "id": "calc-script",
         "grammar": "src/language/calc-script.langium",
-        "fileExtensions": [".calc"],
+        "fileExtensions": [".calc", ".calcscript", ".calculator"],
         "textMate": {
             "out": "syntaxes/calc-script.tmLanguage.json"
         }

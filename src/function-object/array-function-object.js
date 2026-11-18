@@ -3,7 +3,7 @@
  * Escuela Superior de Ingeniería y Tecnología
  * Grado en Ingeniería Informática
  * Asignatura Procesadores de Lenguajes
- * Práctica 3 - Hello Compilers
+ * TFA - Langium Syntaxis and Errors for Calculator
  *
  * @author Himar Edhey Hernández Alonso
  * @since Thu 27 Mar 2025
@@ -12,8 +12,8 @@
  * @see {@link https://github.com/ULL-ESIT-PL-2425/arith2js-himar_edhey-hernandez-alu0101552392}
  */
 
-const { FunctionObject } = require("./function-object");
-const { Complex } = require('complex.js');
+import { FunctionObject } from "./function-object.js";
+import { Complex } from 'complex.js';
 
 class ArrayFunctionObject extends FunctionObject {
   constructor(...array) {
@@ -129,4 +129,4 @@ function arrayObject(...array) {
   return new ArrayFunctionObject(...array);
 }
 
-module.exports = { ArrayFunctionObject, arrayObject };
+export { ArrayFunctionObject, arrayObject };

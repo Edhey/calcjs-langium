@@ -1,1 +1,1 @@
-Cannot read properties of undefined (reading 'ast')
+Cannot read properties of undefined (reading 'forEach')

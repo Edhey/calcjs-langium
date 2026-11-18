@@ -1,0 +1,6 @@
+const { {{ dependencies }} } = await import("{{ root }}/src/code-generation/support-lib.js");
+
+
+/* end of preamble of generated code */
+
+{{code}} 

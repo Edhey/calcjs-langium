@@ -1,15 +1,13 @@
-const { functionObject,Complex,write } = require("/home/usuario/practicas/02-Translating-Arithmetic-Expressions-to-JavaScript/arith2js-himar_edhey-hernandez-alu0101552392/src/support-lib.js");
+const { functionObject,print,Complex } = await import("/home/usuario/practicas/tfa-himar_edhey-hernandez-alu0101552392/src/code-generation/support-lib.js");
+
 
 /* end of preamble of generated code */
 
-let $f, $g;
-
-((($f = functionObject(function($x) {
-  return functionObject(function($y) {
-    return $x.add($y);
-  });
-}), $g = functionObject(function($y) {
-  return $y.mul($y);
-})), $f.assign([$g], functionObject(function($v) {
-  return $f($g($v))(Complex('3'));
-}))), write($f(Complex('2'))(Complex('3')))), write($f($g)(Complex('4'))); 
+let $f, $h;
+$f = functionObject(function($x) {
+return $x.neg();
+});
+$h = $f.neg();
+print($f.neg()(Complex('4').sub(Complex('2i'))));
+print($h(Complex('4i').neg()));
+print($f.neg()(Complex('0'))); 

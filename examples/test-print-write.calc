@@ -1,0 +1,2 @@
+print("I am "+ "Pedri" + ". I am "+ "22" + " years old. Glad to meet you " + 4),
+write("I am "+ "Pedri" + ". I am "+ "22" + " years old. Glad to meet you " + 4)

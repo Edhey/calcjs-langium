@@ -3,7 +3,7 @@
  * Escuela Superior de Ingeniería y Tecnología
  * Grado en Ingeniería Informática
  * Asignatura Procesadores de Lenguajes
- * Práctica 3 - Hello Compilers
+ * TFA - Langium Syntaxis and Errors for Calculator
  *
  * @autor Himar Edhey Hernández Alonso
  * @since Wed 26 Feb 2025
@@ -11,14 +11,22 @@
  * @see {@link https://github.com/ULL-ESIT-PL-2425/arith2js-himar_edhey-hernandez-alu0101552392}
  */
 
-const TestExample = require('./test-example-description.js');
-const TestBasic = require('./test-basic-description.js');
-const TestSimple = require('./test-description.js');
-const TestHard = require('./test-hard-description.js');
-const TestErrorSyntax = require('./test-error-description.js');
-const TestBasicErrorSyntax = require('./test-basic-error-description.js');
+import { TestExample } from './test-example-description.mjs';
+import { TestBasic } from './test-basic-description.mjs';
+import { TestSimple } from './test-description.mjs';
+import { TestHard } from './test-hard-description.mjs';
+import { TestErrorSyntax } from './test-error-description.mjs';
+import { TestBasicErrorSyntax } from './test-basic-error-description.mjs';
+import { checkRunConsoleError, checkRunConsoleLog, checkTranspile, removeSpaces } from './test-utils.ts';
+import * as fileStream from "fs/promises";
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import { expect } from 'chai';
 
-const { checkTranspile, checkRunConsoleLog, checkRunConsoleError } = require('./test-utils.js');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const cliPath = path.resolve(__dirname, '../bin/cli');
 
 /**
  * Test data for the examples
@@ -67,6 +75,7 @@ const HardTest = TestHard.map(testDescription => ({
 const ErrorSyntaxTest = TestErrorSyntax.map(testDescription => ({
   input: __dirname + '/errors/syntax-error/' + testDescription.input,
   output: __dirname + '/errors/output/' + testDescription.output,
+  expected: '', // Default value for the required 'expected' property
   correctErr: __dirname + '/errors/correct-err/' + testDescription.correctErr,
 }));
 
@@ -76,6 +85,7 @@ const ErrorSyntaxTest = TestErrorSyntax.map(testDescription => ({
 const BasicErrorTest = TestBasicErrorSyntax.map(testDescription => ({
   input: __dirname + '/basic-errors/basic-syntax-error/' + testDescription.input,
   output: __dirname + '/basic-errors/output/' + testDescription.output,
+  expected: '', // Default value for the required 'expected' property
   correctErr: __dirname + '/basic-errors/correct-err/' + testDescription.correctErr,
 }));
 
@@ -84,13 +94,23 @@ const BasicErrorTest = TestBasicErrorSyntax.map(testDescription => ({
  * Run the simple tests and check the output
  */
 describe('Example Test', function () {
+  this.timeout(5000);
   /**
    * Transpile the simple tests and check the output
    */
   describe('Example Transpile Tests', function () {
     for (let i = 0; i < ExampleTest.length; i++) {
       it(`transpile(${ExampleTest[i].input}, ${ExampleTest[i].output})`, async function () {
-        await checkTranspile(ExampleTest[i]);
+        const result = await checkTranspile(ExampleTest[i]);
+        if (result.code !== 0) {
+          console.log('Error code:', result.code);
+          console.log('Error message:', result.error);
+        }
+        await fileStream.writeFile(ExampleTest[i].output, result.stdout);
+        const expected = await fileStream.readFile(ExampleTest[i].expected, 'utf-8');
+        const cleanStdout = removeSpaces(result.stdout);
+        const cleanExpected = removeSpaces(expected);
+        expect(cleanStdout).to.equal(cleanExpected);
       });
     }
   });
@@ -102,7 +122,16 @@ describe('Example Test', function () {
   describe('Example Run Tests', function () {
     for (let i = 0; i < ExampleTest.length; i++) {
       it(`run function with ${ExampleTest[i].input}`, async function () {
-        await checkRunConsoleLog(ExampleTest[i]);
+        const result = await checkRunConsoleLog(ExampleTest[i]);
+        if (result.code !== 0) {
+          console.log('Error code:', result.code);
+          console.log('Error message:', result.error);
+        }
+        await fileStream.writeFile(ExampleTest[i].output, result.stdout);
+        const expected = await fileStream.readFile(ExampleTest[i].correctOut, 'utf-8');
+        const cleanStdout = removeSpaces(result.stdout);
+        const cleanExpected = removeSpaces(expected);
+        expect(cleanStdout).to.equal(cleanExpected);
       });
     }
   });
@@ -115,7 +144,16 @@ describe('Basic Tests', function () {
   describe('Basic Transpile Tests', function () {
     for (let i = 0; i < BasicTest.length; i++) {
       it(`transpile(${BasicTest[i].input}, ${BasicTest[i].output})`, async function () {
-        await checkTranspile(BasicTest[i]);
+        const result = await checkTranspile(BasicTest[i]);
+        if (result.code !== 0) {
+          console.log('Error code:', result.code);
+          console.log('Error message:', result.error);
+        }
+        await fileStream.writeFile(ExampleTest[i].output, result.stdout);
+        const expected = await fileStream.readFile(ExampleTest[i].expected, 'utf-8');
+        const cleanStdout = removeSpaces(result.stdout);
+        const cleanExpected = removeSpaces(expected);
+        expect(cleanStdout).to.equal(cleanExpected);
       });
     }
   });
@@ -144,7 +182,16 @@ describe('Simple Test', function () {
   describe('Simple Transpile Tests', function () {
     for (let i = 0; i < SimpleTest.length; i++) {
       it(`transpile(${SimpleTest[i].input}, ${SimpleTest[i].output})`, async function () {
-        await checkTranspile(SimpleTest[i]);
+        const result = await checkTranspile(SimpleTest[i]);
+        if (result.code !== 0) {
+          console.log('Error code:', result.code);
+          console.log('Error message:', result.error);
+        }
+        await fileStream.writeFile(ExampleTest[i].output, result.stdout);
+        const expected = await fileStream.readFile(ExampleTest[i].expected, 'utf-8');
+        const cleanStdout = removeSpaces(result.stdout);
+        const cleanExpected = removeSpaces(expected);
+        expect(cleanStdout).to.equal(cleanExpected);
       });
     }
   });
@@ -173,7 +220,16 @@ describe('Hard Tests', function () {
   describe('Transpile Tests', function () {
     for (let i = 0; i < HardTest.length; i++) {
       it(`transpile(${HardTest[i].input}, ${HardTest[i].output})`, async function () {
-        await checkTranspile(HardTest[i]);
+        const result = await checkTranspile(HardTest[i]);
+        if (result.code !== 0) {
+          console.log('Error code:', result.code);
+          console.log('Error message:', result.error);
+        }
+        await fileStream.writeFile(ExampleTest[i].output, result.stdout);
+        const expected = await fileStream.readFile(ExampleTest[i].expected, 'utf-8');
+        const cleanStdout = removeSpaces(result.stdout);
+        const cleanExpected = removeSpaces(expected);
+        expect(cleanStdout).to.equal(cleanExpected);
       });
     }
   });

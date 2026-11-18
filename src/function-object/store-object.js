@@ -3,7 +3,7 @@
  * Escuela Superior de Ingeniería y Tecnología
  * Grado en Ingeniería Informática
  * Asignatura Procesadores de Lenguajes
- * Práctica 3 - Hello Compilers
+ * TFA - Langium Syntaxis and Errors for Calculator
  *
  * @author Himar Edhey Hernández Alonso
  * @since Sat 29 Mar 2025
@@ -45,4 +45,4 @@ class StoreObject {
   }
 }
 
-module.exports = { StoreObject };
+export { StoreObject };

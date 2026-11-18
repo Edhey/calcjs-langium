@@ -1,8 +1,13 @@
-const { print,objectFunctionObject,Complex } = require("/home/usuario/practicas/02-Translating-Arithmetic-Expressions-to-JavaScript/arith2js-himar_edhey-hernandez-alu0101552392/src/support-lib.js");
+const { Complex,print } = await import("/home/usuario/practicas/tfa-himar_edhey-hernandez-alu0101552392/src/code-generation/support-lib.js");
+
 
 /* end of preamble of generated code */
 
-print(objectFunctionObject({
-  'x': Complex('4'),
-  'y': Complex('5')
-})); 
+let $a, $b, $c, $d, $e, $f;
+$a = Complex('2').neg();
+$b = Complex('3');
+$c = Complex('4');
+$d = Complex('1');
+$e = $b.mul($c.sub($d));
+$f = $a.add($e);
+print($f); 

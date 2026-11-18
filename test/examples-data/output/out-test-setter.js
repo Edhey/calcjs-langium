@@ -1,17 +1,21 @@
-const { functionObject,Complex,write } = require("/home/usuario/practicas/02-Translating-Arithmetic-Expressions-to-JavaScript/arith2js-himar_edhey-hernandez-alu0101552392/src/support-lib.js");
+const { functionObject,print,Complex } = await import("/home/usuario/practicas/tfa-himar_edhey-hernandez-alu0101552392/src/code-generation/support-lib.js");
+
 
 /* end of preamble of generated code */
 
-let $Person, $thom;
-
-(($Person = functionObject(function($name) {
-  return functionObject(function($age) {
-    let $this;
-
-    return ((($this = functionObject(function($x) {
-      return $x;
-    }), $this.assign(['name'], $name)), $this.assign(['age'], $age)), $this.assign(['setAge'], functionObject(function($newAge) {
-      return $this.assign(['age'], $newAge);
-    }))), $this;
-  });
-}), $thom = $Person('Thom')(Complex('78'))), $thom('setAge')(Complex('80'))), write($thom('name'), 'is', $thom('age')); 
+let $f;
+$f = functionObject(function($x) {
+return functionObject(function($y) {
+return $x.add($y);
+});
+});
+print($f(Complex('3'), Complex('5')));
+print($f.sub($f)(Complex('3'))(Complex('5')));
+print(Complex('2').sub($f)(Complex('3'))(Complex('5')));
+print($f.sub(Complex('2'))(Complex('3'))(Complex('5')));
+print($f.sub(true)(Complex('3'))(Complex('5')));
+print(true.sub($f)(Complex('3'))(Complex('5')));
+print(Complex('2').sub(Complex('2')));
+print(true.sub(true));
+print(false.sub(true));
+print(false.sub(false)); 

@@ -5,7 +5,7 @@
  * Escuela Superior de Ingeniería y Tecnología
  * Grado en Ingeniería Informática
  * Asignatura Procesadores de Lenguajes
- * Práctica 3 - Hello Compilers
+ * TFA - Langium Syntaxis and Errors for Calculator
  *
  * @author Himar Edhey Hernández Alonso
  * @since Wed 26 Feb 2025
@@ -17,8 +17,8 @@
 import { program } from "commander";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
-const { version } = require("../package.json");
-import { transpile } from "../src/transpile.js";
+const { version } = require('../package.json');
+import { transpile } from "../src/code-generation/transpile.js";
 
 program
   .version(version)

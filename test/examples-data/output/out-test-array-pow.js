@@ -1,6 +1,6 @@
-const { arrayObject,Complex,print } = require("/home/usuario/practicas/02-Translating-Arithmetic-Expressions-to-JavaScript/arith2js-himar_edhey-hernandez-alu0101552392/src/support-lib.js");
+const { Complex } = await import("/home/usuario/practicas/tfa-himar_edhey-hernandez-alu0101552392/src/code-generation/support-lib.js");
+
 
 /* end of preamble of generated code */
 
-let $a, $b, $c;
-(((($a = arrayObject(Complex('2'), Complex('8'), Complex('10')), $b = arrayObject(Complex('4'), Complex('4'), Complex('5'))), $c = arrayObject(Complex('10'), Complex('5'), Complex('4'), Complex('2'))), print($a.pow($b))), print($b.pow($a))), print($a.pow($c)); 
+Complex('3.3').sub(Complex('2.2i')).sub(Complex('1.1').add(Complex('4.4i'))).sub(Complex('5.5').sub(Complex('6.6i'))); 

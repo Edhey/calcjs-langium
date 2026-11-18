@@ -1,11 +1,14 @@
-const { arrayObject,Complex,print } = require("/home/usuario/practicas/02-Translating-Arithmetic-Expressions-to-JavaScript/arith2js-himar_edhey-hernandez-alu0101552392/src/support-lib.js");
+const { Complex,print } = await import("/home/usuario/practicas/tfa-himar_edhey-hernandez-alu0101552392/src/code-generation/support-lib.js");
+
 
 /* end of preamble of generated code */
 
-let $a, $b;
-
-((($a = arrayObject(
-  Complex('4').add(Complex('2')),
-  Complex('5').add(Complex('3i')),
-  Complex('9').sub(Complex('i'))
-), print('a = ', $a)), $b = $a('concat')(arrayObject(Complex('12'), Complex('13')))), print('b is of length: ', $b('length'))), print('b = ', $b); 
+let $a, $b, $c, $d, $e;
+$a = Complex('3');
+$b = $a.add(Complex('2'));
+$c = $b ! ;
+print($c);
+$d = $c.add(Complex('1'));
+print($d);
+$e = $d ! ;
+print($e); 

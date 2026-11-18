@@ -1,0 +1,25 @@
+{
+  "$type": "Model",
+  "expressions": [
+    {
+      "$type": "BinaryExpression",
+      "left": {
+        "$type": "Expression",
+        "value": "2",
+        "body": [],
+        "elements": [],
+        "params": [],
+        "props": []
+      },
+      "op": "+",
+      "right": {
+        "$type": "Expression",
+        "value": "3",
+        "body": [],
+        "elements": [],
+        "params": [],
+        "props": []
+      }
+    }
+  ]
+}
