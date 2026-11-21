@@ -1,19 +1,33 @@
-# Langium Quickstart
+# Langium / VS Code
 .vscode/**
 .vscode-test/**
+.github/**
 .gitignore
+.npmignore
+.eslintrc.json
 langium-quickstart.md
 
-# Excluir carpetas de tests, documentación y src que ya fue empaquetada
+# Tests, docs y ejemplos
 test/**
-src/**
 docs/**
+examples/**
+GOALS.md
+TODO.md
 
-# Excluir archivos de configuración y dependencias
+# Código fuente y source maps (conservando recursos de runtime si se leen desde src/)
+src/**
+!src/code-generation/templates.txt
+!src/code-generation/support-lib.js
+out/**/*.map
+
+# Configuración, scripts internos y artefactos
 node_modules/**
-.gitignore
 tsconfig.json
 tsconfig.src.json
 esbuild.mjs
 vitest.config.ts
-.eslintrc.json
+jsdoc.json
+create-issues.sh
+issues.txt
+*.vsix
+*.tgz

@@ -1,5 +1,5 @@
 {
-  "name": "@edhey/calcjs-langium",
+  "name": "calcjs-langium",
   "publisher": "Edhey",
   "displayName": "CalcJs-Langium",
   "icon": "images/CalcScript-icon.png",
@@ -7,17 +7,6 @@
   "version": "1.1.0",
   "type": "module",
   "main": "./out/extension/main.js",
-  "files": [
-    "bin/",
-    "out/",
-    "src/",
-    "syntaxes/",
-    "images/CalcScript-icon.png",
-    "language-configuration.json",
-    "langium-config.json",
-    "README.md",
-    "LICENSE"
-  ],
   "publishConfig": {
     "access": "public",
     "registry": "https://npm.pkg.github.com/"
