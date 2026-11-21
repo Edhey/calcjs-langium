@@ -1,14 +1,12 @@
 *.vsix
-**/*.map
 *.map
-**/*.tsbuildinfo
+**/*.map
 *.tsbuildinfo
 docs/
 .nyc_output/
 coverage/
 test/
 examples/
-bin/test-scripts/
 .vscode/
 .github/
 create-issues.sh
