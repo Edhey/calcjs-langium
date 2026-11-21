@@ -47,6 +47,9 @@ class ArrayFunctionObject extends FunctionObject {
   }
 
   override _call(index: unknown): unknown {
+    if (arguments.length === 0) {
+      return this;
+    }
     if (typeof index === 'string' && this.inmediatFunctions.includes(index)) {
       const immediate = this.wrappedFunction(index);
       if (typeof immediate === 'function') {
@@ -77,7 +80,7 @@ class ArrayFunctionObject extends FunctionObject {
     return this;
   }
 
-  _assing(currentFunction: (arg: unknown) => unknown, cacheArgs: unknown[], cacheValue: unknown, index: number): (arg: unknown) => unknown {
+  _assing(currentFunction: (...args: unknown[]) => unknown, cacheArgs: unknown[], cacheValue: unknown, index: number): (...args: unknown[]) => unknown {
     const cacheArgument = cacheArgs[index];
 
     return (...args: unknown[]) => {
@@ -97,10 +100,14 @@ class ArrayFunctionObject extends FunctionObject {
         if (cacheArgs.length === index + 1) {
           return cacheValue;
         }
-        auxFunction = currentFunction(args[0]) as (arg: unknown) => unknown;
-        return this._assing(auxFunction, cacheArgs, cacheValue, index + 1);
+        auxFunction = currentFunction(args[0]) as (...remainingArgs: unknown[]) => unknown;
+        const remainingArgs = args.slice(index + 1);
+        const nestedAssignment = this._assing(auxFunction, cacheArgs, cacheValue, index + 1);
+        return remainingArgs.length > 0
+          ? nestedAssignment(...remainingArgs)
+          : nestedAssignment;
       }
-      return currentFunction(args[0]);
+      return currentFunction(...args);
     };
   }
 
@@ -123,8 +130,11 @@ class ArrayFunctionObject extends FunctionObject {
   push = (arg: unknown): void => {
     const lastIndex = this.indexArray.length;
     if (arg instanceof ArrayFunctionObject) {
-      for (let i = 0; i < arg.indexArray.length; i++) {
-        this.indexArray.push(arg._call(lastIndex) as ComplexInstance);
+      for (const index of arg.indexArray) {
+        const value = arg._call(index);
+        const nextIndex = new Complex(this.indexArray.length);
+        this.indexArray.push(nextIndex);
+        this.wrappedFunction = this._assing(this.wrappedFunction, [nextIndex], value, 0);
       }
     } else {
       this.indexArray.push(new Complex(lastIndex));

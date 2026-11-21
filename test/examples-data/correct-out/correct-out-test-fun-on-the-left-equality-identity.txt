@@ -1,5 +1,8 @@
 false
 5
 19
-(...x) => this(...x)[operator](other)
+(...args) => {
+  const result = this(...args);
+  return result[operator](other);
+}
 29

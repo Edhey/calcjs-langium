@@ -1,3 +1,6 @@
 false
 13
-(...x) => this(...x)[operator](other)
+(...args) => {
+  const result = this(...args);
+  return result[operator](other);
+}

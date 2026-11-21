@@ -5,39 +5,50 @@ const supportLibraryNames = new Set(Object.keys(supportLib));
 
 export function findDependencies(model: Model): Set<string>[] {
   const dependencies: Set<string> = new Set();
-  // const dependenciesNames = Object.keys(supportLib);
   const declaredVariables: Set<string> = new Set();
 
-  function exploreExpression(expr: Expression): void {
-    // if (isCallLiteral(expr)) {
-    //   const call = expr as CallLiteral;
-    //   if (!isIdentifier(call.callee)) {
-    //     throw new Error('It is not possible to call a non-identified function');
-    //   }
-    //   const functionName = call.callee.name;
-    //   if (dependenciesNames.includes(functionName)) {
-    //     dependencies.add(functionName);
-    //   }
-    //   call.arguments.forEach(arg => exploreExpression(arg));
-    // } else if (isBinaryExpression(expr)) {
-    //   exploreExpression(expr.left);
-    //   exploreExpression(expr.right);
-    // } else if (isNumberLiteral(expr)) {
-    //   dependencies.add('Complex');
-    // } else if (isIdentifier(expr)) {
-    //   if (dependenciesNames.includes(expr.name)) {
-    //     dependencies.add(expr.name);
-    //   }
-    //   if (!declaredVariables.has(expr.name)) {
-    //     declaredVariables.add(expr.name);
-    //   }
-    // }
+  function exploreExpression(expr: Expression, inFunction = false): void {
     if (isAssignmentExpression(expr)) {
       const left = expr.left;
       if (isIdentifier(left)) {
-        declaredVariables.add(left.name);
+        if (!inFunction) {
+          declaredVariables.add(left.name);
+        }
       }
-      exploreExpression(expr.right);
+      exploreExpression(expr.right, inFunction);
+    } else if (isForExpression(expr)) {
+      exploreExpression(expr.init, false);
+      exploreExpression(expr.condition, false);
+      exploreExpression(expr.update, false);
+      expr.body.forEach(bodyExpression => exploreExpression(bodyExpression, false));
+    } else if (isWhileExpression(expr)) {
+      exploreExpression(expr.condition, false);
+      expr.body.forEach(bodyExpression => exploreExpression(bodyExpression, false));
+    } else if (isDoWhileExpression(expr)) {
+      expr.body.forEach(bodyExpression => exploreExpression(bodyExpression, false));
+      exploreExpression(expr.condition, false);
+    } else if (isBinaryExpression(expr)) {
+      exploreExpression(expr.left, inFunction);
+      exploreExpression(expr.right, inFunction);
+    } else if (isUnaryPostfixExpression(expr)) {
+      exploreExpression(expr.operand, inFunction);
+    } else if (isUnarySubExpression(expr)) {
+      exploreExpression(expr.operand, inFunction);
+    } else if (isAbsoluteValueExpression(expr)) {
+      exploreExpression(expr.operand, inFunction);
+    } else if (isNotExpression(expr)) {
+      exploreExpression(expr.operand, inFunction);
+    } else if (isFunctionDeclaration(expr)) {
+      expr.body.forEach(bodyExpression => exploreExpression(bodyExpression, true));
+    } else if (isCallLiteral(expr)) {
+      expr.calls.forEach(call => call.arguments.forEach(arg => exploreExpression(arg, inFunction)));
+    } else if (isCallExpression(expr)) {
+      exploreExpression(expr.callee, inFunction);
+      expr.arguments.forEach(arg => exploreExpression(arg, inFunction));
+    } else if (isArrayLiteral(expr)) {
+      expr.elements.forEach(element => exploreExpression(element, inFunction));
+    } else if (isObjectLiteral(expr)) {
+      expr.properties.forEach(property => exploreExpression(property.value, inFunction));
     }
   }
   model.expressions.forEach(expr => exploreExpression(expr));
@@ -52,6 +63,7 @@ export function findDependencies(model: Model): Set<string>[] {
 export class JavaScriptTranspiler {
   private static dependencies: Set<string> = new Set();
   private static dependenciesNames: Set<string> = supportLibraryNames;
+  private static functionParameterCounts: Map<string, number> = new Map();
 
   /**
    * Transpiles a CalcScript model into JavaScript code.
@@ -60,6 +72,14 @@ export class JavaScriptTranspiler {
    */
   public static transpile(model: Model, returnLast = false): string {
     this.dependencies.clear();
+    this.functionParameterCounts.clear();
+    for (const expression of model.expressions) {
+      if (isAssignmentExpression(expression)
+        && isIdentifier(expression.left)
+        && isFunctionDeclaration(expression.right)) {
+        this.functionParameterCounts.set(expression.left.name, expression.right.parameters.length);
+      }
+    }
     const allDependencies = findDependencies(model);
     this.dependencies = allDependencies[0];
     const declaredVariablesSet = allDependencies[1];
@@ -227,9 +247,21 @@ export class JavaScriptTranspiler {
     } else {
       functionName = '$' + functionName;
     }
-    const calls = expr.calls
-      .map(call => `(${call.arguments.map((arg: Expression) => this.transpileExpression(arg)).join(', ')})`)
-      .join('');
+    let calls = '';
+    for (const call of expr.calls) {
+      const args = call.arguments.map((arg: Expression) => this.transpileExpression(arg));
+      const parameterCount = this.functionParameterCounts.get(expr.callee.name);
+      if (!this.dependenciesNames.has(expr.callee.name)
+        && args.length > 1
+        && parameterCount === 1) {
+        calls += `(${args[0]})`;
+        for (const arg of args.slice(1)) {
+          calls += `(${arg})`;
+        }
+      } else {
+        calls += `(${args.join(', ')})`;
+      }
+    }
     return `${functionName}${calls}`;
   }
 
@@ -272,14 +304,53 @@ export class JavaScriptTranspiler {
     const nameInvocation = 'functionObject';
     this.dependencies.add(nameInvocation);
     const args = expr.parameters.map((param) => this.transpileIdentifier(param)).join(', ');
+    const localVariables = new Set<string>();
+    for (const statement of expr.body) {
+      this.collectDirectAssignments(statement, localVariables);
+    }
+    for (const parameter of expr.parameters) {
+      localVariables.delete(parameter.name);
+    }
+    const declarations = Array.from(localVariables)
+      .map(variable => `$${variable}`)
+      .join(', ');
     const statements = expr.body.map((stmt: Expression) => this.transpileExpression(stmt));
     if (statements.length === 0) {
-      return `${nameInvocation}(function(${args}) {})`;
+      const emptyBody = declarations ? `let ${declarations};` : '';
+      return `${nameInvocation}(function(${args}) {${emptyBody}})`;
     }
     const last = statements[statements.length - 1];
     const prefix = statements.slice(0, -1).map(s => `${s};`).join('\n');
-    const body = prefix ? `${prefix}\nreturn ${last};` : `return ${last};`;
+    const declarationPrefix = declarations ? `let ${declarations};` : '';
+    const bodyPrefix = [declarationPrefix, prefix].filter(Boolean).join('\n');
+    const body = bodyPrefix ? `${bodyPrefix}\nreturn ${last};` : `return ${last};`;
     return `${nameInvocation}(function(${args}) {\n${body}\n})`;
+  }
+
+  private static collectDirectAssignments(expr: Expression, variables: Set<string>): void {
+    if (isAssignmentExpression(expr)) {
+      if (isIdentifier(expr.left)) {
+        variables.add(expr.left.name);
+      }
+      this.collectDirectAssignments(expr.right, variables);
+    } else if (isForExpression(expr) || isWhileExpression(expr) || isDoWhileExpression(expr)) {
+      if (isForExpression(expr)) {
+        this.collectDirectAssignments(expr.init, variables);
+        this.collectDirectAssignments(expr.condition, variables);
+        this.collectDirectAssignments(expr.update, variables);
+      }
+      expr.body.forEach(bodyExpression => this.collectDirectAssignments(bodyExpression, variables));
+    } else if (isFunctionDeclaration(expr)) {
+      return;
+    } else if (isBinaryExpression(expr)) {
+      this.collectDirectAssignments(expr.left, variables);
+      this.collectDirectAssignments(expr.right, variables);
+    } else if (isCallLiteral(expr)) {
+      expr.calls.forEach(call => call.arguments.forEach(arg => this.collectDirectAssignments(arg, variables)));
+    } else if (isCallExpression(expr)) {
+      this.collectDirectAssignments(expr.callee, variables);
+      expr.arguments.forEach(arg => this.collectDirectAssignments(arg, variables));
+    }
   }
 
   private static transpileAssignmentExpression(expr: AssignmentExpression): string {

@@ -21,22 +21,22 @@ import { StoreMap } from './store-map.js';
  * the results of function calls for specific arguments.
  */
 class FunctionObject extends CallableInstance {
-  rawFunction: (arg: any) => any;
-  wrappedFunction: (arg: any) => any;
+  rawFunction: (...args: any[]) => any;
+  wrappedFunction: (...args: any[]) => any;
   cache: StoreMap<any, any>;
 
-  constructor(rawFunction: (arg: any) => any) {
+  constructor(rawFunction: (...args: any[]) => any) {
     super("_call");
     this.rawFunction = rawFunction;
     this.wrappedFunction = rawFunction;
     this.cache = new StoreMap();
   }
 
-  _call(arg: any): any {
-    return this.wrappedFunction(arg) ?? null;
+  _call(...args: any[]): any {
+    return this.wrappedFunction(...args) ?? null;
   }
 
-  toFunction(): (arg: any) => any {
+  toFunction(): (...args: any[]) => any {
     return this.wrappedFunction;
   }
 
@@ -61,11 +61,11 @@ class FunctionObject extends CallableInstance {
   }
 
   private _assign(
-    currentFunction: (arg: any) => any,
+    currentFunction: (...args: any[]) => any,
     cacheArgs: any[],
     cacheValue: any,
     index: number
-  ): (arg: any) => any {
+  ): (...args: any[]) => any {
     const cacheArgument = cacheArgs[index];
 
     return (...args: any[]) => {
@@ -84,10 +84,14 @@ class FunctionObject extends CallableInstance {
         if (cacheArgs.length === index + 1) {
           return cacheValue;
         }
-        auxFunction = currentFunction(args); // TODO: Check ...args
-        return this._assign(auxFunction, cacheArgs, cacheValue, index + 1);
+        auxFunction = currentFunction(args[0]);
+        const remainingArgs = args.slice(index + 1);
+        const nestedAssignment = this._assign(auxFunction, cacheArgs, cacheValue, index + 1);
+        return remainingArgs.length > 0
+          ? nestedAssignment(...remainingArgs)
+          : nestedAssignment;
       }
-      return currentFunction(args); // TODO: Check ...args
+      return currentFunction(...args);
     };
   }
 }
@@ -99,7 +103,7 @@ class FunctionObject extends CallableInstance {
  * @param rawFunction - The function to be wrapped.
  * @returns The FunctionObject instance.
  */
-function functionObject(rawFunction: (arg: any) => any): FunctionObject {
+function functionObject(rawFunction: (...args: any[]) => any): FunctionObject {
   if (rawFunction instanceof FunctionObject) return rawFunction;
   return new FunctionObject(rawFunction);
 }

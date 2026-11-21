@@ -1,8 +1,6 @@
-import { min,Complex } from '/home/usuario/practicas/02-Translating-Arithmetic-Expressions-to-JavaScript/arith2js-himar_edhey-hernandez-alu0101552392/src/support-lib.js';
+const { Complex,min } = await import("/home/edhey/3oIngInformatica/PL/tfa-himar_edhey-hernandez-alu0101552392/out/code-generation/support-lib.js");
+
 
 /* end of preamble of generated code */
 
-min(
-  min(Complex('1').add(Complex('2i')), Complex('3').add(Complex('4i'))),
-  Complex('5').add(Complex('6i')).add(Complex('7').sub(Complex('8i')))
-); 
+min(min(Complex('1').add(Complex('2i')), Complex('3').add(Complex('4i'))), Complex('5').add(Complex('6i')).add(Complex('7').sub(Complex('8i')))); 

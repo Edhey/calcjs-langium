@@ -1,6 +1,16 @@
-import { Complex,print } from '/home/usuario/practicas/02-Translating-Arithmetic-Expressions-to-JavaScript/arith2js-himar_edhey-hernandez-alu0101552392/src/support-lib.js';
+const { Complex,print } = await import("/home/edhey/3oIngInformatica/PL/tfa-himar_edhey-hernandez-alu0101552392/out/code-generation/support-lib.js");
+
 
 /* end of preamble of generated code */
 
 let $x, $y, $z, $a, $b, $c, $d;
-(((((((($x = Complex('3.3'), $y = Complex('2.2')), $z = $x.sub($y)), print($z)), $a = Complex('1.1')), $b = Complex('4.4')), $c = $a.add($b)), print($c)), $d = $z.sub($c)), print($d); 
+$x = Complex('3.3');
+$y = Complex('2.2');
+$z = $x.sub($y);
+print($z);
+$a = Complex('1.1');
+$b = Complex('4.4');
+$c = $a.add($b);
+print($c);
+$d = $z.sub($c);
+print($d); 

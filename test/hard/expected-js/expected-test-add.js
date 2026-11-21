@@ -1,5 +1,6 @@
-import { Complex } from '/home/usuario/practicas/02-Translating-Arithmetic-Expressions-to-JavaScript/arith2js-himar_edhey-hernandez-alu0101552392/src/support-lib.js';
+const { print,Complex } = await import("/home/edhey/3oIngInformatica/PL/tfa-himar_edhey-hernandez-alu0101552392/out/code-generation/support-lib.js");
+
 
 /* end of preamble of generated code */
 
-Complex('1').add(Complex('2i')).mul(Complex('3').add(Complex('4i'))).add(Complex('5').mul(Complex('6').add(Complex('7i')))); 
+print(Complex('1').add(Complex('2i')).mul(Complex('3').add(Complex('4i'))).add(Complex('5').mul(Complex('6').add(Complex('7i'))))); 
