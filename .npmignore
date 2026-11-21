@@ -1,0 +1,15 @@
+*.vsix
+docs/
+.nyc_output/
+coverage/
+test/
+examples/
+.vscode/
+.github/
+create-issues.sh
+issues.txt
+jsdoc.json
+langium-quickstart.md
+GOALS.md
+TODO.md
+*.tsbuildinfo

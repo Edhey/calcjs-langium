@@ -1,22 +1,33 @@
 {
-  "name": "calc-script",
+  "name": "@edhey/calcjs-langium",
   "publisher": "Edhey",
-  "displayName": "CalcScript",
+  "displayName": "CalcJs-Langium",
   "icon": "images/CalcScript-icon.png",
   "description": "* See section [TFA](https://apuntes-pl.vercel.app/labs/tfa#task-presentation-of-goals) Final Project - VsCode extension for a transpiler of a simple calculator language to JavaScript.\n* The project is based on the [Langium](https://langium.org/) framework.",
   "version": "1.0.2",
   "type": "module",
   "main": "./out/extension/main.js",
+  "files": [
+    "bin/",
+    "out/",
+    "src/",
+    "syntaxes/",
+    "images/CalcScript-icon.png",
+    "language-configuration.json",
+    "langium-config.json",
+    "README.md",
+    "LICENSE"
+  ],
   "publishConfig": {
     "access": "public",
     "registry": "https://npm.pkg.github.com/"
   },
   "bin": {
-    "calc2js": "./bin/cli"
+    "calc2js": "bin/cli"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Edhey/calcjs-langium.git"
+    "url": "git+https://github.com/Edhey/calcjs-langium.git"
   },
   "scripts": {
     "esbuild-base": "esbuild ./src/extension/main.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
@@ -65,7 +76,6 @@
     "espree": "^10.3.0",
     "langium": "~3.5.0",
     "mathjs": "^14.2.1",
-    "node": "^23.8.0",
     "recast": "^0.23.10",
     "template-file": "^6.0.1",
     "vscode-languageclient": "~9.0.1",
