@@ -58,7 +58,8 @@
     "dev": "http-server -c-1 -o docs",
     "trans": "./bin/cli --verbose",
     "exec": "./bin/cli --run",
-    "syntax": "node ./src/language/syntaxes-post-processing.js"
+    "syntax": "node ./src/language/syntaxes-post-processing.js",
+    "pack:clean": "npm run langium:generate:build && find out -name '*.map' -delete"
   },
   "keywords": [
     "ull",
