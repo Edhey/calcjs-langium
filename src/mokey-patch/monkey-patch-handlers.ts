@@ -6,15 +6,26 @@
  * TFA - Langium Syntaxis and Errors for Calculator
  *
  * @author Himar Edhey Hernández Alonso
- * @since Wed 19 Mar 2025 
+ * @since Wed 19 Mar 2025
  * @desc Handler for operations
  * @see {@link https://github.com/Edhey/calcjs-langium}
- *
  */
 
-const operationHandlers = {
-  'default': (left, operator, rigth) => {
-    throw new Error(`Operation ${left} ${operator} ${rigth} not supported`);
+export type OperationHandler = (this: unknown, ...args: unknown[]) => unknown;
+export type OperationNode = OperationHandler | Record<string, unknown>;
+
+export interface OperationHandlers {
+  default: (left: unknown, operator: string, right: unknown) => never;
+  [typeName: string]: OperationNode | OperationHandler | ((left: unknown, operator: string, right: unknown) => never);
+}
+
+export interface PatchingType {
+  prototype: object;
+}
+
+const operationHandlers: OperationHandlers = {
+  default: (left: unknown, operator: string, right: unknown): never => {
+    throw new Error(`Operation ${String(left)} ${operator} ${String(right)} not supported`);
   }
 };
 
@@ -32,7 +43,7 @@ const allOperators = {
   ...ComparisonOperators
 };
 
-const implementedTypes = [];
+const implementedTypes: PatchingType[] = [];
 
 export {
   operationHandlers,
