@@ -9,7 +9,7 @@
  * @since Thu 27 Mar 2025
  * @desc This file defines the FunctionObject class, which is a subclass of the 
  * CallableInstance class.
- * @see {@link https://github.com/ULL-ESIT-PL-2425/arith2js-himar_edhey-hernandez-alu0101552392}
+ * @see {@link https://github.com/Edhey/calcjs-langium}
  */
 
 import CallableInstance from 'callable-instance';
@@ -62,7 +62,7 @@ class FunctionObject extends CallableInstance {
 
   _assing(currentFunction, cacheArgs, cacheValue, index) {
     let cacheArgument = cacheArgs[index];
-    
+
     return (...args) => {
       let auxFunction = currentFunction;
       if (cacheArgument == null) {

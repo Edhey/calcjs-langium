@@ -8,7 +8,7 @@
  * @autor Himar Edhey Hernández Alonso
  * @since Fri 28 Feb 2025
  * @desc Este archivo contiene los tests de los errores de la práctica
- * @see {@link https://github.com/ULL-ESIT-PL-2425/arith2js-himar_edhey-hernandez-alu0101552392}
+ * @see {@link https://github.com/Edhey/calcjs-langium}
  */
 
 import { exec } from 'node:child_process';
@@ -68,7 +68,7 @@ export async function checkTranspile(testsFiles: TestFiles): Promise<CliResult> 
  * @param testsFiles Object with the input, output, expectedjs and correctout files
  * @param verbose If true, it will show the console.log output
  */
-export async function checkRunConsoleLog(testsFiles: TestFiles): Promise <CliResult> {
+export async function checkRunConsoleLog(testsFiles: TestFiles): Promise<CliResult> {
   return new Promise(resolve => {
     const cmd = `node ${cliPath} "${testsFiles.input}" -r`;
     exec(cmd, async (error, stdout, stderr) => {
@@ -86,7 +86,7 @@ export async function checkRunConsoleLog(testsFiles: TestFiles): Promise <CliRes
  * Function that executes the run function and checks the error output
  * @param testsFiles Object with the input, output, expectedjs and correcterr files
  */
-export async function checkRunConsoleError(testsFiles: TestFiles): Promise <CliResult> {
+export async function checkRunConsoleError(testsFiles: TestFiles): Promise<CliResult> {
   return new Promise(resolve => {
     const cmd = `node ${cliPath} "${testsFiles.input}" -r`;
     exec(cmd, async (error, stdout, stderr) => {

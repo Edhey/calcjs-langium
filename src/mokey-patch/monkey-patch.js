@@ -8,7 +8,7 @@
  * @author Himar Edhey Hernandez Alonso
  * @since Wed 19 Mar 2025 
  * @desc Patches the objects to add new operations
- * @see https://github.com/ULL-ESIT-PL-2425/arith2js-himar_edhey-hernandez-alu0101552392
+ * @see https://github.com/Edhey/calcjs-langium
  */
 
 import { Complex } from './handlers/complex-monkey-patch.js';

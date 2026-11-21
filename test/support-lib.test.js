@@ -8,7 +8,7 @@
  * @autor Himar Edhey Hernández Alonso
  * @since Wed 26 Feb 2025
  * @desc Este archivo contiene los tests de la support library
- * @see {@link https://github.com/ULL-ESIT-PL-2425/arith2js-himar_edhey-hernandez-alu0101552392}
+ * @see {@link https://github.com/Edhey/calcjs-langium}
  */
 
 import { expect } from 'chai';

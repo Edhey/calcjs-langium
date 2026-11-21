@@ -8,7 +8,7 @@
  * @author Himar Edhey Hernández Alonso
  * @since Sat 29 Mar 2025
  * @desc Structure that implements the cache based on an Object.
- * @see {@link https://github.com/ULL-ESIT-PL-2425/arith2js-himar_edhey-hernandez-alu0101552392}
+ * @see {@link https://github.com/Edhey/calcjs-langium}
  */
 
 /**

@@ -9,7 +9,7 @@
  * @since Wed 26 Feb 2025
  * @desc Archivo que contiene la función dependencies que se encarga de detectar
  * las funciones de soporte que se utilizan
- * @see {@link https://github.com/ULL-ESIT-PL-2425/arith2js-himar_edhey-hernandez-alu0101552392}
+ * @see {@link https://github.com/Edhey/calcjs-langium}
  */
 
 import astTypes from 'ast-types';

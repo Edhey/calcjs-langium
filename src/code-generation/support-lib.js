@@ -11,7 +11,7 @@
  *        El factorial para números complejos:
  *          - A gamma function implementation based on Lanczos Approximation
  *          - @see {@link https://en.wikipedia.org/wiki/Lanczos_approximation}
- * @see {@link https://github.com/ULL-ESIT-PL-2425/arith2js-himar_edhey-hernandez-alu0101552392}
+ * @see {@link https://github.com/Edhey/calcjs-langium}
  *
  */
 

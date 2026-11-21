@@ -11,7 +11,7 @@
  * @since Wed 26 Feb 2025
  * @desc Este archivo contiene el código para la ejecución del programa que
  *       convierte una expresión aritmética en un programa en JavaScript
- * @see {@link https://github.com/ULL-ESIT-PL-2425/arith2js-himar_edhey-hernandez-alu0101552392}
+ * @see {@link https://github.com/Edhey/calcjs-langium}
  */
 
 import { program } from "commander";
