@@ -78,12 +78,12 @@ async function getModel(fileName: string): Promise<Model | undefined> {
   return document.parseResult?.value as Model | undefined;
 }
 
-async function transpileInProcess(fileName: string): Promise<string> {
+async function transpileInProcess(fileName: string, returnLast = false): Promise<string> {
   const model = await getModel(fileName);
   if (!model) {
     return '';
   }
-  return generateJavaScript(model);
+  return generateJavaScript(model, returnLast);
 }
 
 async function executeCaptured(fileName: string): Promise<CliResult> {
@@ -101,14 +101,19 @@ async function executeCaptured(fileName: string): Promise<CliResult> {
   };
 
   try {
-    const code = await transpileInProcess(fileName);
+    const code = await transpileInProcess(fileName, true);
     if (!code) {
       return { code: 1, error: new Error('CalcScript validation failed'), stdout, stderr };
     }
 
     tmpFile = path.join(os.tmpdir(), `calcjs-${process.pid}-${randomUUID()}.mjs`);
     await fsPromises.writeFile(tmpFile, code, 'utf8');
-    await import(`${pathToFileURL(tmpFile).href}?t=${Date.now()}-${randomUUID()}`);
+    const mod = await import(`${pathToFileURL(tmpFile).href}?t=${Date.now()}-${randomUUID()}`) as {
+      __lastValue?: unknown;
+    };
+    if (stdout.trim() === '' && mod.__lastValue !== undefined && mod.__lastValue !== null) {
+      stdout = String(mod.__lastValue);
+    }
     return { code: 0, error: null, stdout: stdout.trim(), stderr: stderr.trim() };
   } catch (error) {
     const executionError = error instanceof Error ? error : new Error(String(error));

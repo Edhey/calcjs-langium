@@ -58,7 +58,7 @@ export class JavaScriptTranspiler {
    * @param model The CalcScript model to transpile
    * @returns The transpiled JavaScript code
    */
-  public static transpile(model: Model): string {
+  public static transpile(model: Model, returnLast = false): string {
     this.dependencies.clear();
     const allDependencies = findDependencies(model);
     this.dependencies = allDependencies[0];
@@ -71,9 +71,26 @@ export class JavaScriptTranspiler {
         .join(', ');
       jsCode += ';\n';
     }
-    jsCode += model.expressions
+    const lastExpression = model.expressions[model.expressions.length - 1];
+    const shouldReturnLast = returnLast
+      && model.expressions.length > 0
+      && lastExpression !== undefined
+      && !isForExpression(lastExpression)
+      && !isWhileExpression(lastExpression)
+      && !isDoWhileExpression(lastExpression);
+    const expressionsToTranspile = shouldReturnLast
+      ? model.expressions.slice(0, -1)
+      : model.expressions;
+    jsCode += expressionsToTranspile
       .map(expr => this.transpileExpression(expr))
-      .join(';\n') + ';';
+      .join(';\n');
+    if (expressionsToTranspile.length > 0) {
+      jsCode += ';';
+    }
+    if (shouldReturnLast && lastExpression) {
+      const transpiledLastExpression = this.transpileExpression(lastExpression);
+      jsCode += `\nexport const __lastValue = ${transpiledLastExpression};`;
+    }
     return jsCode;
   }
 
@@ -157,8 +174,16 @@ export class JavaScriptTranspiler {
   private static transpileBinaryExpression(expr: BinaryExpression): string {
     const left = this.transpileExpression(expr.left);
     const right = this.transpileExpression(expr.right);
+    if (expr.operator === '&') {
+      this.dependencies.add('min');
+      return `min(${left}, ${right})`;
+    }
+    if (expr.operator === '@') {
+      this.dependencies.add('max');
+      return `max(${left}, ${right})`;
+    }
     const operator = this.transpileOperator(expr.operator);
-    return `${left}${operator}${right}${operator[operator.length - 1] == '(' ? ')' : ''}`; // TODO: Error handling for unsupported operators??
+    return `${left}${operator}${right}${operator[operator.length - 1] == '(' ? ')' : ''}`;
   }
 
   private static transpileAbsoluteValueExpression(expr: AbsoluteValueExpression): string {
@@ -168,12 +193,11 @@ export class JavaScriptTranspiler {
 
   private static transpileUnaryPostfixExpression(expr: UnaryPostfixExpression): string {
     const operand = this.transpileExpression(expr.operand);
-    let operator = this.transpileOperator(expr.operator);
-    if (operator === '!') {
+    if (expr.operator === '!') {
       this.dependencies.add('gamma');
       return `gamma(${operand})`;
     }
-    return `${operand}${operator}`;
+    return `${operand}${this.transpileOperator(expr.operator)}`;
   }
 
   private static transpileUnarySubExpression(expr: UnarySubExpression): string {
@@ -183,7 +207,7 @@ export class JavaScriptTranspiler {
 
   private static transpileNotExpression(expr: NotExpression): string {
     const operand = this.transpileExpression(expr.operand);
-    return `!${operand}`;
+    return `${operand}.not()`;
   }
 
   /**
@@ -203,8 +227,10 @@ export class JavaScriptTranspiler {
     } else {
       functionName = '$' + functionName;
     }
-    const args = expr.arguments.map((arg: Expression) => this.transpileExpression(arg)).join(', ');
-    return `${functionName}(${args})`;
+    const calls = expr.calls
+      .map(call => `(${call.arguments.map((arg: Expression) => this.transpileExpression(arg)).join(', ')})`)
+      .join('');
+    return `${functionName}${calls}`;
   }
 
   private static transpileCallExpression(expr: CallExpression): string {
@@ -238,7 +264,7 @@ export class JavaScriptTranspiler {
     return expr.value;
   }
 
-  private static transpileNullLiteral(expr: NullLiteral): string {
+  private static transpileNullLiteral(_expr: NullLiteral): string {
     return 'null';
   }
 
@@ -246,13 +272,27 @@ export class JavaScriptTranspiler {
     const nameInvocation = 'functionObject';
     this.dependencies.add(nameInvocation);
     const args = expr.parameters.map((param) => this.transpileIdentifier(param)).join(', ');
-    const body = expr.body.map((stmt: Expression) => this.transpileExpression(stmt)).join(';\n');
-    return `${nameInvocation}(function(${args}) {\nreturn ${body}\n})`;
+    const statements = expr.body.map((stmt: Expression) => this.transpileExpression(stmt));
+    if (statements.length === 0) {
+      return `${nameInvocation}(function(${args}) {})`;
+    }
+    const last = statements[statements.length - 1];
+    const prefix = statements.slice(0, -1).map(s => `${s};`).join('\n');
+    const body = prefix ? `${prefix}\nreturn ${last};` : `return ${last};`;
+    return `${nameInvocation}(function(${args}) {\n${body}\n})`;
   }
 
   private static transpileAssignmentExpression(expr: AssignmentExpression): string {
     const right = this.transpileExpression(expr.right);
-    if (isCallLiteral(expr.left) || isCallExpression(expr.left)) {
+    if (isCallLiteral(expr.left)) {
+      const callee = this.transpileExpression(expr.left.callee);
+      const args = expr.left.calls
+        .flatMap(call => call.arguments)
+        .map((arg: Expression) => this.transpileExpression(arg))
+        .join(', ');
+      return `${callee}.assign([${args}], ${right})`;
+    }
+    if (isCallExpression(expr.left)) {
       const callee = this.transpileExpression(expr.left.callee);
       const args = expr.left.arguments.map((arg: Expression) => this.transpileExpression(arg)).join(', ');
       return `${callee}.assign([${args}], ${right})`;
@@ -293,6 +333,12 @@ export class JavaScriptTranspiler {
         return '.div(';
       case '**':
         return '.pow(';
+      case '==':
+        return '.equals(';
+      case '!=':
+        return '.notEquals(';
+      case '<':
+        return '.lessThan(';
       default:
         return ` ${operator} `;
     }

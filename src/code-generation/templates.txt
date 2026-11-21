@@ -1,4 +1,4 @@
-const { {{ dependencies }} } = await import("{{ root }}/src/code-generation/support-lib.js");
+const { {{ dependencies }} } = await import("{{ root }}/out/code-generation/support-lib.js");
 
 
 /* end of preamble of generated code */
