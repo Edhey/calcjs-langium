@@ -263,7 +263,11 @@ describe('Hard Tests', function () {
 describe('Syntax Error Tests', function () {
   for (let i = 0; i < ErrorSyntaxTest.length; i++) {
     it(`check syntax errors(${ErrorSyntaxTest[i].input}, ${ErrorSyntaxTest[i].output})`, async () => {
-      await checkRunConsoleError(ErrorSyntaxTest[i]);
+      const result = await checkRunConsoleError(ErrorSyntaxTest[i]);
+      const reported = `${result.stderr}\n${result.error?.message ?? ''}`.trim();
+      expect(result.code).to.equal(1);
+      expect(reported).to.not.equal('');
+      expect(reported).not.to.match(/Cannot read properties of undefined|reading 'ast'|reading 'forEach'/);
     });
   }
 });
@@ -275,7 +279,11 @@ describe('Syntax Error Tests', function () {
 describe('Basic Syntax Error Tests', function () {
   for (let i = 0; i < BasicErrorTest.length; i++) {
     it(`check syntax errors(${BasicErrorTest[i].input}, ${BasicErrorTest[i].output})`, async () => {
-      await checkRunConsoleError(BasicErrorTest[i]);
+      const result = await checkRunConsoleError(BasicErrorTest[i]);
+      const reported = `${result.stderr}\n${result.error?.message ?? ''}`.trim();
+      expect(result.code).to.equal(1);
+      expect(reported).to.not.equal('');
+      expect(reported).not.to.match(/Cannot read properties of undefined|reading 'ast'|reading 'forEach'/);
     });
   }
 });

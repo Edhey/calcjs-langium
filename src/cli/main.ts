@@ -9,9 +9,14 @@ import * as url from 'node:url';
 import * as fs from 'node:fs';
 import * as fspromise from 'node:fs/promises';
 import * as path from 'node:path';
-import { exec } from 'node:child_process';
+import * as os from 'node:os';
+import * as crypto from 'node:crypto';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 import { generateJavaScript } from '../code-generation/generate.js';
+const execFileAsync = promisify(execFile);
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+
 
 const packagePath = path.resolve(__dirname, '..', '..', 'package.json');
 const packageContent = await fspromise.readFile(packagePath, 'utf-8');
@@ -45,44 +50,62 @@ export default function (): void {
     .option('-r, --run', 'Execute the resulting JS code')
     .description("Transpile an arithmetic expression into a JavaScript program")
     .action(async (fileName: string, options: GenerateOptions) => {
-      const services = createCalcScriptServices(NodeFileSystem).CalcScript;
-      const model = await extractAstNode<Model>(fileName, services);
-      if (options.ast) {
-        console.log(chalk.blue('Parsed AST:'));
-        const jsonStr = services.serializer.JsonSerializer.serialize(model);
-        const parsed = JSON.parse(jsonStr);
-        const prettyJson = JSON.stringify(parsed, null, 2);
-        console.log(prettyJson);
-      }
-      const code = await generateJavaScript(model);
-
-      if (options.destination) {
-        const data = extractDestinationAndName(fileName, options.destination);
-        const generatedFilePath = `${path.join(data.destination, data.name)}.js`;
-        if (!fs.existsSync(data.destination)) {
-          fs.mkdirSync(data.destination, { recursive: true });
+      try {
+        const services = createCalcScriptServices(NodeFileSystem).CalcScript;
+        const model = await extractAstNode<Model>(fileName, services);
+        if (options.ast) {
+          console.log(chalk.blue('Parsed AST:'));
+          const jsonStr = services.serializer.JsonSerializer.serialize(model);
+          const parsed = JSON.parse(jsonStr);
+          const prettyJson = JSON.stringify(parsed, null, 2);
+          console.log(prettyJson);
         }
-        fs.writeFileSync(generatedFilePath, code);
-        console.log(chalk.green(`JavaScript code written to ${generatedFilePath}`));
-      }
-      if (options.verbose) {
-        // console.log(chalk.blue('Generated JavaScript code:'));
-        console.log(code);
-      }
-      if (options.run || options.string || options.return) {
-        const tempFile = path.join(__dirname, 'tempCode.js');
-        await fs.writeFileSync(tempFile, code);
-        await exec(`node ${tempFile}`, (error, stdout, stderr) => {
-          if (error) {
-            console.error(chalk.red(`Error: ${error.message}`));
-            return;
+        const code = await generateJavaScript(model);
+
+        if (options.destination) {
+          const data = extractDestinationAndName(fileName, options.destination);
+          const generatedFilePath = `${path.join(data.destination, data.name)}.js`;
+          if (!fs.existsSync(data.destination)) {
+            fs.mkdirSync(data.destination, { recursive: true });
           }
-          if (stderr) {
-            console.error(chalk.red(`stderr: ${stderr}`));
-            return;
+          fs.writeFileSync(generatedFilePath, code);
+          console.log(chalk.green(`JavaScript code written to ${generatedFilePath}`));
+        }
+        if (options.verbose) {
+          console.log(code);
+        }
+        if (options.run || options.string || options.return) {
+          const tempFile = path.join(
+            os.tmpdir(),
+            `calc2js-${process.pid}-${crypto.randomUUID()}.js`
+          );
+          await fspromise.writeFile(tempFile, code, 'utf-8');
+          try {
+            const { stdout, stderr } = await execFileAsync(process.execPath, [tempFile]);
+            if (stderr) {
+              console.error(chalk.red(`stderr: ${stderr}`));
+            }
+            if (stdout.trim()) {
+              console.log(stdout.trim());
+            }
+          } catch (err) {
+            const details = err && typeof err === 'object' && 'stderr' in err
+              ? String((err as { stderr?: unknown }).stderr)
+              : err instanceof Error ? err.message : String(err);
+            const runtimeLine = details
+              .split(/\r?\n/)
+              .find(line => /\b(?:Error|TypeError|ReferenceError|RangeError):/.test(line));
+            const message = runtimeLine?.replace(/^\w*Error:\s*/, '') ?? 'Generated JavaScript execution failed';
+            console.error(chalk.red(`Runtime error: ${message}`));
+            process.exitCode = 1;
+          } finally {
+            await fspromise.rm(tempFile, { force: true });
           }
-          console.log(stdout.trim());
-        });
+        }
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        console.error(chalk.red(message));
+        process.exitCode = 1;
       }
     });
 

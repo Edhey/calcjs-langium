@@ -23,6 +23,7 @@ import { NodeFileSystem } from 'langium/node';
 import { createCalcScriptServices } from '../out/language/calc-script-module.js';
 import type { Model } from '../src/language/generated/ast.js';
 import { generateJavaScript } from '../out/code-generation/generate.js';
+import { formatDocumentErrors } from '../out/cli/cli-util.js';
 
 const calcScriptServices = createCalcScriptServices(NodeFileSystem).CalcScript;
 
@@ -60,17 +61,11 @@ async function getModel(fileName: string): Promise<Model | undefined> {
     .getOrCreateDocument(URI.file(path.resolve(fileName)));
   await calcScriptServices.shared.workspace.DocumentBuilder.build([document], { validation: true });
 
-  const parseErrors = document.parseResult?.parserErrors ?? [];
-  const validationErrors = (document.diagnostics ?? []).filter(diagnostic => diagnostic.severity === 1);
-  if (parseErrors.length > 0 || validationErrors.length > 0) {
+  const errors = formatDocumentErrors(document);
+  if (errors.length > 0) {
     console.error(chalk.red('There are validation errors:'));
-    for (const parseError of parseErrors) {
-      console.error(chalk.red(parseError.message));
-    }
-    for (const validationError of validationErrors) {
-      console.error(chalk.red(
-        `line ${validationError.range.start.line + 1}: ${validationError.message} [${document.textDocument.getText(validationError.range)}]`
-      ));
+    for (const error of errors) {
+      console.error(chalk.red(error));
     }
     return undefined;
   }

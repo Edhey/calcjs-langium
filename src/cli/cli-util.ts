@@ -1,33 +1,60 @@
 import type { AstNode, LangiumCoreServices, LangiumDocument } from 'langium';
-import chalk from 'chalk';
 import * as path from 'node:path';
 import * as fs from 'node:fs';
 import { URI } from 'langium';
 
+export class CalcDocumentError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'CalcDocumentError';
+    }
+}
+
+export function formatDocumentErrors(document: LangiumDocument): string[] {
+    const errors: string[] = [];
+    const lexerErrors = document.parseResult?.lexerErrors ?? [];
+    for (const lexerError of lexerErrors) {
+        const line = lexerError.line ?? 1;
+        const column = lexerError.column ?? 1;
+        errors.push(`Lexing error on line ${line}, column ${column}: ${lexerError.message}`);
+    }
+
+    const diagnostics = (document.diagnostics ?? []).filter(diagnostic => diagnostic.severity === 1);
+    for (const diagnostic of diagnostics) {
+        const line = diagnostic.range.start.line + 1;
+        const column = diagnostic.range.start.character + 1;
+        const offending = document.textDocument.getText(diagnostic.range);
+        const detail = offending ? ` [${offending}]` : '';
+        errors.push(`Syntax/validation error on line ${line}, column ${column}: ${diagnostic.message}${detail}`);
+    }
+
+    if (errors.length === 0) {
+        for (const parserError of document.parseResult?.parserErrors ?? []) {
+            const token = parserError.token;
+            const line = token?.startLine ?? 1;
+            const column = token?.startColumn ?? 1;
+            errors.push(`Syntax error on line ${line}, column ${column}: ${parserError.message ?? 'Unexpected input'}`);
+        }
+    }
+    return errors;
+}
+
 export async function extractDocument(fileName: string, services: LangiumCoreServices): Promise<LangiumDocument> {
     const extensions = services.LanguageMetaData.fileExtensions;
     if (!extensions.includes(path.extname(fileName))) {
-        console.error(chalk.yellow(`Please choose a file with one of these extensions: ${extensions}.`));
-        process.exit(1);
+        throw new CalcDocumentError(`Please choose a file with one of these extensions: ${extensions}.`);
     }
 
     if (!fs.existsSync(fileName)) {
-        console.error(chalk.red(`File ${fileName} does not exist.`));
-        process.exit(1);
+        throw new CalcDocumentError(`File ${fileName} does not exist.`);
     }
 
     const document = await services.shared.workspace.LangiumDocuments.getOrCreateDocument(URI.file(path.resolve(fileName)));
     await services.shared.workspace.DocumentBuilder.build([document], { validation: true });
 
-    const validationErrors = (document.diagnostics ?? []).filter(e => e.severity === 1);
-    if (validationErrors.length > 0) {
-        console.error(chalk.red('There are validation errors:'));
-        for (const validationError of validationErrors) {
-            console.error(chalk.red(
-                `line ${validationError.range.start.line + 1}: ${validationError.message} [${document.textDocument.getText(validationError.range)}]`
-            ));
-        }
-        process.exit(1);
+    const errors = formatDocumentErrors(document);
+    if (errors.length > 0) {
+        throw new CalcDocumentError(errors.join('\n'));
     }
 
     return document;
