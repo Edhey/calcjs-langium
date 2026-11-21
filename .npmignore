@@ -1,9 +1,14 @@
 *.vsix
+**/*.map
+*.map
+**/*.tsbuildinfo
+*.tsbuildinfo
 docs/
 .nyc_output/
 coverage/
 test/
 examples/
+bin/test-scripts/
 .vscode/
 .github/
 create-issues.sh
@@ -12,4 +17,3 @@ jsdoc.json
 langium-quickstart.md
 GOALS.md
 TODO.md
-*.tsbuildinfo
