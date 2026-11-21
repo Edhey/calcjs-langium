@@ -11,16 +11,24 @@
  * @see {@link https://github.com/Edhey/calcjs-langium}
  */
 
-import { exec } from 'node:child_process';
-import type { ExecException } from 'child_process';
-import path from 'path';
-import { fileURLToPath } from 'url';
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const cliPath = path.resolve(__dirname, '../bin/cli');
+import * as fs from 'node:fs';
+import * as fsPromises from 'node:fs/promises';
+import * as os from 'node:os';
+import * as path from 'node:path';
+import { randomUUID } from 'node:crypto';
+import { pathToFileURL } from 'node:url';
+import chalk from 'chalk';
+import { URI } from 'langium';
+import { NodeFileSystem } from 'langium/node';
+import { createCalcScriptServices } from '../out/language/calc-script-module.js';
+import type { Model } from '../src/language/generated/ast.js';
+import { generateJavaScript } from '../out/code-generation/generate.js';
+
+const calcScriptServices = createCalcScriptServices(NodeFileSystem).CalcScript;
 
 interface CliResult {
   code: number,
-  error: ExecException | null,
+  error: Error | null,
   stdout: string,
   stderr: string
 }
@@ -42,6 +50,78 @@ export function removeSpaces(code: string): string {
   return code.replace(/\s/g, '').replace(/^.*\/\*endofpreambleofgeneratedcode\*\//, '');
 }
 
+async function getModel(fileName: string): Promise<Model | undefined> {
+  if (!fs.existsSync(fileName)) {
+    console.error(chalk.red(`File ${fileName} does not exist.`));
+    return undefined;
+  }
+
+  const document = await calcScriptServices.shared.workspace.LangiumDocuments
+    .getOrCreateDocument(URI.file(path.resolve(fileName)));
+  await calcScriptServices.shared.workspace.DocumentBuilder.build([document], { validation: true });
+
+  const parseErrors = document.parseResult?.parserErrors ?? [];
+  const validationErrors = (document.diagnostics ?? []).filter(diagnostic => diagnostic.severity === 1);
+  if (parseErrors.length > 0 || validationErrors.length > 0) {
+    console.error(chalk.red('There are validation errors:'));
+    for (const parseError of parseErrors) {
+      console.error(chalk.red(parseError.message));
+    }
+    for (const validationError of validationErrors) {
+      console.error(chalk.red(
+        `line ${validationError.range.start.line + 1}: ${validationError.message} [${document.textDocument.getText(validationError.range)}]`
+      ));
+    }
+    return undefined;
+  }
+
+  return document.parseResult?.value as Model | undefined;
+}
+
+async function transpileInProcess(fileName: string): Promise<string> {
+  const model = await getModel(fileName);
+  if (!model) {
+    return '';
+  }
+  return generateJavaScript(model);
+}
+
+async function executeCaptured(fileName: string): Promise<CliResult> {
+  const originalLog = console.log;
+  const originalError = console.error;
+  let stdout = '';
+  let stderr = '';
+  let tmpFile: string | undefined;
+
+  console.log = (...values: unknown[]) => {
+    stdout += `${values.join(' ')}\n`;
+  };
+  console.error = (...values: unknown[]) => {
+    stderr += `${values.join(' ')}\n`;
+  };
+
+  try {
+    const code = await transpileInProcess(fileName);
+    if (!code) {
+      return { code: 1, error: new Error('CalcScript validation failed'), stdout, stderr };
+    }
+
+    tmpFile = path.join(os.tmpdir(), `calcjs-${process.pid}-${randomUUID()}.mjs`);
+    await fsPromises.writeFile(tmpFile, code, 'utf8');
+    await import(`${pathToFileURL(tmpFile).href}?t=${Date.now()}-${randomUUID()}`);
+    return { code: 0, error: null, stdout: stdout.trim(), stderr: stderr.trim() };
+  } catch (error) {
+    const executionError = error instanceof Error ? error : new Error(String(error));
+    return { code: 1, error: executionError, stdout: stdout.trim(), stderr: stderr.trim() };
+  } finally {
+    console.log = originalLog;
+    console.error = originalError;
+    if (tmpFile) {
+      await fsPromises.rm(tmpFile, { force: true });
+    }
+  }
+}
+
 /**
  * Function that executes the transpile function and checks the output result
  * removing spaces and requires
@@ -49,17 +129,17 @@ export function removeSpaces(code: string): string {
  * @param unlink If true, it will delete the output file after checking
  */
 export async function checkTranspile(testsFiles: TestFiles): Promise<CliResult> {
-  return new Promise(resolve => {
-    const cmd = `node ${cliPath} "${testsFiles.input}" -v`;
-    exec(cmd, async (error, stdout, stderr) => {
-      resolve({
-        code: error && error.code ? error.code : 0,
-        error,
-        stdout,
-        stderr
-      });
-    });
-  });
+  try {
+    const stdout = await transpileInProcess(testsFiles.input);
+    return { code: stdout ? 0 : 1, error: stdout ? null : new Error('CalcScript validation failed'), stdout, stderr: '' };
+  } catch (error) {
+    return {
+      code: 1,
+      error: error instanceof Error ? error : new Error(String(error)),
+      stdout: '',
+      stderr: ''
+    };
+  }
 }
 
 /**
@@ -69,17 +149,7 @@ export async function checkTranspile(testsFiles: TestFiles): Promise<CliResult> 
  * @param verbose If true, it will show the console.log output
  */
 export async function checkRunConsoleLog(testsFiles: TestFiles): Promise<CliResult> {
-  return new Promise(resolve => {
-    const cmd = `node ${cliPath} "${testsFiles.input}" -r`;
-    exec(cmd, async (error, stdout, stderr) => {
-      resolve({
-        code: error && error.code ? error.code : 0,
-        error,
-        stdout,
-        stderr
-      });
-    });
-  });
+  return executeCaptured(testsFiles.input);
 }
 
 /**
@@ -87,15 +157,5 @@ export async function checkRunConsoleLog(testsFiles: TestFiles): Promise<CliResu
  * @param testsFiles Object with the input, output, expectedjs and correcterr files
  */
 export async function checkRunConsoleError(testsFiles: TestFiles): Promise<CliResult> {
-  return new Promise(resolve => {
-    const cmd = `node ${cliPath} "${testsFiles.input}" -r`;
-    exec(cmd, async (error, stdout, stderr) => {
-      resolve({
-        code: error && error.code ? error.code : 0,
-        error,
-        stderr,
-        stdout
-      });
-    });
-  });
+  return executeCaptured(testsFiles.input);
 }

@@ -1,6 +1,8 @@
 import { AbsoluteValueExpression, ArrayLiteral, AssignmentExpression, BinaryExpression, BooleanLiteral, CallExpression, CallLiteral, DoWhileExpression, ForExpression, FunctionDeclaration, Identifier, isAbsoluteValueExpression, isArrayLiteral, isAssignmentExpression, isBinaryExpression, isBooleanLiteral, isCallExpression, isCallLiteral, isDoWhileExpression, isExpression, isForExpression, isFunctionDeclaration, isIdentifier, isKeyValuePair, isNotExpression, isNullLiteral, isNumberLiteral, isObjectLiteral, isStringLiteral, isUnaryPostfixExpression, isUnarySubExpression, isWhileExpression, KeyValuePair, NotExpression, NullLiteral, NumberLiteral, ObjectLiteral, StringLiteral, UnaryPostfixExpression, UnarySubExpression, WhileExpression, type Expression, type Model } from '../language/generated/ast.js';
 import * as supportLib from './support-lib.js';
 
+const supportLibraryNames = new Set(Object.keys(supportLib));
+
 export function findDependencies(model: Model): Set<string>[] {
   const dependencies: Set<string> = new Set();
   // const dependenciesNames = Object.keys(supportLib);
@@ -49,7 +51,7 @@ export function findDependencies(model: Model): Set<string>[] {
  */
 export class JavaScriptTranspiler {
   private static dependencies: Set<string> = new Set();
-  private static dependenciesNames: string[] = Object.keys(supportLib);
+  private static dependenciesNames: Set<string> = supportLibraryNames;
 
   /**
    * Transpiles a CalcScript model into JavaScript code.
@@ -57,10 +59,10 @@ export class JavaScriptTranspiler {
    * @returns The transpiled JavaScript code
    */
   public static transpile(model: Model): string {
+    this.dependencies.clear();
     const allDependencies = findDependencies(model);
     this.dependencies = allDependencies[0];
     const declaredVariablesSet = allDependencies[1];
-    this.dependencies.clear();
     let jsCode = '';
     if (declaredVariablesSet.size > 0) {
       jsCode = 'let ';
@@ -196,7 +198,7 @@ export class JavaScriptTranspiler {
       throw new Error('It is not possible to call a non-identified function');
     }
     let functionName = expr.callee.name;
-    if (this.dependenciesNames.includes(functionName)) {
+    if (this.dependenciesNames.has(functionName)) {
       this.dependencies.add(functionName);
     } else {
       functionName = '$' + functionName;
@@ -222,7 +224,7 @@ export class JavaScriptTranspiler {
   }
 
   private static transpileIdentifier(expr: Identifier): string {
-    if (this.dependenciesNames.includes(expr.name)) {
+    if (this.dependenciesNames.has(expr.name)) {
       this.dependencies.add(expr.name);
     }
     return '$' + expr.name;
@@ -244,7 +246,7 @@ export class JavaScriptTranspiler {
     const nameInvocation = 'functionObject';
     this.dependencies.add(nameInvocation);
     const args = expr.parameters.map((param) => this.transpileIdentifier(param)).join(', ');
-    const body = expr.body.map((stmt: Expression) => this.transpileExpression(stmt)).join(';\n') + ';';
+    const body = expr.body.map((stmt: Expression) => this.transpileExpression(stmt)).join(';\n');
     return `${nameInvocation}(function(${args}) {\nreturn ${body}\n})`;
   }
 

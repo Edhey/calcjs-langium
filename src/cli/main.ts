@@ -9,10 +9,8 @@ import * as url from 'node:url';
 import * as fs from 'node:fs';
 import * as fspromise from 'node:fs/promises';
 import * as path from 'node:path';
-import pkg from 'template-file';
-import { JavaScriptTranspiler } from '../code-generation/transpile.js';
 import { exec } from 'node:child_process';
-const { renderFile } = pkg;
+import { generateJavaScript } from '../code-generation/generate.js';
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 const packagePath = path.resolve(__dirname, '..', '..', 'package.json');
@@ -56,12 +54,7 @@ export default function (): void {
         const prettyJson = JSON.stringify(parsed, null, 2);
         console.log(prettyJson);
       }
-      let code = JavaScriptTranspiler.transpile(model);
-      const dependencies = Array.from(JavaScriptTranspiler.getDependencies());
-      const root = __dirname.replace(/\/out.*$/, ''); // get the root path (Linux)
-      if (dependencies.length > 0) {
-        code = await renderFile(`${root}/src/code-generation/templates.txt`, { dependencies, root, code });
-      }
+      const code = await generateJavaScript(model);
 
       if (options.destination) {
         const data = extractDestinationAndName(fileName, options.destination);
