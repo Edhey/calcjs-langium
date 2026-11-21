@@ -1,7 +1,7 @@
 grammar CalcScript
 
 /**
- * Regla de entrada: 
+ * Regla de entrada:
  * El programa es una lista de expresiones separadas por comas
  */
 entry Model:
@@ -23,23 +23,27 @@ ControlExpression infers ControlExpression:
 ;
 
 fragment Body:
-  '{' body+=Expression (',' body+=Expression )* '}';
+  '{' body+=Expression (',' body+=Expression)* '}'
+;
 
 ForExpression infers ForExpression:
-  'for' '(' init=Expression ';' condition=Expression ';' update=Expression ')' Body;
+  'for' '(' init=Expression ';' condition=Expression ';' update=Expression ')' Body
+;
 
 WhileExpression infers WhileExpression:
-  'while' condition=Expression Body;
+  'while' condition=Expression Body
+;
 
 DoWhileExpression infers DoWhileExpression:
-  'do' Body 'while' '(' condition=Expression ')';
+  'do' Body 'while' '(' condition=Expression ')'
+;
 
 AssignmentExpression infers Expression:
   CallExpression ({infer AssignmentExpression.left=current} operator='=' right=AssignmentExpression)?
 ;
 
 CallExpression infers Expression:
-  ArithmeticExpression ({infer CallExpression.callee=current} '(' (arguments+=Expression (';' arguments+=Expression)*)* ')')* // TODO: Check if + could be used
+  ArithmeticExpression ({infer CallExpression.callee=current} '(' (arguments+=Expression (';' arguments+=Expression)*)? ')')*
 ;
 
 ArithmeticExpression infers Expression:
@@ -64,26 +68,29 @@ LogicalExpression infers Expression:
  * Operador relacional: '<'
  */
 ComparativeExpression infers Expression:
-  AbsoluteValueExpression ({infer BinaryExpression.left=current} operator=('<') right=AbsoluteValueExpression)*
-;
-
-AbsoluteValueExpression infers Expression:
-  {infer AbsoluteValueExpression} '|' operand=MaxExpression '|'
-    | MaxExpression
+  AbsoluteValueExpression ({infer BinaryExpression.left=current} operator='<' right=AbsoluteValueExpression)*
 ;
 
 /**
- * Operador izquierdo: '@'
+ * Valor absoluto: '|' expression '|'
+ */
+AbsoluteValueExpression infers Expression:
+  {infer AbsoluteValueExpression} '|' operand=Expression '|'
+  | MaxExpression
+;
+
+/**
+ * Operador izquierdo: '@' (máximo)
  */
 MaxExpression infers Expression:
-  MinExpression ({infer BinaryExpression.left=current} operator=('@') right=MinExpression)*
+  MinExpression ({infer BinaryExpression.left=current} operator='@' right=MinExpression)*
 ;
 
 /**
- * Operador izquierdo: '&'
+ * Operador izquierdo: '&' (mínimo)
  */
 MinExpression infers Expression:
-  AdditiveExpression ({infer BinaryExpression.left=current} operator=('&') right=AdditiveExpression)*
+  AdditiveExpression ({infer BinaryExpression.left=current} operator='&' right=AdditiveExpression)*
 ;
 
 /**
@@ -102,87 +109,101 @@ MultiplicativeExpression infers Expression:
 
 /**
  * Operador unario: UMINUS (no asociativo)
- * Se define en la regla UnarySubExpression, junto con otros posibles operadores unarios.
  */
 UnarySubExpression infers Expression:
   {infer UnarySubExpression} operator='-' operand=ExponentiationExpression
-    | ExponentiationExpression
+  | ExponentiationExpression
 ;
 
 /**
- * Operador de exponenciación '**' es right associative.
- * Se implementa mediante recursión a la derecha.
+ * Operador de exponenciación '**' (asociativo a la derecha)
  */
 ExponentiationExpression infers Expression:
-  FactorialExpression ({infer BinaryExpression.left=current} operator='**' right=ExponentiationExpression)*
+  FactorialExpression ({infer BinaryExpression.left=current} operator='**' right=ExponentiationExpression)?
 ;
 
 /**
- * Operador postfix: '!'
- * Se aplica a la expresión factorial.
+ * Operador postfix: '!' (factorial)
  */
 FactorialExpression infers Expression:
   NotExpression ({infer UnaryPostfixExpression.operand=current} operator='!')*
 ;
 
+/**
+ * Operador unario lógico: '!'
+ */
 NotExpression infers Expression:
   {infer NotExpression} operator='!' operand=PrimaryExpression
   | PrimaryExpression
 ;
 
 /**
- * Expresión primaria: 
+ * Expresión primaria:
  * - Paréntesis
  * - Literales (números, cadenas, booleanos, nulos)
- * - Identificadores
+ * - Identificadores, arrays, objetos, funciones y llamadas
  */
 PrimaryExpression infers Expression:
-  '(' Expression ')' 
-  | NumberLiteral 
-  | StringLiteral 
-  | BooleanLiteral 
-  | NullLiteral 
-  | Identifier 
-  | ArrayLiteral 
-  | ObjectLiteral 
+  '(' Expression ')'
+  | NumberLiteral
+  | StringLiteral
+  | BooleanLiteral
+  | NullLiteral
+  | Identifier
+  | ArrayLiteral
+  | ObjectLiteral
   | FunctionDeclaration
   | CallLiteral
 ;
 
 NumberLiteral infers NumberLiteral:
-  value=NUMBER;
+  value=NUMBER
+;
 
 StringLiteral infers StringLiteral:
-  value=STRING;
+  value=STRING
+;
 
 BooleanLiteral infers BooleanLiteral:
-  value=(TRUE | FALSE);
+  value=(TRUE | FALSE)
+;
 
 NullLiteral infers NullLiteral:
-  value=NULL;
+  value=NULL
+;
 
 Identifier infers Identifier:
-  name=ID;
+  name=ID
+;
 
 FunctionDeclaration infers FunctionDeclaration:
-  'fun' ('(' (parameters+=Identifier (';' parameters+=Identifier)*)* ')')+ Body;
+  'fun' ('(' (parameters+=Identifier (';' parameters+=Identifier)*)? ')')+ Body
+;
 
 ArrayLiteral infers ArrayLiteral:
-  '[' (elements+=Expression ( ';' elements+=Expression )*)* ']';
+  '[' (elements+=Expression (';' elements+=Expression)*)? ']'
+;
 
 ObjectLiteral infers ObjectLiteral:
-  '{' (properties+=KeyValuePair ( ';' properties+=KeyValuePair )*)* '}';
+  '{' (properties+=KeyValuePair (';' properties+=KeyValuePair)*)? '}'
+;
 
 KeyValuePair:
-  key=STRING ':' value=Expression;
+  key=STRING ':' value=Expression
+;
 
 CallLiteral infers CallLiteral:
-  callee=Identifier ('(' (arguments+=Expression (';' arguments+=Expression)*)* ')')+;
+  callee=Identifier calls+=CallArguments+
+;
+
+CallArguments:
+  '(' (arguments+=Expression (';' arguments+=Expression)*)? ')'
+;
 
 terminal TRUE: /true/;
 terminal FALSE: /false/;
 terminal NULL: /null/;
-terminal NUMBER: /\d+(\.\d+)?([eE][-+]?\d+)?i?|(i(?![$\w]))/; // Important to be before STRING and ID for i
+terminal NUMBER: /\d+(\.\d+)?([eE][-+]?\d+)?i?|(i(?![$\w]))/; // Antes de STRING e ID para reconocer 'i'
 terminal STRING: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/;
 terminal ID: /[a-zA-Z_][$\w]*/;
 
