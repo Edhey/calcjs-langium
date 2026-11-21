@@ -8,7 +8,7 @@
  * @autor Himar Edhey Hernández Alonso
  * @since Wed 26 Feb 2025
  * @desc Este archivo contiene los tests de la práctica
- * @see {@link https://github.com/ULL-ESIT-PL-2425/arith2js-himar_edhey-hernandez-alu0101552392}
+ * @see {@link https://github.com/Edhey/calcjs-langium}
  */
 
 import { TestExample } from './test-example-description.mjs';
@@ -149,8 +149,8 @@ describe('Basic Tests', function () {
           console.log('Error code:', result.code);
           console.log('Error message:', result.error);
         }
-        await fileStream.writeFile(ExampleTest[i].output, result.stdout);
-        const expected = await fileStream.readFile(ExampleTest[i].expected, 'utf-8');
+        await fileStream.writeFile(BasicTest[i].output, result.stdout);
+        const expected = await fileStream.readFile(BasicTest[i].expected, 'utf-8');
         const cleanStdout = removeSpaces(result.stdout);
         const cleanExpected = removeSpaces(expected);
         expect(cleanStdout).to.equal(cleanExpected);
@@ -165,7 +165,16 @@ describe('Basic Tests', function () {
   describe('Basic Run Tests', function () {
     for (let i = 0; i < BasicTest.length; i++) {
       it(`run function with ${BasicTest[i].input}`, async function () {
-        await checkRunConsoleLog(BasicTest[i]);
+        const result = await checkRunConsoleLog(BasicTest[i]);
+        if (result.code !== 0) {
+          console.log('Error code:', result.code);
+          console.log('Error message:', result.error);
+        }
+        await fileStream.writeFile(BasicTest[i].output, result.stdout);
+        const expected = await fileStream.readFile(BasicTest[i].correctOut, 'utf-8');
+        const cleanStdout = removeSpaces(result.stdout);
+        const cleanExpected = removeSpaces(expected);
+        expect(cleanStdout).to.equal(cleanExpected);
       });
     }
   });
@@ -187,8 +196,8 @@ describe('Simple Test', function () {
           console.log('Error code:', result.code);
           console.log('Error message:', result.error);
         }
-        await fileStream.writeFile(ExampleTest[i].output, result.stdout);
-        const expected = await fileStream.readFile(ExampleTest[i].expected, 'utf-8');
+        await fileStream.writeFile(SimpleTest[i].output, result.stdout);
+        const expected = await fileStream.readFile(SimpleTest[i].expected, 'utf-8');
         const cleanStdout = removeSpaces(result.stdout);
         const cleanExpected = removeSpaces(expected);
         expect(cleanStdout).to.equal(cleanExpected);
@@ -225,8 +234,8 @@ describe('Hard Tests', function () {
           console.log('Error code:', result.code);
           console.log('Error message:', result.error);
         }
-        await fileStream.writeFile(ExampleTest[i].output, result.stdout);
-        const expected = await fileStream.readFile(ExampleTest[i].expected, 'utf-8');
+        await fileStream.writeFile(HardTest[i].output, result.stdout);
+        const expected = await fileStream.readFile(HardTest[i].expected, 'utf-8');
         const cleanStdout = removeSpaces(result.stdout);
         const cleanExpected = removeSpaces(expected);
         expect(cleanStdout).to.equal(cleanExpected);
