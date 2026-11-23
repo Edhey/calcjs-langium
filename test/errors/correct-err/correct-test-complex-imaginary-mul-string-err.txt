@@ -1,0 +1,1 @@
+Syntax/validation error on line 2, column 9: Multiplication is not supported for string and imaginary complex values. [*]

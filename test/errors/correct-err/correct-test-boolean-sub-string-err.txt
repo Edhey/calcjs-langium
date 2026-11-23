@@ -1,0 +1,2 @@
+Syntax/validation error on line 1, column 12: Operator '-' is not supported for types 'boolean' and 'string'. [-]
+Syntax/validation error on line 2, column 13: Operator '-' is not supported for types 'boolean' and 'string'. [-]

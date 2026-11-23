@@ -1,3 +1,2 @@
-Variable d not declared
-Variable b declared but not used
-Variable c used before declaration at line 2, column 13
+Syntax/validation error on line 2, column 1: Variable 'b' is declared but not used. [b]
+Syntax/validation error on line 4, column 5: Identifier 'd' is used before declaration. [d]

@@ -1,4 +1,2 @@
-Errors in global scope:
-Variable a used before declaration at line 1, column 3
-Variable a used before declaration at line 2, column 1
-
+Syntax/validation error on line 1, column 4: Operator '-' is not supported for types 'complex' and 'zero'. [-]
+Syntax/validation error on line 2, column 2: Operator '-' is not supported for types 'zero' and 'complex'. [-]

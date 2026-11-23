@@ -1,6 +1,4 @@
-Errors in global scope:
-Variable d not declared at line 1, column 7
-Variable c not declared at line 3, column 7
-Variable a declared but not used at line 1, column 1
-Variable b declared but not used at line 2, column 1
-
+Syntax/validation error on line 1, column 1: Variable 'a' is declared but not used. [a]
+Syntax/validation error on line 2, column 1: Variable 'b' is declared but not used. [b]
+Syntax/validation error on line 1, column 7: Identifier 'd' is used before declaration. [d]
+Syntax/validation error on line 3, column 7: Identifier 'c' is used before declaration. [c]

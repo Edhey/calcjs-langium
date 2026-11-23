@@ -1,4 +1,1 @@
-Parse error on line 1:
-(1 + 2i)) * (3 + 4i
---------^
-Expecting 'EOF', ',', '+', '-', '/', '*', '**', '==', '!=', '<', '&', '@', '&&', '||', '!', got ')'
+Syntax/validation error on line 1, column 9: Expecting token of type 'EOF' but found `)`. [)]

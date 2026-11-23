@@ -1,0 +1,2 @@
+Syntax/validation error on line 1, column 16: Operator '<' is not supported for types 'string' and 'boolean'. [<]
+Syntax/validation error on line 2, column 10: Operator '<' is not supported for types 'string' and 'boolean'. [<]

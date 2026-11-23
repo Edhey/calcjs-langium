@@ -1,0 +1,1 @@
+Syntax/validation error on line 1, column 3: Operator '*' is not supported for types 'complex' and 'boolean'. [*]

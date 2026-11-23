@@ -1,4 +1,1 @@
-Parse error on line 1:
-(4 + 5
-------^
-Expecting ',', '+', '-', '/', '*', '**', '==', '!=', '<', '&', '@', '&&', '||', '!', ')', got 'EOF'
+Syntax/validation error on line 1, column 7: Expecting token of type ')' but found ``.

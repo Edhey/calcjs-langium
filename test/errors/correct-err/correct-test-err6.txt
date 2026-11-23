@@ -1,4 +1,18 @@
-Parse error on line 1:
-
-^
-Expecting 'NUMBER', 'ID', '-', '|', '!', 'PID', '(', 'TRUE', 'FALSE', 'FUN', 'STRING', 'WHILE', 'FOR', got 'EOF'
+Syntax/validation error on line 1, column 1: Expecting: one of these possible Token sequences:
+  1. [|]
+  2. [-]
+  3. [!]
+  4. [(]
+  5. [NUMBER]
+  6. [STRING]
+  7. [TRUE]
+  8. [FALSE]
+  9. [NULL]
+  10. [ID]
+  11. [[]
+  12. [{]
+  13. [fun]
+  14. [for]
+  15. [while]
+  16. [do]
+but found: ''

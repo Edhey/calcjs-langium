@@ -1,4 +1,14 @@
-Parse error on line 1:
-5 + * 3
-----^
-Expecting 'NUMBER', 'ID', '-', '|', '!', 'PID', '(', 'TRUE', 'FALSE', 'FUN', 'STRING', 'WHILE', 'FOR', got '*'
+Syntax/validation error on line 1, column 5: Expecting: one of these possible Token sequences:
+  1. [-]
+  2. [!]
+  3. [(]
+  4. [NUMBER]
+  5. [STRING]
+  6. [TRUE]
+  7. [FALSE]
+  8. [NULL]
+  9. [ID]
+  10. [[]
+  11. [{]
+  12. [fun]
+but found: '*' [*]

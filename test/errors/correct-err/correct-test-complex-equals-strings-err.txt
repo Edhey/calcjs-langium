@@ -1,0 +1,1 @@
+Syntax/validation error on line 2, column 9: Operator '==' is not supported for types 'imaginary-complex' and 'string'. [==]

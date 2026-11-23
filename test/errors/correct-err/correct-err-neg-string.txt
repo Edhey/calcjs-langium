@@ -1,0 +1,1 @@
+Syntax/validation error on line 1, column 2: Unary '-' is not supported for type 'string'. [""]
