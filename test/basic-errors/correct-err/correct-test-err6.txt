@@ -1,1 +1,0 @@
-Parseerroronline1:^Expecting'NUMBER','TRUE','FALSE','STRING','NULL','ID','-','|','!','PID','(','WHILE','{','DO','FUN','[','FOR',got'EOF'

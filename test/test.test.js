@@ -15,14 +15,13 @@ import { TestExample } from './test-example-description.mjs';
 import { TestBasic } from './test-basic-description.mjs';
 import { TestSimple } from './test-description.mjs';
 import { TestHard } from './test-hard-description.mjs';
-import { TestErrorSyntax } from './test-error-description.mjs';
-import { TestBasicErrorSyntax } from './test-basic-error-description.mjs';
 import { checkRunConsoleError, checkRunConsoleLog, checkTranspile, removeSpaces } from './test-utils.ts';
 import * as fileStream from "fs/promises";
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { expect } from 'chai';
+import { readdirSync } from 'node:fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -69,25 +68,31 @@ const HardTest = TestHard.map(testDescription => ({
 }));
 
 
-/**
- * Test data for the error syntax tests
- */
-const ErrorSyntaxTest = TestErrorSyntax.map(testDescription => ({
-  input: __dirname + '/errors/syntax-error/' + testDescription.input,
-  output: __dirname + '/errors/output/' + testDescription.output,
-  expected: '', // Default value for the required 'expected' property
-  correctErr: __dirname + '/errors/correct-err/' + testDescription.correctErr,
-}));
+const errorCategories = ['syntax-errors', 'semantic-errors', 'runtime-errors'];
+const ErrorTests = Object.fromEntries(errorCategories.map(category => [
+  category,
+  readdirSync(path.join(__dirname, 'errors', category))
+    .filter(file => file.endsWith('.calc'))
+    .map(file => ({ input: path.join(__dirname, 'errors', category, file) }))
+]));
 
-/**
- * Test data for the basic error syntax tests
- */
-const BasicErrorTest = TestBasicErrorSyntax.map(testDescription => ({
-  input: __dirname + '/basic-errors/basic-syntax-error/' + testDescription.input,
-  output: __dirname + '/basic-errors/output/' + testDescription.output,
-  expected: '', // Default value for the required 'expected' property
-  correctErr: __dirname + '/basic-errors/correct-err/' + testDescription.correctErr,
-}));
+const parserDiagnostic = /Expecting|unexpected|token/i;
+
+function assertErrorResult(result, phase) {
+  const reported = `${result.stderr}\n${result.error?.message ?? ''}`.trim();
+  expect(result.code).to.equal(1);
+  expect(reported).to.not.equal('');
+  expect(reported).not.to.match(/Cannot read properties of undefined|reading 'ast'|reading 'forEach'/);
+
+  if (phase === 'syntax-errors') {
+    expect(reported).to.match(parserDiagnostic);
+  } else if (phase === 'semantic-errors') {
+    expect(reported).to.match(/Syntax\/validation error/);
+    expect(reported).not.to.match(parserDiagnostic);
+  } else {
+    expect(reported).to.match(/Runtime error/);
+  }
+}
 
 /**
  * Example Tests
@@ -256,34 +261,13 @@ describe('Hard Tests', function () {
   });
 });
 
-/**
- * Syntax Error Tests
- * Run the simple tests and check the output
- */
-describe('Syntax Error Tests', function () {
-  for (let i = 0; i < ErrorSyntaxTest.length; i++) {
-    it(`check syntax errors(${ErrorSyntaxTest[i].input}, ${ErrorSyntaxTest[i].output})`, async () => {
-      const result = await checkRunConsoleError(ErrorSyntaxTest[i]);
-      const reported = `${result.stderr}\n${result.error?.message ?? ''}`.trim();
-      expect(result.code).to.equal(1);
-      expect(reported).to.not.equal('');
-      expect(reported).not.to.match(/Cannot read properties of undefined|reading 'ast'|reading 'forEach'/);
-    });
-  }
-});
-
-/**
- * Basic Syntax Error Tests
- * Run the simple tests and check the output
- */
-describe('Basic Syntax Error Tests', function () {
-  for (let i = 0; i < BasicErrorTest.length; i++) {
-    it(`check syntax errors(${BasicErrorTest[i].input}, ${BasicErrorTest[i].output})`, async () => {
-      const result = await checkRunConsoleError(BasicErrorTest[i]);
-      const reported = `${result.stderr}\n${result.error?.message ?? ''}`.trim();
-      expect(result.code).to.equal(1);
-      expect(reported).to.not.equal('');
-      expect(reported).not.to.match(/Cannot read properties of undefined|reading 'ast'|reading 'forEach'/);
-    });
-  }
-});
+for (const category of errorCategories) {
+  describe(`${category[0].toUpperCase()}${category.slice(1)}`, function () {
+    for (const testCase of ErrorTests[category]) {
+      it(`reports ${path.basename(testCase.input)}`, async () => {
+        const result = await checkRunConsoleError(testCase);
+        assertErrorResult(result, category);
+      });
+    }
+  });
+}

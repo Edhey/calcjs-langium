@@ -1,2 +1,0 @@
-a = 1+2i,
-print("cadena" / a) 

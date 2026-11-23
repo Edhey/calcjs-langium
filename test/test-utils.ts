@@ -112,6 +112,9 @@ async function executeCaptured(fileName: string): Promise<CliResult> {
     return { code: 0, error: null, stdout: stdout.trim(), stderr: stderr.trim() };
   } catch (error) {
     const executionError = error instanceof Error ? error : new Error(String(error));
+    if (!stderr.includes('Runtime error')) {
+      stderr = `${stderr}${stderr ? '\n' : ''}Runtime error: ${executionError.message}`;
+    }
     return { code: 1, error: executionError, stdout: stdout.trim(), stderr: stderr.trim() };
   } finally {
     console.log = originalLog;

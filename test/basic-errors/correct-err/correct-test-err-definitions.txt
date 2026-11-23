@@ -1,3 +1,0 @@
-Errors in global scope:
-Variable a declared but not used at line 1, column 1
-

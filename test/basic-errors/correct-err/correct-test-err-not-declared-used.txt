@@ -1,3 +1,0 @@
-Variable d not declared
-Variable b declared but not used
-Variable c used before declaration at line 2, column 13

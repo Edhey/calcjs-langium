@@ -16,17 +16,17 @@ if [ ! -f "$error_file" ]; then
 fi
 
 base_name="$(basename "$error_file" .calc)"
-syntax_error_dir="test/errors/syntax-error"
+error_dir="test/errors/semantic-errors"
 correct_err_dir="test/errors/correct-err"
-syntax_error_file="${syntax_error_dir}/${base_name}.calc"
+error_input="${error_dir}/${base_name}.calc"
 output_txt="${correct_err_dir}/correct-${base_name}.txt"
 cli_bin="./bin/cli"
 
-mkdir -p "$syntax_error_dir" "$correct_err_dir"
-cp "$error_file" "$syntax_error_file"
+mkdir -p "$error_dir" "$correct_err_dir"
+cp "$error_file" "$error_input"
 
 set +e
-"$cli_bin" "$syntax_error_file" 2> "$output_txt"
+"$cli_bin" "$error_input" 2> "$output_txt"
 exit_code=$?
 set -e
 
@@ -36,5 +36,5 @@ if [ -f "$output_txt" ]; then
 fi
 
 if [ "$exit_code" -eq 0 ]; then
-  echo "Warning: '$syntax_error_file' exited with code 0 (no error reported)." >&2
+  echo "Warning: '$error_input' exited with code 0 (no error reported)." >&2
 fi

@@ -1,1 +1,0 @@
-print("cadena" * (1+2i)) # Error

@@ -1,6 +1,0 @@
-b = fun(a) {
-  c = fun(d) {
-    print(e)
-  },
-  print(d)
-}

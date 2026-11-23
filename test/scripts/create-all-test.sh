@@ -6,7 +6,6 @@ set -euo pipefail
 
 INPUT_DIR="examples"
 EXAMPLES_OUT_FILE="test/test-example-description.mjs"
-ERRORS_OUT_FILE="test/test-error-description.mjs"
 CREATE_TEST_SCRIPT="bin/test-scripts/create-test.sh"
 CREATE_ERR_TEST_SCRIPT="scripts/create-err-test.sh"
 OVERRIDE_EXISTING="true" # "true" para sobrescribir, "false" para añadir sin duplicar
@@ -101,8 +100,6 @@ ${joined}"
 
 if [ "$OVERRIDE_EXISTING" = "true" ]; then
   write_js_array "$EXAMPLES_OUT_FILE" "TestExample" "override" "${example_entries[@]+"${example_entries[@]}"}"
-  write_js_array "$ERRORS_OUT_FILE" "TestErrorSyntax" "override" "${error_entries[@]+"${error_entries[@]}"}"
 else
   write_js_array "$EXAMPLES_OUT_FILE" "TestExample" "append" "${example_entries[@]+"${example_entries[@]}"}"
-  write_js_array "$ERRORS_OUT_FILE" "TestErrorSyntax" "append" "${error_entries[@]+"${error_entries[@]}"}"
 fi
