@@ -1,12 +1,12 @@
 {
-  "name": "calcjs-langium",
+  "name": "calc",
   "publisher": "Edhey",
   "displayName": "CalcJs-Langium",
   "icon": "images/CalcScript-icon.png",
   "description": "* See section [TFA](https://apuntes-pl.vercel.app/labs/tfa#task-presentation-of-goals) Final Project - VsCode extension for a transpiler of a simple calculator language to JavaScript.\n* The project is based on the [Langium](https://langium.org/) framework.",
   "version": "1.1.0",
   "type": "module",
-  "main": "./out/extension/main.js",
+  "main": "./out/extension/main.cjs",
   "publishConfig": {
     "access": "public",
     "registry": "https://npm.pkg.github.com/"
