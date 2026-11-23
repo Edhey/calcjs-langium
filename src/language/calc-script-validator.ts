@@ -1,7 +1,6 @@
 import type { ValidationAcceptor, ValidationChecks } from 'langium';
-import { AssignmentExpression, Expression, Identifier, isArrayLiteral, isAssignmentExpression, isCallLiteral, isFunctionDeclaration, isIdentifier, isObjectLiteral, Model, type BinaryExpression, type CalcScriptAstType, type FunctionDeclaration } from './generated/ast.js';
+import { AssignmentExpression, Expression, Identifier, isArrayLiteral, isAssignmentExpression, isCallLiteral, isFunctionDeclaration, isIdentifier, isObjectLiteral, Model, type BinaryExpression, type CalcScriptAstType, type FunctionDeclaration, type UnarySubExpression } from './generated/ast.js';
 import type { CalcScriptServices } from './calc-script-module.js';
-import { JavaScriptTranspiler } from '../code-generation/transpile.js';
 import * as supportLib from '../code-generation/support-lib.js';
 const dependenciesNames = Object.keys(supportLib);
 const reservedWords = ['class'];
@@ -55,6 +54,7 @@ export function registerValidationChecks(services: CalcScriptServices) {
     AssignmentExpression: validator.checkAssignment,
     FunctionDeclaration: validator.checkFunctionDeclaration,
     BinaryExpression: [validator.checkDivByZero, validator.checkBinaryExpressionTypes],
+    UnarySubExpression: validator.checkUnarySubExpression,
     Identifier: [validator.checkIdentifierNotReserved, validator.checkUsedBeforeDeclaration],
   };
   registry.register(checks, validator);
@@ -85,11 +85,14 @@ export class CalcScriptValidator {
       if (ast.$type === 'AssignmentExpression') {
         const assignment = ast as unknown as AssignmentExpression;
         if (isIdentifier(assignment.left)) {
-          this.variableTypes.set(assignment.left.name, this.inferType(assignment.right));
+          const assignedType = this.inferType(assignment.right);
+          this.variableTypes.set(
+            assignment.left.name,
+            this.isZeroExpression(assignment.right) ? 'zero' : assignedType
+          );
           if (!globalAssignments.has(assignment.left.name)) {
             globalAssignments.set(assignment.left.name, assignment);
           }
-          this.currentScope.addDefinition(assignment);
         }
         collectGlobalIdentifiers(assignment.right);
         return;
@@ -145,11 +148,13 @@ export class CalcScriptValidator {
   }
 
   checkUsedBeforeDeclaration(node: Identifier, accept: ValidationAcceptor): void {
+    const container = node.$container;
+    if (container && isAssignmentExpression(container) && container.left === node) {
+      this.variableTypes.set(node.name, this.inferType(container.right));
+      this.currentScope.addDefinition(container);
+      return;
+    }
     if (node.name && !this.currentScope.has(node.name) && !dependenciesNames.includes(node.name)) {
-      if (node.$container && (isAssignmentExpression(node.$container) && node.$container.left === node)) {
-        this.currentScope.addDefinition(node);
-        return;
-      }
       const parameters = this.getFunctionScopeParameters(node);
       if (!parameters.has(node.name)) {
         accept('error', `Identifier '${node.name}' is used before declaration.`, {
@@ -193,8 +198,38 @@ export class CalcScriptValidator {
   }
 
   checkDivByZero(binExpr: BinaryExpression, accept: ValidationAcceptor): void {
-    if ((binExpr.operator === '/') && JavaScriptTranspiler.transpileExpression(binExpr.right) === 'Complex(\'0\')') {
+    if (binExpr.operator !== '/') {
+      return;
+    }
+    if (this.isZeroExpression(binExpr.right)) {
       accept('error', 'You can not divide by 0.', { node: binExpr, property: 'right' });
+    }
+  }
+
+  private isZeroExpression(expr: Expression): boolean {
+    if (!expr) {
+      return false;
+    }
+    if (expr.$type === 'NumberLiteral') {
+      return Number((expr as { value: string }).value) === 0;
+    }
+    if (expr.$type === 'UnarySubExpression') {
+      return this.isZeroExpression((expr as UnarySubExpression).operand);
+    }
+    if (expr.$type === 'Identifier') {
+      const name = (expr as Identifier).name;
+      return this.variableTypes.get(name) === 'zero';
+    }
+    return false;
+  }
+
+  checkUnarySubExpression(expr: UnarySubExpression, accept: ValidationAcceptor): void {
+    const operandType = this.inferType(expr.operand);
+    if (operandType === 'boolean' || operandType === 'string') {
+      accept('error', `Unary '-' is not supported for type '${operandType}'.`, {
+        node: expr,
+        property: 'operand'
+      });
     }
   }
 
@@ -228,6 +263,18 @@ export class CalcScriptValidator {
       'complex.div.boolean',
       'string.equals.complex'
     ]);
+    const isImaginaryStringOperation =
+      binExpr.operator === '*'
+      && ((leftType === 'string' && rightType === 'imaginary-complex')
+        || (leftType === 'imaginary-complex' && rightType === 'string')
+        || (leftType === 'string' && rightType === 'imaginary-complex'));
+    if (isImaginaryStringOperation) {
+      accept('error', 'Multiplication is not supported for string and imaginary complex values.', {
+        node: binExpr,
+        property: 'operator'
+      });
+      return;
+    }
     if (unsupportedPairs.has(`${leftType}.${operator}.${rightType}`)) {
       accept('error', `Operator '${binExpr.operator}' is not supported for types '${leftType}' and '${rightType}'.`, {
         node: binExpr,
@@ -236,7 +283,9 @@ export class CalcScriptValidator {
       return;
     }
     try {
-      const operation = lodash.get(operationHandlers, `${leftType}.${operator}.${rightType}`);
+      const lookupLeftType = leftType === 'imaginary-complex' ? 'complex' : leftType;
+      const lookupRightType = rightType === 'imaginary-complex' ? 'complex' : rightType;
+      const operation = lodash.get(operationHandlers, `${lookupLeftType}.${operator}.${lookupRightType}`);
       if (!operation) {
         throw new Error();
       }
@@ -250,13 +299,24 @@ export class CalcScriptValidator {
 
   inferType(expr: Expression): string {
     if (!expr) return 'unknown';
-    if (expr.$type === 'NumberLiteral') return 'complex';
+    if (expr.$type === 'NumberLiteral') {
+      const value = (expr as { value: string }).value;
+      return value.includes('i') ? 'imaginary-complex' : 'complex';
+    }
     if (expr.$type === 'StringLiteral') return 'string';
     if (expr.$type === 'BooleanLiteral') return 'boolean';
+    if (expr.$type === 'UnarySubExpression') {
+      return this.inferType((expr as UnarySubExpression).operand);
+    }
     if (expr.$type === 'ArrayLiteral') return 'object';
     if (expr.$type === 'ObjectLiteral') return 'object';
+    if (expr.$type === 'FunctionDeclaration') return 'functionobject';
     if (expr.$type === 'Identifier') {
-      return this.variableTypes.get((expr as Identifier).name) ?? 'unknown';
+      const name = (expr as Identifier).name;
+      if (name === 'i') {
+        return 'imaginary-complex';
+      }
+      return this.variableTypes.get(name) ?? 'unknown';
     }
     if (expr.$type === 'BinaryExpression') {
       const binary = expr as BinaryExpression;
@@ -264,6 +324,12 @@ export class CalcScriptValidator {
       const rightType = this.inferType(binary.right);
       if (leftType !== 'unknown' && leftType === rightType) {
         return leftType;
+      }
+      if ((leftType === 'complex' || leftType === 'imaginary-complex')
+        && (rightType === 'complex' || rightType === 'imaginary-complex')) {
+        return leftType === 'imaginary-complex' || rightType === 'imaginary-complex'
+          ? 'imaginary-complex'
+          : 'complex';
       }
     }
     return 'unknown';
