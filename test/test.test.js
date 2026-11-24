@@ -16,10 +16,10 @@ import { TestBasic } from './test-basic-description.mjs';
 import { TestSimple } from './test-description.mjs';
 import { TestHard } from './test-hard-description.mjs';
 import { checkRunConsoleError, checkRunConsoleLog, checkTranspile, removeSpaces } from './test-utils.ts';
+import { before } from 'mocha';
 import * as fileStream from "fs/promises";
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 import { expect } from 'chai';
 import { readdirSync } from 'node:fs';
 
@@ -67,6 +67,18 @@ const HardTest = TestHard.map(testDescription => ({
   correctOut: __dirname + '/hard/correct-out/' + testDescription.correctOut,
 }));
 
+const outputDirs = [
+  path.join(__dirname, 'examples-data/output'),
+  path.join(__dirname, 'basic/output'),
+  path.join(__dirname, 'data/output'),
+  path.join(__dirname, 'hard/output'),
+];
+
+before(async function () {
+  await Promise.all(
+    outputDirs.map((dir) => fileStream.mkdir(dir, { recursive: true }))
+  );
+});
 
 const errorCategories = ['syntax-errors', 'semantic-errors', 'runtime-errors'];
 const ErrorTests = Object.fromEntries(errorCategories.map(category => [
