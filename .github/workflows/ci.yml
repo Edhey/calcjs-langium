@@ -34,4 +34,4 @@ jobs:
         run: npm run langium:generate:build
 
       - name: Run tests
-        run: npx mocha test/ --timeout 5000 && npm run test:vitest
+        run: npm test

@@ -28,7 +28,7 @@
     "langium:watch": "langium generate --watch",
     "langium:generate:build": "langium generate && npm run build",
     "vscode:prepublish": "npm run build && npm run lint",
-    "test": "npm run build && mocha test/ --timeout 5000",
+    "test": "npm run build && mocha --import tsx test/ --timeout 5000",
     "test:example": "mocha test/ --grep 'Example Test' --timeout 5000",
     "test:simple": "mocha test/ --grep 'Simple Test' --timeout 5000",
     "test:hard": "mocha test/ --grep 'Hard Test' --timeout 5000",
@@ -90,6 +90,7 @@
     "langium-cli": "~3.5.0",
     "mocha": "^11.1.0",
     "nyc": "^17.1.0",
+    "tsx": "^4.23.15",
     "typescript": "~5.1.6",
     "vitest": "~1.4.0"
   },
