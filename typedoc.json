@@ -1,0 +1,28 @@
+{
+  "entryPoints": [
+    "src"
+  ],
+  "entryPointStrategy": "expand",
+  "tsconfig": "tsconfig.src.json",
+  "out": "docs/typedoc",
+  "exclude": [
+    "**/node_modules/**",
+    "src/language/generated/**",
+    "src/types/**"
+  ],
+  "excludePrivate": true,
+  "excludeInternal": true,
+  "readme": "README.md",
+  "name": "CalcJs-Langium",
+  "navigationLinks": {
+    "PL Lab": "https://apuntes-pl.vercel.app/labs/tfa",
+    "Coverage": "../coverage/"
+  },
+  "externalPattern": [
+    "**/node_modules/**",
+    "src/language/generated/**"
+  ],
+  "intentionallyNotExported": [
+    "FilePathData"
+  ]
+}

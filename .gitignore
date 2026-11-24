@@ -24,6 +24,7 @@ node_modules/
 test/**/output/
 coverage/
 .nyc_output/
+docs/typedoc/
 docs/coverage/
 docs/jsdoc/
 

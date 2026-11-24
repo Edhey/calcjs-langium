@@ -1,9 +1,18 @@
 {
   "source": {
-    "include": ["src"],
-    "includePattern": ".+\\.js(doc|x)?$"
+    "include": [
+      "src"
+    ],
+    "includePattern": ".+\\.(js|jsdoc|jsx|ts|tsx)$",
+    "exclude": [
+      "src/language/generated",
+      "src/types"
+    ]
   },
-  "plugins": ["plugins/markdown"],
+  "plugins": [
+    "plugins/markdown",
+    "node_modules/jsdoc-babel"
+  ],
   "opts": {
     "destination": "./docs/jsdoc",
     "recurse": true,
@@ -22,7 +31,7 @@
           "link": "../coverage/",
           "target": "_self"
         },
-        { 
+        {
           "title": "Lab documentation",
           "link": "../",
           "target": "_self"
